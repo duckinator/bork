@@ -75,6 +75,7 @@ def clean(args):
 
 def release(args):
     print("Would release to: {}".format(str(args)))
+    raise NotImplementedError("bork release")
 
 def main(argv=None):
     if argv is None:
