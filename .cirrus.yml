@@ -86,8 +86,9 @@ repos_task:
   install_script:
     - apt-get update
     - apt-get install -y git python3 python3-pip
-    - pip3 install -U pip
-    - pip3 install .
+    # Because apparently updating system pip does Weird Things
+    - python3 -m pip install -U pip
+    - python3 -m pip install .
   script:
     - git clone $REPO /tmp/repo
     - cd /tmp/repo
