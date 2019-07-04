@@ -77,7 +77,7 @@ Lint_task:
 
 repos_task:
   container:
-    image: debian:slim
+    image: debian:stable-slim
   env:
     matrix:
       - REPO: https://github.com/ppb/ppb-vector.git
