@@ -76,7 +76,7 @@ Windows_task:
     - C:\Python\python.exe -m pytest --verbose
 
 
-repo-test:
+repos_task:
   container:
     image: debian:slim
   env:
