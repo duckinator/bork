@@ -74,3 +74,21 @@ Windows_task:
   script:
     - C:\Python\python.exe --version
     - C:\Python\python.exe -m pytest --verbose
+
+
+repo-test:
+  container:
+    image: debian:slim
+  env:
+    matrix:
+      - REPO: https://github.com/ppb/ppb-vector.git
+      - REPO: https://github.com/duckinator/emanate.git
+      - REPO: https://github.com/duckinator/bork.git
+  install_script:
+    - apt-get update
+    - apt-get install -y git python3 python3-pip
+    - pip3 install .
+  script:
+    - git clone $REPO /tmp/repo
+    - cd /tmp/repo
+    - bork build
