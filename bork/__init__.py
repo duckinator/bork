@@ -61,8 +61,12 @@ def build_zipapp():
         raise Exception("Failed to build zipapp: {}".format(target))
 
 def build():
-    config = load_setup_cfg().get('bork', {})
-    want_zipapp = (config.get('zipapp', 'false').lower() == 'true') or ('zipapp_main' in config.keys())
+    config = load_setup_cfg()
+    if 'bork' in config:
+        config = config['bork']
+        want_zipapp = (config.get('zipapp', 'false').lower() == 'true') or ('zipapp_main' in config.keys())
+    else:
+        want_zipapp = False
 
     build_dist()
 
