@@ -79,6 +79,8 @@ repos_task:
   container:
     image: debian:stable-slim
   env:
+    LC_ALL: C.UTF-8
+    LANG: C.UTF-8
     matrix:
       - REPO: https://github.com/ppb/ppb-vector.git
       - REPO: https://github.com/duckinator/emanate.git
