@@ -3,6 +3,6 @@
 /.tox/
 /build/
 /dist/
-/emanate.egg-info/
+/*.egg-info/
 /venv
 __pycache__
