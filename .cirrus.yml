@@ -77,7 +77,7 @@ Lint_task:
 
 repos_task:
   container:
-    image: debian:stable-slim
+    image: python:3-slim
   env:
     LC_ALL: C.UTF-8
     LANG: C.UTF-8
@@ -87,10 +87,7 @@ repos_task:
       - REPO: https://github.com/duckinator/bork.git
   install_script:
     - apt-get update
-    - apt-get install -y git python3 python3-pip
-    # Because apparently updating system pip does Weird Things
-    - python3 -m pip install -U pip
-    - python3 -m pip install .
+    - apt-get install -y git
   script:
     - env
     - git clone $REPO /tmp/repo
