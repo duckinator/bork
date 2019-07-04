@@ -56,7 +56,7 @@ def build_zipapp():
 
 def build():
     config = load_setup_cfg().get('bork', {})
-    want_zipapp = ('zipapp' in config.keys() and config['zipapp'].lower() == 'true') or ('zipapp_main' in config.keys())
+    want_zipapp = (config.get('zipapp', 'false').lower() == 'true') or ('zipapp_main' in config.keys())
 
     build_dist()
 
