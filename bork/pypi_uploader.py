@@ -15,5 +15,5 @@ def upload(*globs):
         print("- {}".format(filename))
     print("")
 
-    twine(["upload", *files])
+    twine_upload(["upload", *files])
 
