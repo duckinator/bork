@@ -86,6 +86,7 @@ repos_task:
   install_script:
     - apt-get update
     - apt-get install -y git python3 python3-pip
+    - pip3 install -U pip
     - pip3 install .
   script:
     - git clone $REPO /tmp/repo
