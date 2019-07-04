@@ -90,6 +90,7 @@ repos_task:
     - python3 -m pip install -U pip
     - python3 -m pip install .
   script:
+    - env
     - git clone $REPO /tmp/repo
     - cd /tmp/repo
     - bork build
