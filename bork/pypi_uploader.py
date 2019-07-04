@@ -9,9 +9,11 @@ def upload(*globs):
         matches = map(str, Path().glob(glob))
         files += list(matches)
 
+    print("")
     print("Uploading to PyPI:")
     for filename in files:
         print("- {}".format(filename))
+    print("")
 
-    #twine(["upload", *files])
+    twine(["upload", *files])
 
