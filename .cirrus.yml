@@ -88,8 +88,8 @@ repos_task:
   install_script:
     - apt-get update
     - apt-get install -y git
+    - pip3 install .
   script:
-    - env
     - git clone $REPO /tmp/repo
     - cd /tmp/repo
     - bork build
