@@ -1,6 +1,6 @@
 from twine.cli import dispatch as twine_upload
 
-def pypi_upload(*globs):
+def upload(*globs):
     files = []
 
     for glob in globs:
