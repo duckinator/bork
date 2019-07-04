@@ -18,10 +18,15 @@ def load_setup_cfg():
     setup_cfg.read('setup.cfg')
     return setup_cfg
 
-def build_pep517(args):
+def build_dist():
+    """Build the sdist and wheel distributions."""
+    # TODO: Determine what can be passed via `args`, and expose it in a nicer API.
+    args = []
     pep517.build.main(pep517.build.parser.parse_args('.', *args))
 
-def build_zipapp(args):
+# FIXME: zipapps are broken as fuck.
+def build_zipapp():
+    """Build a zipapp for the project."""
     config = load_setup_cfg()
     name = config['metadata']['name']
 
@@ -43,15 +48,21 @@ def build_zipapp(args):
 
     # TODO: Allow the ability to specify which console_script entrypoint to
     #       use, instead of duplicating it.
-    main = config['bork']['zipapp_entrypoint']
+    main = config['bork']['zipapp_main']
 
     zipapp.create_archive(source, target, interpreter, main)
     if not Path(target).exists():
         raise Exception("Failed to build zipapp: {}".format(target))
 
-def build(args):
-    build_pep517(args)
-    build_zipapp(args)
+def build():
+    config = load_setup_cfg()['bork']
+    want_zipapp = ('zipapp' in config.keys() and config['zipapp'].lower() == 'true') or ('zipapp_main' in config.keys())
+
+    build_dist()
+
+    if want_zipapp:
+        raise Exception("zipapp builds are broken as hell, sorry. :(")
+        #build_zipapp()
 
 def _try_delete(path):
     if Path(path).is_dir():
@@ -59,7 +70,7 @@ def _try_delete(path):
     elif Path(path).exists():
         raise Exception("{} is not a directory".format(path))
 
-def clean(args):
+def clean():
     config = load_setup_cfg()
     name = config['metadata']['name']
 
@@ -67,12 +78,8 @@ def clean(args):
     _try_delete("./dist")
     _try_delete("./{}.egg-info".format(name))
 
-def release(args):
-    if len(args) == 0:
-        args = ['pypi', 'github']
+def release():
+    pypi_uploader.upload('./dist/*.tar.gz', './dist/*.whl')
 
-    if 'pypi' in args:
-        pypi_uploader.upload('./dist/*.tar.gz', './dist/*.whl')
-
-    if 'github' in args:
-        github_uploader.upload('./dist/*.pyz')
+    #if 'github' in args:
+    #    github_uploader.upload('./dist/*.pyz')

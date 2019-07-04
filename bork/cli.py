@@ -1,33 +1,24 @@
-import sys
+import click
 
-from . import build_pep517, build_zipapp
-from . import build, clean, release
+from . import build as _build
+from . import clean as _clean
+from . import release as _release
 
-def print_help():
-    print("Usage: bork build")
-    print("       bork clean")
-    print("       bork release [pypi] [github]")
+@click.group()
+def cli():
+    pass
 
-def main(argv=None):
-    if argv is None:
-        argv = sys.argv
+@cli.command()
+def build():
+    _build()
 
-    if len(argv) < 2 or "-h" in argv or "--help" in argv:
-        print_help()
-        exit(1)
+@cli.command()
+def clean():
+    _clean()
 
-    command = argv[1]
-    args = argv[2:]
+@cli.command()
+def release():
+    _release()
 
-    if command == "build":
-        build(args)
-    elif command == "build-pep517":
-        build_pep517(args)
-    elif command == "build-zipapp":
-        build_zipapp(args)
-    elif command == "clean":
-        clean(args)
-    elif command == "release":
-        release(args)
-    else:
-        print_help()
+def main():
+    cli()
