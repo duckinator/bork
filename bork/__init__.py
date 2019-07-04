@@ -1,6 +1,7 @@
 import configparser
 from pathlib import Path
 import shutil
+import sys
 import zipapp
 
 import pep517.build
@@ -27,6 +28,11 @@ def build_dist():
 # FIXME: zipapps are broken as fuck.
 def build_zipapp():
     """Build a zipapp for the project."""
+
+    if not 'metadata' in config or not 'name' in config['metadata']:
+        print("The [metadata] section of setup.cfg needs to have the 'name' key set.", file=sys.stderr)
+        exit(1)
+
     config = load_setup_cfg()
     name = config['metadata']['name']
 
