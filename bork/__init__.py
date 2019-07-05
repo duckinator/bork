@@ -22,12 +22,10 @@ def load_setup_cfg():
 
 def build_dist():
     """Build the sdist and wheel distributions."""
-    # TODO: Determine what can be passed via `args` + expose an API for it.
     args = []
     pep517.build.main(pep517.build.parser.parse_args('.', *args))
 
 
-# FIXME: zipapps are broken as fuck.
 def build_zipapp():
     """Build a zipapp for the project."""
 
@@ -43,7 +41,7 @@ def build_zipapp():
     # The code is assumed to be in ./<name>
     source = str(Path(name))
 
-    # TODO: Get version info. bdist is always done, so probably just use that?
+    # When we have version info, use the following line instead:
     # target = "dist/{}-{}.pyz".format(name, version)
     target = "dist/{}.pyz".format(name)
 
@@ -56,8 +54,8 @@ def build_zipapp():
     else:
         interpreter = DEFAULT_PYTHON_INTERPRETER
 
-    # TODO: Allow the ability to specify which console_script entrypoint to
-    #       use, instead of duplicating it.
+    # This is where GitHub issue #9 ("Allow specifying console_script
+    # entrypoint") would likely be implemented.
     main = config['bork']['zipapp_main']
 
     zipapp.create_archive(source, target, interpreter, main)
