@@ -2,6 +2,7 @@ from pathlib import Path
 
 from twine.cli import dispatch as twine_upload
 
+
 def upload(*globs):
     files = []
 
@@ -16,4 +17,3 @@ def upload(*globs):
     print("")
 
     twine_upload(["upload", *files])
-

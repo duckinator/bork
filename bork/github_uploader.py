@@ -1,3 +1,6 @@
+from pathlib import Path
+
+
 def upload(*globs):
     files = []
 
@@ -10,4 +13,3 @@ def upload(*globs):
         print("- {}".format(filename))
 
     raise NotImplementedError("github_uploader.upload()")
-

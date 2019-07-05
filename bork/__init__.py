@@ -6,7 +6,7 @@ import zipapp
 
 import pep517.build
 
-from . import github_uploader
+# from . import github_uploader
 from . import pypi_uploader
 
 # The "proper" way to handle the default would be to check python_requires
@@ -19,28 +19,32 @@ def load_setup_cfg():
     setup_cfg.read('setup.cfg')
     return setup_cfg
 
+
 def build_dist():
     """Build the sdist and wheel distributions."""
-    # TODO: Determine what can be passed via `args`, and expose it in a nicer API.
+    # TODO: Determine what can be passed via `args` + expose an API for it.
     args = []
     pep517.build.main(pep517.build.parser.parse_args('.', *args))
+
 
 # FIXME: zipapps are broken as fuck.
 def build_zipapp():
     """Build a zipapp for the project."""
 
-    if not 'metadata' in config or not 'name' in config['metadata']:
-        print("The [metadata] section of setup.cfg needs to have the 'name' key set.", file=sys.stderr)
+    config = load_setup_cfg()
+
+    if 'metadata' not in config or 'name' not in config['metadata']:
+        print("The [metadata] section of setup.cfg needs the 'name' key set.",
+              file=sys.stderr)
         exit(1)
 
-    config = load_setup_cfg()
     name = config['metadata']['name']
 
     # The code is assumed to be in ./<name>
     source = str(Path(name))
 
-    # TODO: Get version info -- this is more complex, since it can be in many places.
-    #target = "dist/{}-{}.pyz".format(name, version)
+    # TODO: Get version info. bdist is always done, so probably just use that?
+    # target = "dist/{}-{}.pyz".format(name, version)
     target = "dist/{}.pyz".format(name)
 
     # To override the default interpreter, add this to your project's setup.cfg:
@@ -60,11 +64,16 @@ def build_zipapp():
     if not Path(target).exists():
         raise Exception("Failed to build zipapp: {}".format(target))
 
+
 def build():
     config = load_setup_cfg()
     if 'bork' in config:
         config = config['bork']
-        want_zipapp = (config.get('zipapp', 'false').lower() == 'true') or ('zipapp_main' in config.keys())
+
+        zipapp_is_true = config.get('zipapp', 'false').lower() == 'true'
+        zipapp_main_set = 'zipapp_main' in config.keys()
+
+        want_zipapp = zipapp_is_true or zipapp_main_set
     else:
         want_zipapp = False
 
@@ -72,13 +81,15 @@ def build():
 
     if want_zipapp:
         raise Exception("zipapp builds are broken as hell, sorry. :(")
-        #build_zipapp()
+        # build_zipapp()
+
 
 def _try_delete(path):
     if Path(path).is_dir():
         shutil.rmtree(path)
     elif Path(path).exists():
         raise Exception("{} is not a directory".format(path))
+
 
 def clean():
     config = load_setup_cfg()
@@ -88,8 +99,9 @@ def clean():
     _try_delete("./dist")
     _try_delete("./{}.egg-info".format(name))
 
+
 def release():
     pypi_uploader.upload('./dist/*.tar.gz', './dist/*.whl')
 
-    #if 'github' in args:
-    #    github_uploader.upload('./dist/*.pyz')
+    # if 'github' in args:
+    #     github_uploader.upload('./dist/*.pyz')
