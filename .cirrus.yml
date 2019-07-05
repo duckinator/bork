@@ -7,7 +7,7 @@ Lint_task:
     - flake8 --version
     - flake8
     - pylint --version
-    - pylint emanate
+    - pylint bork
 
 # Linux_task:
 #   allow_failures: $CIRRUS_TASK_NAME =~ '.*-rc-.*'
