@@ -1,19 +1,7 @@
-from pathlib import Path
-
 from twine.cli import dispatch as twine_upload
+from . import file_finder
 
 
 def upload(*globs):
-    files = []
-
-    for glob in globs:
-        matches = map(str, Path().glob(glob))
-        files += list(matches)
-
-    print("")
-    print("Uploading to PyPI:")
-    for filename in files:
-        print("- {}".format(filename))
-    print("")
-
+    files = file_finder.find_files(globs, 'PyPI')
     twine_upload(["upload", *files])
