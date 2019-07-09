@@ -96,4 +96,6 @@ repos_task:
   script:
     - git clone $REPO /tmp/repo
     - cd /tmp/repo
+    - bork clean
     - bork build
+    - bork release --dry-run
