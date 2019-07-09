@@ -4,8 +4,8 @@ import zipapp
 
 import pep517.build
 
-# from . import github_uploader
-from . import pypi_uploader
+# from . import github
+from . import pypi
 from .filesystem import load_setup_cfg, try_delete
 
 # The "proper" way to handle the default would be to check python_requires
@@ -85,10 +85,10 @@ def clean():
 
 
 def release(dry_run=False):
-    pypi_uploader.upload('./dist/*.tar.gz', './dist/*.whl', dry_run=dry_run)
+    pypi.upload('./dist/*.tar.gz', './dist/*.whl', dry_run=dry_run)
 
     print('')
     print('')
 
     # if 'github' in args:
-    #     github_uploader.upload('./dist/*.pyz', dry_run=dry_run)
+    #     github.upload('./dist/*.pyz', dry_run=dry_run)
