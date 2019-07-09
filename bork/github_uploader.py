@@ -1,7 +1,7 @@
 # from . import file_finder
 
 
-def upload(dry_run=False, *globs):
+def upload(*globs, dry_run=False):
     # files = file_finder.find_files(globs, 'GitHub')
 
     # if dry_run:

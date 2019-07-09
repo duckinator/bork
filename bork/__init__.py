@@ -99,10 +99,10 @@ def clean():
 
 
 def release(dry_run=False):
-    pypi_uploader.upload(dry_run, './dist/*.tar.gz', './dist/*.whl')
+    pypi_uploader.upload('./dist/*.tar.gz', './dist/*.whl', dry_run=dry_run)
 
     print('')
     print('')
 
     # if 'github' in args:
-    #     github_uploader.upload(dry_run, './dist/*.pyz')
+    #     github_uploader.upload('./dist/*.pyz', dry_run=dry_run)

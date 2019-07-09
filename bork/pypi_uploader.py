@@ -2,7 +2,7 @@ from twine.cli import dispatch as twine_upload
 from . import file_finder
 
 
-def upload(dry_run=False, *globs):
+def upload(*globs, dry_run=False):
     files = file_finder.find_files(globs, 'PyPI')
 
     if dry_run:
