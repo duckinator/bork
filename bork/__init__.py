@@ -1,6 +1,3 @@
-from pathlib import Path
-import sys
-
 from . import builder
 # from . import github
 from . import pypi
@@ -13,9 +10,10 @@ def build():
         config = config['bork']
 
         want_zipapp = config.get('zipapp', 'false').lower() == 'true'
-        zipapp_main = config.get('zipapp_main', None)
+        # zipapp_main = config.get('zipapp_main', None)
     else:
         want_zipapp = False
+        # zipapp_main = None
 
     builder.dist()
 

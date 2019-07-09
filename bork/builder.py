@@ -1,6 +1,11 @@
-import zipapp
+from pathlib import Path
+import sys
+# Slight kludge so we can have a function named zipapp().
+import zipapp as Zipapp
 
 import pep517.build
+
+from .filesystem import load_setup_cfg
 
 
 # The "proper" way to handle the default would be to check python_requires
@@ -49,7 +54,6 @@ def zipapp():
     # entrypoint") would likely be implemented.
     main = config['bork']['zipapp_main']
 
-    zipapp.create_archive(source, target, interpreter, main)
+    Zipapp.create_archive(source, target, interpreter, main)
     if not Path(target).exists():
         raise Exception("Failed to build zipapp: {}".format(target))
-
