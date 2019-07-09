@@ -11,5 +11,6 @@ def find_files(globs, service):
     print('Uploading to {}:'.format(service))
     for filename in files:
         print('- {}'.format(filename))
+    print('')
 
     return files

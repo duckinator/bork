@@ -98,8 +98,11 @@ def clean():
     _try_delete("./{}.egg-info".format(name))
 
 
-def release():
-    pypi_uploader.upload('./dist/*.tar.gz', './dist/*.whl')
+def release(dry_run=False):
+    pypi_uploader.upload('./dist/*.tar.gz', './dist/*.whl', dry_run=dry_run)
+
+    print('')
+    print('')
 
     # if 'github' in args:
-    #     github_uploader.upload('./dist/*.pyz')
+    #     github_uploader.upload('./dist/*.pyz', dry_run=dry_run)

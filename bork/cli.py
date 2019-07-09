@@ -21,8 +21,10 @@ def clean():
 
 
 @cli.command()
-def release():
-    _release()
+@click.option('--dry-run', is_flag=True, default=False,
+              help="Don't actually release, just show what a release would do.")
+def release(dry_run):
+    _release(dry_run=dry_run)
 
 
 def main():
