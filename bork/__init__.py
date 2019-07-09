@@ -1,3 +1,4 @@
+from pathlib import Path
 import sys
 import zipapp
 
@@ -72,6 +73,7 @@ def build():
     if want_zipapp:
         raise Exception("zipapp builds are broken as hell, sorry. :(")
         # build_zipapp()
+
 
 def clean():
     config = load_setup_cfg()
