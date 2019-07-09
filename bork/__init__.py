@@ -1,6 +1,3 @@
-import configparser
-from pathlib import Path
-import shutil
 import sys
 import zipapp
 
@@ -8,16 +5,11 @@ import pep517.build
 
 # from . import github_uploader
 from . import pypi_uploader
+from .filesystem import load_setup_cfg, try_delete
 
 # The "proper" way to handle the default would be to check python_requires
 # in setup.cfg. But, since Bork needs Python 3, there's no point.
 DEFAULT_PYTHON_INTERPRETER = "/usr/bin/env python3"
-
-
-def load_setup_cfg():
-    setup_cfg = configparser.ConfigParser()
-    setup_cfg.read('setup.cfg')
-    return setup_cfg
 
 
 def build_dist():
@@ -81,21 +73,13 @@ def build():
         raise Exception("zipapp builds are broken as hell, sorry. :(")
         # build_zipapp()
 
-
-def _try_delete(path):
-    if Path(path).is_dir():
-        shutil.rmtree(path)
-    elif Path(path).exists():
-        raise Exception("{} is not a directory".format(path))
-
-
 def clean():
     config = load_setup_cfg()
     name = config['metadata']['name']
 
-    _try_delete("./build")
-    _try_delete("./dist")
-    _try_delete("./{}.egg-info".format(name))
+    try_delete("./build")
+    try_delete("./dist")
+    try_delete("./{}.egg-info".format(name))
 
 
 def release(dry_run=False):
