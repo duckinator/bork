@@ -40,7 +40,8 @@ def _prepare_zipapp_directory(source, dest, name):
 
     return Path(realdest).is_dir()
 
-def _zipapp_add_deps(dest, name):
+
+def _zipapp_add_deps(dest):
     config = load_setup_cfg()
     deps = None
     if 'options' in config:
@@ -56,7 +57,7 @@ def _zipapp_add_deps(dest, name):
     return subprocess.check_call(cmd)
 
 
-# ASSUMPTION: We assume dist() is called before zipapp(). This is a questionable assumption.
+# BAD ASSUMPTION: We assume dist() is called before zipapp().
 def zipapp():
     """Build a zipapp for the project."""
 
@@ -92,7 +93,7 @@ def zipapp():
     main = config['bork']['zipapp_main']
 
     _prepare_zipapp_directory(orig_source, source, name)
-    _zipapp_add_deps(source, name)
+    _zipapp_add_deps(source)
 
     Zipapp.create_archive(source, target, interpreter, main)
     if not Path(target).exists():
