@@ -22,6 +22,14 @@ def dist():
     pep517.build.main(pep517.build.parser.parse_args(['.', *args]))
 
 
+def version_from_sdist_file():
+    sdist = sorted(Path.cwd().glob('dist/*.tar.gz'))[-1].name
+    sdist = sdist.replace('.tar.gz', '')
+    sdist = sdist.split('-')[1]
+    return sdist
+
+
+# ASSUMPTION: We assume dist() is called before zipapp(). This is a questionable assumption.
 def zipapp():
     """Build a zipapp for the project."""
 
@@ -37,9 +45,10 @@ def zipapp():
     # The code is assumed to be in ./<name>
     source = str(Path(name))
 
-    # When we have version info, use the following line instead:
-    # target = "dist/{}-{}.pyz".format(name, version)
-    target = "dist/{}.pyz".format(name)
+    version = version_from_sdist_file()
+
+    # Output file is dist/<package name>-<package version>.pyz.
+    target = "dist/{}-{}.pyz".format(name, version)
 
     # To override the default interpreter, add this to your project's setup.cfg:
     #
