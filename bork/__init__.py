@@ -9,17 +9,17 @@ def build():
     if 'bork' in config:
         config = config['bork']
 
-        want_zipapp = config.get('zipapp', 'false').lower() == 'true'
-        # zipapp_main = config.get('zipapp_main', None)
+        if 'zipapp' in config:
+            want_zipapp = config['zipapp'].lower() == 'true'
+        else:
+            want_zipapp = 'zipapp_main' in config
     else:
         want_zipapp = False
-        # zipapp_main = None
 
     builder.dist()
 
     if want_zipapp:
-        raise Exception("zipapp builds are broken as hell, sorry. :(")
-        # builder.zipapp()
+        builder.zipapp()
 
 
 def clean():
