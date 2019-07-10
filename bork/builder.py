@@ -1,5 +1,6 @@
 from pathlib import Path
 import shutil
+import subprocess
 import sys
 # Slight kludge so we can have a function named zipapp().
 import zipapp as Zipapp
@@ -39,6 +40,21 @@ def _prepare_zipapp_directory(source, dest, name):
 
     return Path(realdest).is_dir()
 
+def _zipapp_add_deps(dest, name):
+    config = load_setup_cfg()
+    deps = None
+    if 'options' in config:
+        options = config['options']
+        if 'install_requires' in options:
+            deps = options['install_requires'].strip().split("\n")
+            deps = list(map(str.strip, deps))
+
+    if not deps:
+        return
+
+    cmd = [sys.executable, '-m', 'pip', 'install', '--target', dest] + deps
+    return subprocess.check_call(cmd)
+
 
 # ASSUMPTION: We assume dist() is called before zipapp(). This is a questionable assumption.
 def zipapp():
@@ -57,8 +73,6 @@ def zipapp():
     orig_source = str(Path(name))
     source = str(Path('build', 'zipapp'))
 
-    _prepare_zipapp_directory(orig_source, source, name)
-
     version = version_from_sdist_file()
 
     # Output file is dist/<package name>-<package version>.pyz.
@@ -76,6 +90,9 @@ def zipapp():
     # This is where GitHub issue #9 ("Allow specifying console_script
     # entrypoint") would likely be implemented.
     main = config['bork']['zipapp_main']
+
+    _prepare_zipapp_directory(orig_source, source, name)
+    _zipapp_add_deps(source, name)
 
     Zipapp.create_archive(source, target, interpreter, main)
     if not Path(target).exists():
