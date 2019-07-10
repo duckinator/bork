@@ -1,11 +1,12 @@
 from pathlib import Path
+import shutil
 import sys
 # Slight kludge so we can have a function named zipapp().
 import zipapp as Zipapp
 
 import pep517.build
 
-from .filesystem import load_setup_cfg
+from .filesystem import load_setup_cfg, try_delete
 
 
 # The "proper" way to handle the default would be to check python_requires
@@ -29,6 +30,16 @@ def version_from_sdist_file():
     return sdist
 
 
+def _prepare_zipapp_directory(source, dest, name):
+    ignore = shutil.ignore_patterns('**/__pycache__/**')
+    try_delete(dest)
+    Path(dest).mkdir()
+    realdest = Path(dest, name)
+    shutil.copytree(source, realdest, ignore=ignore)
+
+    return Path(realdest).is_dir()
+
+
 # ASSUMPTION: We assume dist() is called before zipapp(). This is a questionable assumption.
 def zipapp():
     """Build a zipapp for the project."""
@@ -43,7 +54,10 @@ def zipapp():
     name = config['metadata']['name']
 
     # The code is assumed to be in ./<name>
-    source = str(Path(name))
+    orig_source = str(Path(name))
+    source = str(Path('build', 'zipapp'))
+
+    _prepare_zipapp_directory(orig_source, source, name)
 
     version = version_from_sdist_file()
 
