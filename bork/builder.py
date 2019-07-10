@@ -54,7 +54,7 @@ def _zipapp_add_deps(dest):
         return
 
     cmd = [sys.executable, '-m', 'pip', 'install', '--target', dest] + deps
-    return subprocess.check_call(cmd)
+    subprocess.check_call(cmd)
 
 
 # BAD ASSUMPTION: We assume dist() is called before zipapp().
