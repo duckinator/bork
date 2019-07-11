@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from . import builder
 # from . import github
 from . import pypi
@@ -23,12 +25,11 @@ def build():
 
 
 def clean():
-    config = load_setup_cfg()
-    name = config['metadata']['name']
-
     try_delete("./build")
     try_delete("./dist")
-    try_delete("./{}.egg-info".format(name))
+    for name in Path.cwd().glob('*.egg-info'):
+        if name.is_dir():
+            try_delete(name)
 
 
 def release(dry_run=False):
