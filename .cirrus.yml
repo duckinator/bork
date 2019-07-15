@@ -89,6 +89,7 @@ repos_task:
       - REPO: https://github.com/ppb/ppb-vector.git
       - REPO: https://github.com/duckinator/emanate.git
       - REPO: https://github.com/duckinator/bork.git
+      - REPO: https://github.com/astronouth7303/ppb-mutant.git
   install_script:
     - apt-get update
     - apt-get install -y git
