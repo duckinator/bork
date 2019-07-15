@@ -1,3 +1,5 @@
+import sys
+
 import click
 
 from . import build as _build
@@ -49,4 +51,14 @@ def release(dry_run):
 
 
 def main():
-    cli()
+    verbose = '--verbose' in sys.argv
+    if verbose:
+        sys.argv.remove('--verbose')
+
+    try:
+        cli()
+    except Exception as err:
+        if verbose:
+            raise err
+        else:
+            exit("bork: error: {}".format(str(err)))
