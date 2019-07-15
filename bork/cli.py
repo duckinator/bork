@@ -29,9 +29,8 @@ def clean():
 
 @cli.command()
 @click.option('--files', default='*.pyz',
-              help='Comma-separated list of filenames to download. ' +
-                   'Wildcards supported (* = everything, ? = any single ' +
-                   ' character).')
+              help='Comma-separated list of filenames to download. Supports '
+                   'wildcards (* = everything, ? = any single character).')
 @click.option('--directory', default='downloads',
               help='Directory to save files in. Created if missing.')
 @click.argument('repo', nargs=1)

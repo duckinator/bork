@@ -2,7 +2,6 @@ import fnmatch
 import json
 from pathlib import Path
 from urllib.request import urlopen
-import sys
 
 # from .filesystem import find_files
 
@@ -20,7 +19,7 @@ def upload(*globs, dry_run=False):
 
 def _relevant_asset(asset, file_pattern):
     file_patterns = file_pattern.split(',')
-    for pattern in file_pattern:
+    for pattern in file_patterns:
         if fnmatch.fnmatch(asset['name'], pattern):
             return True
     return False
@@ -35,11 +34,11 @@ def _get_download_info(repo, release, file_pattern):
     data = json.loads(req)
 
     if release == 'latest':
-        current_release = sorted(data, key=lambda x: x['created_at'])[-1]
+        release = sorted(data, key=lambda x: x['created_at'])[-1]
     else:
-        current_release = list(filter(lambda x: x['tag_name'] == release, data))[0]
+        release = list(filter(lambda x: x['tag_name'] == release, data))[0]
 
-    all_assets = current_release['assets']
+    all_assets = release['assets']
 
     assets = filter(lambda x: _relevant_asset(x, file_pattern), all_assets)
 
