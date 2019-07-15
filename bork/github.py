@@ -1,8 +1,8 @@
 import fnmatch
 import json
-from pathlib import Path
 from urllib.request import urlopen
 
+from .asset_manager import download_assets
 # from .filesystem import find_files
 
 
@@ -46,17 +46,5 @@ def _get_download_info(repo, release, file_pattern):
 
 
 def download(repo, release, file_pattern, directory):
-    directory = Path(directory)
-    directory.mkdir(parents=True, exist_ok=True)
-
     asset_list = _get_download_info(repo, release, file_pattern)
-
-    for asset in asset_list:
-        name = asset['name']
-        url = asset['url']
-        path = directory / name
-
-        contents = urlopen(url).read()
-
-        path.write_bytes(contents)
-        print(str(path))
+    download_assets(asset_list, directory)
