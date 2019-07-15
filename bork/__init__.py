@@ -38,7 +38,7 @@ def clean():
             try_delete(name)
 
 
-def download(repo, release, file_pattern, directory):
+def download(repo, release_tag, file_pattern, directory):
     if file_pattern is None or len(file_pattern) == 0:
         raise Exception('--files requires a value.')
 
@@ -51,7 +51,7 @@ def download(repo, release, file_pattern, directory):
         raise Exception('Invalid repository -- invalid source specified.')
 
     source = DOWNLOAD_SOURCES[source]
-    source.download(repo, release, file_pattern, directory)
+    source.download(repo, release_tag, file_pattern, directory)
 
 
 def release(dry_run=False):

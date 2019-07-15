@@ -27,6 +27,10 @@ def clean():
     _clean()
 
 
+# pylint: disable=redefined-outer-name
+# NOTE: It's okay to redefine `release` in download(), since it doesn't
+#       use release().
+
 @cli.command()
 @click.option('--files', default='*.pyz',
               help='Comma-separated list of filenames to download. Supports '
@@ -40,6 +44,8 @@ def download(files, directory, repo, release):
     #       what makes sense on a CLI interface to what makes sense in a
     #       Python interface.
     _download(repo, release, files, directory)
+
+# pylint: enable=redefined-outer-name
 
 
 @cli.command()
@@ -56,8 +62,8 @@ def main():
 
     try:
         cli()
-    except Exception as err:
+    except Exception as err:  # pylint: disable=broad-except
+        # NOTE: Catching something as general as Exception should be okay here.
         if verbose:
             raise err
-        else:
-            exit("bork: error: {}".format(str(err)))
+        exit("bork: error: {}".format(str(err)))
