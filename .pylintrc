@@ -26,6 +26,8 @@ enable=all
 disable=missing-docstring,
         bad-whitespace,
         bad-continuation,
+        len-as-condition,
+        compare-to-zero
 
 
 [REPORTS]
