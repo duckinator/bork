@@ -49,10 +49,12 @@ def download(files, directory, package, release):
 
 
 @cli.command()
+@click.option('--test-pypi', is_flag=True, default=False,
+              help='Release to test.pypi.org instead of pypi.org.')
 @click.option('--dry-run', is_flag=True, default=False,
               help="Don't actually release, just show what a release would do.")
-def release(dry_run):
-    _release(dry_run=dry_run)
+def release(test_pypi, dry_run):
+    _release(test_pypi, dry_run)
 
 
 def main():
