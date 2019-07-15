@@ -30,6 +30,9 @@ class SimplePypiParser(HTMLParser):
         data = data.strip()
         self.files[data] = self.current_url
 
+    def error(self, message):
+        raise RuntimeError("{}: {}".format(self.__class__.__name__, message))
+
 
 def _normalize(name):
     return re.sub(r"[-_.]+", "-", name).lower()
