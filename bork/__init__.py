@@ -9,6 +9,7 @@ from .filesystem import load_setup_cfg, try_delete
 DOWNLOAD_SOURCES = {
     'gh': github,
     'github': github,
+    'pypi': pypi,
 }
 
 
@@ -38,20 +39,20 @@ def clean():
             try_delete(name)
 
 
-def download(repo, release_tag, file_pattern, directory):
+def download(package, release_tag, file_pattern, directory):
     if file_pattern is None or len(file_pattern) == 0:
         raise Exception('--files requires a value.')
 
-    if ':' not in repo:
-        raise Exception('Invalid repository -- no source specified.')
+    if ':' not in package:
+        raise Exception('Invalid package/repository -- no source given.')
 
-    source, repo = repo.split(':')
+    source, package = package.split(':')
 
     if source not in DOWNLOAD_SOURCES.keys():
-        raise Exception('Invalid repository -- invalid source specified.')
+        raise Exception('Invalid package/repository -- unknown source given.')
 
     source = DOWNLOAD_SOURCES[source]
-    source.download(repo, release_tag, file_pattern, directory)
+    source.download(package, release_tag, file_pattern, directory)
 
 
 def release(dry_run=False):
