@@ -9,7 +9,8 @@ from .filesystem import load_setup_cfg, try_delete
 DOWNLOAD_SOURCES = {
     'gh': github,
     'github': github,
-    'pypi': pypi,
+    'pypi': pypi.PRODUCTION,
+    'pypi-test': pypi.TESTING,
 }
 
 
@@ -55,8 +56,12 @@ def download(package, release_tag, file_pattern, directory):
     source.download(package, release_tag, file_pattern, directory)
 
 
-def release(dry_run=False):
-    pypi.upload('./dist/*.tar.gz', './dist/*.whl', dry_run=dry_run)
+def release(test_pypi, dry_run):
+    if test_pypi:
+        pypi_instance = pypi.TESTING
+    else:
+        pypi_instance = pypi.PRODUCTION
+    pypi_instance.upload('./dist/*.tar.gz', './dist/*.whl', dry_run=dry_run)
 
     print('')
     print('')
