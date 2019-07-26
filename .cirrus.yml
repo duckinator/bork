@@ -88,9 +88,9 @@ downloads_task:
   install_script:
     - pip3 install .
   script:
-    # Download a pyz file from GitHub.
+    # Download a pyz file from GitHub, saved to ./downloads
     - bork download gh:duckinator/emanate v7.0.0
-    - python3 ./emanate-7.0.0.pyz --help
+    - python3 ./downloads/emanate-7.0.0.pyz --help
     # Download a pyz file for a specific version from GitHub, saved to ./bin
     - bork download gh:duckinator/emanate v6.0.0 --directory bin/
     - python3 bin/emanate-6.0.0.pyz --help
