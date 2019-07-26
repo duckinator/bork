@@ -93,7 +93,7 @@ downloads_task:
     - python3 ./downloads/emanate-7.0.0.pyz --help | head -n 1
     # Download a pyz file for a specific version from GitHub, saved to ./bin
     - bork download gh:duckinator/emanate v7.0.0 --directory bin/
-    - python3 bin/emanate-6.0.0.pyz --help
+    - python3 bin/emanate-7.0.0.pyz --help
     # Download a .tar.gz file from GitHub, saved to ./downloads
     - bork download gh:ppb/pursuedpybear v0.6.0 --files '*.tar.gz' --directory downloads
     - test "$(file downloads/ppb-0.6.0.tar.gz | cut -d ' ' -f 2)" == 'gzip'
