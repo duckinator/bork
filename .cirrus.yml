@@ -86,6 +86,8 @@ downloads_task:
     LC_ALL: C.UTF-8
     LANG: C.UTF-8
   install_script:
+    - apt update
+    - apt install file
     - pip3 install .
   script:
     # Download a pyz file from GitHub, saved to ./downloads
