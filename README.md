@@ -14,6 +14,32 @@ $ pip3 install bork
 
 ## Usage
 
+### Downloading Existing Builds
+
+
+To download a release from GitHub:
+
+```
+$ bork download gh:duckinator/emanate # download latest .pyz for Emanate
+$ bork download gh:duckinator/emanate --directory bin/ # put files in ./bin
+$ bork download gh:ppb/pursuedpybear --files '*.tar.gz' # download latest .tar.gz file
+```
+
+To download a wheel from a PyPi release:
+
+```
+$ bork download pypi:emanate 6.0.0 --files '*.whl'
+```
+
+
+To download a wheel from a release on PyPi's test instance:
+
+```
+$ bork download pypi-test:whaledo 1.0.1 --files '*.whl'
+```
+
+### Building and Releasing
+
 Assuming a project is PEP 517 compliant, you can just do:
 
 ```
