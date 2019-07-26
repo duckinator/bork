@@ -47,4 +47,4 @@ def _get_download_info(repo, release, file_pattern):
 
 def download(repo, release, file_pattern, directory):
     asset_list = _get_download_info(repo, release, file_pattern)
-    download_assets(asset_list, directory)
+    download_assets(asset_list, directory, url_key='browser_download_url')
