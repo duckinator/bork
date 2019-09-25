@@ -9,4 +9,5 @@ enabled = false
 main = "bork.cli:main"
 
 [tool.bork.aliases]
+lint = "pylint bork"
 test = "pytest --pylint --flake8 --verbose"
