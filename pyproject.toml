@@ -9,5 +9,7 @@ enabled = false
 main = "bork.cli:main"
 
 [tool.bork.aliases]
-lint = "pylint bork"
+# Runs *only* pylint and flake8. (Not the actual tests.)
+lint = "pytest -k 'flake8 or pylint' --pylint --flake8 --verbose"
+# Runs tests, pylint, and flake8.
 test = "pytest --pylint --flake8 --verbose"
