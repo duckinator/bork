@@ -6,6 +6,7 @@ from . import build as _build
 from . import clean as _clean
 from . import download as _download
 from . import release as _release
+from . import run as _run
 from . import DOWNLOAD_SOURCES
 
 
@@ -55,6 +56,12 @@ def download(files, directory, package, release):
               help="Don't actually release, just show what a release would do.")
 def release(test_pypi, dry_run):
     _release(test_pypi, dry_run)
+
+
+@cli.command()
+@click.argument('alias', nargs=1)
+def run(alias):
+    _run(alias)
 
 
 def main():

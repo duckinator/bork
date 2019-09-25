@@ -1,10 +1,12 @@
+import os
 from pathlib import Path
+import sys
 import toml
 
 from . import builder
 from . import github
 from . import pypi
-from .filesystem import load_setup_cfg, try_delete
+from .filesystem import try_delete
 
 
 DOWNLOAD_SOURCES = {
@@ -63,3 +65,15 @@ def release(test_pypi, dry_run):
 
     # if 'github' in args:
     #     github.upload('./dist/*.pyz', dry_run=dry_run)
+
+
+def run(alias):
+    pyproject = toml.load('pyproject.toml')
+    config = pyproject.get('tool', {}).get('bork', {})
+    aliases = config.get('aliases', {})
+
+    if alias not in aliases.keys():
+        sys.exit('bork: no such alias: {}'.format(alias))
+
+    command = aliases[alias]
+    os.system(command)
