@@ -1,4 +1,5 @@
 from pathlib import Path
+import toml
 
 from . import builder
 from . import github
@@ -15,16 +16,10 @@ DOWNLOAD_SOURCES = {
 
 
 def build():
-    config = load_setup_cfg()
-    if 'bork' in config:
-        config = config['bork']
-
-        if 'zipapp' in config:
-            want_zipapp = config['zipapp'].lower() == 'true'
-        else:
-            want_zipapp = 'zipapp_main' in config
-    else:
-        want_zipapp = False
+    pyproject = toml.load('pyproject.toml')
+    config = pyproject.get('tool', {}).get('bork', {})
+    zipapp = config.get('zipapp', {})
+    want_zipapp = zipapp.get('enabled', False)
 
     builder.dist()
 
