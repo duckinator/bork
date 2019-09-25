@@ -2,3 +2,14 @@
 # Specify the required build system.
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.bork.zipapp]
+# bork can not build a functional zipapp of itself yet.
+enabled = false
+main = "bork.cli:main"
+
+[tool.bork.aliases]
+# Runs *only* pylint and flake8. (Not the actual tests.)
+lint = "pytest -k 'flake8 or pylint' --pylint --flake8 --verbose"
+# Runs tests, pylint, and flake8.
+test = "pytest --pylint --flake8 --verbose"
