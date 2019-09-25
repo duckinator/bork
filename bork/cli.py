@@ -68,4 +68,4 @@ def main():
         # NOTE: Catching something as general as Exception should be okay here.
         if verbose:
             raise err
-        exit("bork: error: {}".format(str(err)))
+        sys.exit("bork: error: {}".format(str(err)))
