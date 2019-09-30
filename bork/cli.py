@@ -71,8 +71,7 @@ def main():
 
     try:
         cli()
-    except Exception as err:  # pylint: disable=broad-except
-        # NOTE: Catching something as general as Exception should be okay here.
+    except RuntimeError as err:
         if verbose:
             raise err
         sys.exit("bork: error: {}".format(str(err)))
