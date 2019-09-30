@@ -1,7 +1,6 @@
 from pathlib import Path
 from signal import Signals
 import subprocess
-from subprocess import CalledProcessError, PIPE
 import sys
 import toml
 
@@ -78,8 +77,7 @@ def run(alias):
         sys.exit("bork: no such alias: '{}'".format(alias))
 
     try:
-        subprocess.run(command, check=True, shell=True,
-                       stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        subprocess.run(command, check=True, shell=True)
 
     except subprocess.CalledProcessError as error:
         if error.returncode < 0:
