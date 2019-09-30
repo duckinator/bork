@@ -1,5 +1,6 @@
-import os
 from pathlib import Path
+import subprocess
+from subprocess import PIPE
 import sys
 import toml
 
@@ -75,4 +76,4 @@ def run(alias):
     except KeyError:
         sys.exit("bork: no such alias: '{}'".format(alias))
 
-    os.system(command)
+    subprocess.run(command, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE)
