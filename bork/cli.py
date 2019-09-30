@@ -7,7 +7,7 @@ from . import clean as _clean
 from . import download as _download
 from . import release as _release
 from . import run as _run
-from . import DOWNLOAD_SOURCES
+from . import DOWNLOAD_SOURCES  # noqa: I100
 
 
 DOWNLOAD_SOURCES_STR = ' '.join(DOWNLOAD_SOURCES)
