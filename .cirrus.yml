@@ -7,7 +7,7 @@ Lint_task:
     image: python:3.7-slim
   install_script:
     - pip install .
-    - pip install .[linting]
+    - pip install .[testing]
   script:
     - flake8 --version
     - pylint --version
