@@ -28,10 +28,6 @@ def clean():
     _clean()
 
 
-# pylint: disable=redefined-outer-name
-# NOTE: It's okay to redefine `release` in download(), since it doesn't
-#       use release().
-
 @cli.command()
 @click.option('--files', default='*.pyz',
               help='Comma-separated list of filenames to download. Supports '
@@ -39,12 +35,12 @@ def clean():
 @click.option('--directory', default='downloads',
               help='Directory to save files in. Created if missing.')
 @click.argument('package', nargs=1)
-@click.argument('release', nargs=1, default='latest')
-def download(files, directory, package, release):
+@click.argument('release_tag', nargs=1, default='latest')
+def download(files, directory, package, release_tag):
     # NOTE: We change the order of the arguments here, to move away from
     #       what makes sense on a CLI interface to what makes sense in a
     #       Python interface.
-    _download(package, release, files, directory)
+    _download(package, release_tag, files, directory)
 
 # pylint: enable=redefined-outer-name
 
