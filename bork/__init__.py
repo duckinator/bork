@@ -73,7 +73,7 @@ def run(alias):
     aliases = config.get('aliases', {})
 
     if alias not in aliases.keys():
-        sys.exit('bork: no such alias: {}'.format(alias))
+        sys.exit("bork: no such alias: '{}'".format(alias))
 
     command = aliases[alias]
     os.system(command)
