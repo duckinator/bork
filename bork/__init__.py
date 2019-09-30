@@ -69,11 +69,10 @@ def release(test_pypi, dry_run):
 
 def run(alias):
     pyproject = toml.load('pyproject.toml')
-    config = pyproject.get('tool', {}).get('bork', {})
-    aliases = config.get('aliases', {})
 
-    if alias not in aliases.keys():
+    try:
+        command = pyproject['tool']['bork']['aliases'][alias]
+    except KeyError:
         sys.exit("bork: no such alias: '{}'".format(alias))
 
-    command = aliases[alias]
     os.system(command)
