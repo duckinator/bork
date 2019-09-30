@@ -36,3 +36,7 @@ disable=missing-docstring,
 # and msvs (visual studio).You can also give a reporter class, eg
 # mypackage.mymodule.MyReporterClass.
 output-format=colorized
+
+[TYPECHECK]
+# Workaround for https://github.com/PyCQA/pylint/issues/2804
+ignored-modules=signal

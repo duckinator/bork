@@ -1,5 +1,6 @@
-import os
 from pathlib import Path
+from signal import Signals
+import subprocess
 import sys
 import toml
 
@@ -69,11 +70,21 @@ def release(test_pypi, dry_run):
 
 def run(alias):
     pyproject = toml.load('pyproject.toml')
-    config = pyproject.get('tool', {}).get('bork', {})
-    aliases = config.get('aliases', {})
 
-    if alias not in aliases.keys():
-        sys.exit('bork: no such alias: {}'.format(alias))
+    try:
+        command = pyproject['tool']['bork']['aliases'][alias]
+    except KeyError:
+        sys.exit("bork: no such alias: '{}'".format(alias))
 
-    command = aliases[alias]
-    os.system(command)
+    try:
+        subprocess.run(command, check=True, shell=True)
+
+    except subprocess.CalledProcessError as error:
+        if error.returncode < 0:
+            signal = Signals(- error.returncode)
+            sys.exit("bork: command '{}' exited due to signal {} ({})".format(
+                error.cmd, signal.name, signal.value))
+
+        else:
+            sys.exit("bork: command '{}' exited with error code {}".format(
+                error.cmd, error.returncode))
