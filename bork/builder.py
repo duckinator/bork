@@ -97,4 +97,4 @@ def zipapp():
 
     Zipapp.create_archive(source, target, interpreter, main)
     if not Path(target).exists():
-        raise Exception("Failed to build zipapp: {}".format(target))
+        raise RuntimeError("Failed to build zipapp: {}".format(target))

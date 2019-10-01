@@ -27,7 +27,9 @@ def _relevant_asset(asset, file_pattern):
 
 def _get_download_info(repo, release, file_pattern):
     if '/' not in repo:
-        raise Exception('repo must be of format <user>/<repo>')
+        raise ValueError(
+            "repo must be of format <user>/<repo>, got '{}'".format(repo),
+        )
 
     url = 'https://api.github.com/repos/{}/releases'.format(repo)
     req = urlopen(url).read().decode()

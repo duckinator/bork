@@ -41,15 +41,15 @@ def clean():
 
 def download(package, release_tag, file_pattern, directory):
     if file_pattern is None or len(file_pattern) == 0:
-        raise Exception('--files requires a value.')
+        raise ValueError('file_pattern must be non-empty.')
 
     if ':' not in package:
-        raise Exception('Invalid package/repository -- no source given.')
+        raise ValueError('Invalid package/repository -- no source given.')
 
     source, package = package.split(':')
 
     if source not in DOWNLOAD_SOURCES.keys():
-        raise Exception('Invalid package/repository -- unknown source given.')
+        raise ValueError('Invalid package/repository -- unknown source given.')
 
     source = DOWNLOAD_SOURCES[source]
     source.download(package, release_tag, file_pattern, directory)

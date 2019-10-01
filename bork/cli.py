@@ -1,6 +1,7 @@
 import sys
 
 import click
+from click import BadParameter
 
 from . import build as _build
 from . import clean as _clean
@@ -40,7 +41,10 @@ def download(files, directory, package, release_tag):
     # NOTE: We change the order of the arguments here, to move away from
     #       what makes sense on a CLI interface to what makes sense in a
     #       Python interface.
-    _download(package, release_tag, files, directory)
+    try:
+        _download(package, release_tag, files, directory)
+    except ValueError as error:
+        raise BadParameter(error)
 
 # pylint: enable=redefined-outer-name
 
@@ -67,8 +71,7 @@ def main():
 
     try:
         cli()
-    except Exception as err:  # pylint: disable=broad-except
-        # NOTE: Catching something as general as Exception should be okay here.
+    except RuntimeError as err:
         if verbose:
             raise err
         sys.exit("bork: error: {}".format(str(err)))
