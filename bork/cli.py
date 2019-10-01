@@ -46,8 +46,6 @@ def download(files, directory, package, release_tag):
     except ValueError as error:
         raise BadParameter(error)
 
-# pylint: enable=redefined-outer-name
-
 
 @cli.command()
 @click.option('--test-pypi', is_flag=True, default=False,
