@@ -4,7 +4,7 @@ import sys
 from typing import Any, Callable, Optional, TypeVar
 
 
-def _get_module(context: inspect.FrameInfo):
+def _get_module(context: inspect.FrameInfo) -> str:
     """Find the module name for a given FrameInfo.
 
     Raises KeyError if the module isn't loaded.
