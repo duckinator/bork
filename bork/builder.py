@@ -8,6 +8,7 @@ import zipapp as Zipapp  # noqa: N812
 import pep517.build
 
 from .filesystem import load_setup_cfg, try_delete
+from .log import logger
 
 
 # The "proper" way to handle the default would be to check python_requires
@@ -64,9 +65,10 @@ def zipapp():
     config = load_setup_cfg()
 
     if 'metadata' not in config or 'name' not in config['metadata']:
-        print("The [metadata] section of setup.cfg needs the 'name' key set.",
-              file=sys.stderr)
-        sys.exit(1)
+        logger().error(
+            "The [metadata] section of setup.cfg needs the 'name' key set.",
+        )
+        raise RuntimeError("Invalid project configuration")
 
     name = config['metadata']['name']
 

@@ -2,6 +2,8 @@ import configparser
 from pathlib import Path
 import shutil
 
+from .log import logger
+
 
 def load_setup_cfg():
     setup_cfg = configparser.ConfigParser()
@@ -11,16 +13,14 @@ def load_setup_cfg():
 
 def find_files(globs, service):
     files = []
+    log = logger()
 
     for glob in globs:
         matches = map(str, Path().glob(glob))
         files += list(matches)
 
-    print('Uploading to {}:'.format(service))
-    for filename in files:
-        print('- {}'.format(filename))
-    print('')
-
+    # NOTE: This is the wrong place for this log call
+    log.info('Uploading to %s: %s', service, ', '.join(files))
     return files
 
 

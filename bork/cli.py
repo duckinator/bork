@@ -1,3 +1,4 @@
+import logging
 import sys
 
 import click
@@ -67,6 +68,7 @@ def main():
     if verbose:
         sys.argv.remove('--verbose')
 
+    logging.basicConfig(level=logging.INFO if verbose else logging.WARNING)
     try:
         cli()
     except RuntimeError as err:

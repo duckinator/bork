@@ -9,6 +9,7 @@ from . import builder
 from . import github
 from . import pypi
 from .filesystem import try_delete
+from .log import logger
 
 
 DOWNLOAD_SOURCES = {
@@ -62,9 +63,6 @@ def release(test_pypi, dry_run):
         pypi_instance = pypi.PRODUCTION
     pypi_instance.upload('./dist/*.tar.gz', './dist/*.whl', dry_run=dry_run)
 
-    print('')
-    print('')
-
     # if 'github' in args:
     #     github.upload('./dist/*.pyz', dry_run=dry_run)
 
@@ -76,6 +74,8 @@ def run(alias):
         command = pyproject['tool']['bork']['aliases'][alias]
     except KeyError:
         sys.exit("bork: no such alias: '{}'".format(alias))
+
+    logger().info("Running '%s'", command)
 
     try:
         subprocess.run(command, check=True, shell=True)

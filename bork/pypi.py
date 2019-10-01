@@ -2,6 +2,7 @@ from twine.cli import dispatch as twine_upload
 
 from .asset_manager import download_assets
 from .filesystem import find_files
+from .log import logger
 from .pypi_api import get_download_info
 
 
@@ -13,7 +14,7 @@ class PypiHandler:
         files = find_files(globs, 'PyPI')
 
         if dry_run:
-            print('NOTE: Skipping PyPI upload step since this is a dry run.')
+            logger().note('Skipping PyPI upload step since this is a dry run.')
         else:
             twine_upload(['upload', '--repository-url', self.repo_url, *files])
 

@@ -3,6 +3,7 @@ import json
 from urllib.request import urlopen
 
 from .asset_manager import download_assets
+# from .log import logger
 # from .filesystem import find_files
 
 
@@ -10,7 +11,7 @@ def upload(*globs, dry_run=False):
     # files = find_files(globs, 'GitHub')
 
     # if dry_run:
-    #     print('NOTE: Skipping GitHub upload step since this is a dry run.')
+    #     logger().note('Skipping GitHub upload step since this is a dry run.')
     # else:
     #     pass
 
