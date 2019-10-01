@@ -1,7 +1,6 @@
 from pathlib import Path
 from signal import Signals
 import subprocess
-import sys
 
 import toml
 
@@ -73,7 +72,7 @@ def run(alias):
     try:
         command = pyproject['tool']['bork']['aliases'][alias]
     except KeyError:
-        sys.exit("bork: no such alias: '{}'".format(alias))
+        raise RuntimeError("No such alias: '{}'".format(alias))
 
     logger().info("Running '%s'", command)
 
@@ -83,9 +82,13 @@ def run(alias):
     except subprocess.CalledProcessError as error:
         if error.returncode < 0:
             signal = Signals(- error.returncode)
-            sys.exit("bork: command '{}' exited due to signal {} ({})".format(
-                error.cmd, signal.name, signal.value))
+            msg = "command '{}' exited due to signal {} ({})".format(
+                error.cmd, signal.name, signal.value,
+            )
 
         else:
-            sys.exit("bork: command '{}' exited with error code {}".format(
-                error.cmd, error.returncode))
+            msg = "bork: command '{}' exited with error code {}".format(
+                error.cmd, error.returncode,
+            )
+
+        raise RuntimeError(msg) from error
