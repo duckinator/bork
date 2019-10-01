@@ -11,7 +11,7 @@ def upload(*globs, dry_run=False):
     # files = find_files(globs, 'GitHub')
 
     # if dry_run:
-    #     logger().note('Skipping GitHub upload step since this is a dry run.')
+    #     logger().info('Skipping GitHub upload step since this is a dry run.')
     # else:
     #     pass
 

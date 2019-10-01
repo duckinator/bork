@@ -14,7 +14,7 @@ class PypiHandler:
         files = find_files(globs, 'PyPI')
 
         if dry_run:
-            logger().note('Skipping PyPI upload step since this is a dry run.')
+            logger().info('Skipping PyPI upload step since this is a dry run.')
         else:
             twine_upload(['upload', '--repository-url', self.repo_url, *files])
 
