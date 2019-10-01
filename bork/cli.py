@@ -42,8 +42,6 @@ def download(files, directory, package, release_tag):
     #       Python interface.
     _download(package, release_tag, files, directory)
 
-# pylint: enable=redefined-outer-name
-
 
 @cli.command()
 @click.option('--test-pypi', is_flag=True, default=False,
