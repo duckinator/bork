@@ -5,3 +5,5 @@ status = [
   "repos REPO:https://github.com/ppb/ppb-vector.git",
   "repos REPO:https://github.com/astronouth7303/ppb-mutant.git",
 ]
+
+delete_merged_branches = true
