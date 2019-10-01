@@ -1,0 +1,29 @@
+import inspect
+import logging
+from typing import Any, Callable, TypeVar
+
+
+def logger() -> logging.Logger:
+    """Provide a logger with a name appropriate for the caller."""
+    caller = inspect.currentframe().f_back.f_code
+    # XXXTODO: Check this is truly correct
+    return logging.getLogger('bork.{}'.format(caller.co_name))
+
+
+F = TypeVar('F', bound=Callable[..., Any])  # noqa
+
+
+def trace(func: F, level: int = logging.DEBUG) -> F:
+    """Decorator to log function entry and exit."""
+    log = logging.getLogger(__name__ + func.__name__)
+
+    def wrapper(*args, **kwargs):
+        arglist = args + ['{}={}'.format(k, v) for k, v in kwargs]
+
+        try:
+            log.log(level, 'called with %s', ', '.join(arglist))
+            return func(*args, **kwargs)
+        finally:
+            log.log(level, 'exiting')
+
+    return wrapper
