@@ -19,7 +19,7 @@ F = TypeVar('F', bound=Callable[..., Any])  # noqa
 
 def trace(func: F, level: int = logging.DEBUG) -> F:
     """Decorator to log function entry and exit."""
-    log = logging.getLogger(__name__ + func.__name__)
+    log = logging.getLogger('{}.{}'.format(func.__module__, func.__qualname__))
 
     def wrapper(*args, **kwargs):
         arglist = map(repr, args) + [
