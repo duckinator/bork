@@ -14,7 +14,7 @@ def logger(context: Optional[inspect.FrameInfo] = None) -> logging.Logger:
     return logging.getLogger('bork.{}'.format(context.function))
 
 
-F = TypeVar('F', bound=Callable[..., Any])  # noqa
+F = TypeVar('F', bound=Callable[..., Any])
 
 
 def trace(func: F, level: int = logging.DEBUG) -> F:
