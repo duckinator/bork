@@ -78,9 +78,6 @@ def main():
         thrown = inspect.trace()[-1][3]
         logger = logging.getLogger('bork.{}'.format(thrown))
 
-        if verbose:
-            logger.exception(str(err))
-        else:
-            logger.error(str(err))
+        (logger.exception if verbose else logger.error)(str(err))
 
         sys.exit(1)
