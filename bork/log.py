@@ -1,13 +1,17 @@
 import inspect
 import logging
-from typing import Any, Callable, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 
 
-def logger() -> logging.Logger:
-    """Provide a logger with a name appropriate for the caller."""
-    caller = inspect.currentframe().f_back.f_code
-    # XXXTODO: Check this is truly correct
-    return logging.getLogger('bork.{}'.format(caller.co_name))
+def logger(context: Optional[inspect.FrameInfo] = None) -> logging.Logger:
+    """Provide a logger with a name appropriate for a given context.
+
+    The default context is the caller's.
+    """
+    if context is None:
+        context = inspect.getframeinfo(inspect.currentframe().f_back)
+
+    return logging.getLogger('bork.{}'.format(context.function))
 
 
 F = TypeVar('F', bound=Callable[..., Any])  # noqa
