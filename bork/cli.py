@@ -1,3 +1,4 @@
+import inspect
 import logging
 import sys
 
@@ -69,9 +70,17 @@ def main():
         sys.argv.remove('--verbose')
 
     logging.basicConfig(level=logging.INFO if verbose else logging.WARNING)
+
     try:
         cli()
+
     except RuntimeError as err:
+        thrown = inspect.trace()[-1][3]
+        logger = logging.getLogger('bork.{}'.format(thrown))
+
         if verbose:
-            raise err
-        sys.exit("bork: error: {}".format(str(err)))
+            logger.exception(str(err))
+        else:
+            logger.error(str(err))
+
+        sys.exit(1)
