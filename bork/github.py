@@ -14,7 +14,7 @@ def upload(*globs, dry_run=False):
     # else:
     #     pass
 
-    raise NotImplementedError('github_uploader.upload() is not implemented')
+    raise NotImplementedError('github.upload() is not yet implemented')
 
 
 def _relevant_asset(asset, file_pattern):
