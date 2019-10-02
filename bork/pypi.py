@@ -12,9 +12,10 @@ class PypiHandler:
 
     def upload(self, *globs, dry_run=False):
         files = find_files(globs)
-        logger().info("Uploading files to PyPI instance '%s': %s",
-                      self.repo_url,
-                      ', '.join(("'{}'".format(file) for file in files)),
+        logger().info(
+            "Uploading files to PyPI instance '%s': %s",
+            self.repo_url,
+            ', '.join(("'{}'".format(file) for file in files)),
         )
 
         if dry_run:
