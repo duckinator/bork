@@ -65,10 +65,9 @@ def zipapp():
     config = load_setup_cfg()
 
     if 'metadata' not in config or 'name' not in config['metadata']:
-        logger().error(
+        raise RuntimeError(
             "The [metadata] section of setup.cfg needs the 'name' key set.",
         )
-        raise RuntimeError("Invalid project configuration")
 
     name = config['metadata']['name']
 
