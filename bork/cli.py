@@ -70,11 +70,21 @@ def main():
     if verbose:
         sys.argv.remove('--verbose')
 
-    logging.basicConfig(level=logging.INFO if verbose else logging.WARNING)
+    try:
+        import coloredlogs
+        coloredlogs.install(
+            level=logging.INFO if verbose else logging.WARNING,
+            fmt="%(name)s %(levelname)s %(message)s",
+        )
+
+    except ModuleNotFoundError:
+        logging.basicConfig(
+            level=logging.INFO if verbose else logging.WARNING,
+            format="%(name)s %(levelname)s %(message)s",
+        )
 
     try:
         cli()
-
     except RuntimeError as err:
         thrower = inspect.trace()[-1]
         log = logger(thrower)
