@@ -8,8 +8,11 @@ from .asset_manager import download_assets
 
 
 def upload(*globs, dry_run=False):
-    # files = find_files(globs, 'GitHub')
-
+    # files = find_files(globs)
+    # logger().info("Uploading files to Github: %s",
+    #               ', '.join(("'{}'".format(file) for file in files)),
+    # )
+    #
     # if dry_run:
     #     logger().info('Skipping GitHub upload step since this is a dry run.')
     # else:

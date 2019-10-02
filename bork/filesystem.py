@@ -11,16 +11,13 @@ def load_setup_cfg():
     return setup_cfg
 
 
-def find_files(globs, service):
+def find_files(globs):
     files = []
-    log = logger()
 
     for glob in globs:
         matches = map(str, Path().glob(glob))
         files += list(matches)
 
-    # NOTE: This is the wrong place for this log call
-    log.info('Uploading to %s: %s', service, ', '.join(files))
     return files
 
 

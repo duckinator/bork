@@ -11,7 +11,11 @@ class PypiHandler:
         self.repo_url = repo_url
 
     def upload(self, *globs, dry_run=False):
-        files = find_files(globs, 'PyPI')
+        files = find_files(globs)
+        logger().info("Uploading files to PyPI instance '%s': %s",
+                      self.repo_url,
+                      ', '.join(("'{}'".format(file) for file in files)),
+        )
 
         if dry_run:
             logger().info('Skipping PyPI upload step since this is a dry run.')
