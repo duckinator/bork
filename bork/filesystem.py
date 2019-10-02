@@ -2,8 +2,6 @@ import configparser
 from pathlib import Path
 import shutil
 
-from .log import logger
-
 
 def load_setup_cfg():
     setup_cfg = configparser.ConfigParser()

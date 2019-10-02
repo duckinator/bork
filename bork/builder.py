@@ -8,7 +8,6 @@ import zipapp as Zipapp  # noqa: N812
 import pep517.build
 
 from .filesystem import load_setup_cfg, try_delete
-from .log import logger
 
 
 # The "proper" way to handle the default would be to check python_requires
