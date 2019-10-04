@@ -3,7 +3,7 @@ import json
 from urllib.request import urlopen
 
 from .asset_manager import download_assets
-# from .log import logger
+from .log import logger
 # from .filesystem import find_files
 
 
@@ -29,20 +29,31 @@ def _relevant_asset(asset, file_pattern):
     return False
 
 
-def _get_download_info(repo, release, file_pattern):
+def _get_download_info(repo, name, file_pattern, draft=False, prerelease=False):
     if '/' not in repo:
         raise ValueError(
             "repo must be of format <user>/<repo>, got '{}'".format(repo),
         )
 
+    log = logger()
     url = 'https://api.github.com/repos/{}/releases'.format(repo)
     req = urlopen(url).read().decode()
     data = json.loads(req)
+    releases = []
 
-    if release == 'latest':
-        release = sorted(data, key=lambda x: x['created_at'])[-1]
+    for release in data:
+        if not draft and release['draft']:
+            log.info("Discarding draft release '%s'", release['name'])
+        elif not prerelease and release['prerelease']:
+            log.info("Discarding prerelease '%s'", release['name'])
+        else:
+            releases.append(release)
+
+    if name == 'latest':
+        release = sorted(releases, key=lambda x: x['created_at'])[-1]
+        log.info("Selected release '%s' as latest", release['name'])
     else:
-        release = list(filter(lambda x: x['tag_name'] == release, data))[0]
+        release = list(filter(lambda x: x['tag_name'] == name, releases))[0]
 
     all_assets = release['assets']
 
