@@ -1,7 +1,6 @@
 from pathlib import Path
 from signal import Signals
 import subprocess
-import sys
 
 import toml
 
@@ -9,6 +8,7 @@ from . import builder
 from . import github
 from . import pypi
 from .filesystem import try_delete
+from .log import logger
 
 
 DOWNLOAD_SOURCES = {
@@ -62,9 +62,6 @@ def release(test_pypi, dry_run):
         pypi_instance = pypi.PRODUCTION
     pypi_instance.upload('./dist/*.tar.gz', './dist/*.whl', dry_run=dry_run)
 
-    print('')
-    print('')
-
     # if 'github' in args:
     #     github.upload('./dist/*.pyz', dry_run=dry_run)
 
@@ -75,7 +72,9 @@ def run(alias):
     try:
         command = pyproject['tool']['bork']['aliases'][alias]
     except KeyError:
-        sys.exit("bork: no such alias: '{}'".format(alias))
+        raise RuntimeError("No such alias: '{}'".format(alias))
+
+    logger().info("Running '%s'", command)
 
     try:
         subprocess.run(command, check=True, shell=True)
@@ -83,9 +82,13 @@ def run(alias):
     except subprocess.CalledProcessError as error:
         if error.returncode < 0:
             signal = Signals(- error.returncode)
-            sys.exit("bork: command '{}' exited due to signal {} ({})".format(
-                error.cmd, signal.name, signal.value))
+            msg = "command '{}' exited due to signal {} ({})".format(
+                error.cmd, signal.name, signal.value,
+            )
 
         else:
-            sys.exit("bork: command '{}' exited with error code {}".format(
-                error.cmd, error.returncode))
+            msg = "bork: command '{}' exited with error code {}".format(
+                error.cmd, error.returncode,
+            )
+
+        raise RuntimeError(msg) from error

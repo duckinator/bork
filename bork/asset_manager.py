@@ -1,6 +1,8 @@
 from pathlib import Path
 from urllib.request import urlopen
 
+from .log import logger
+
 
 def download_assets(asset_list, directory, name_key=None, url_key=None):
     if name_key is None:
@@ -12,6 +14,7 @@ def download_assets(asset_list, directory, name_key=None, url_key=None):
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
 
+    log = logger()
     for asset in asset_list:
         name = asset[name_key]
         url = asset[url_key]
@@ -20,4 +23,4 @@ def download_assets(asset_list, directory, name_key=None, url_key=None):
         contents = urlopen(url).read()
 
         path.write_bytes(contents)
-        print(str(path))
+        log.info("Downloaded '%s'", path)

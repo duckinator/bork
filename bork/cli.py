@@ -1,3 +1,5 @@
+import inspect
+import logging
 import sys
 
 import click
@@ -9,6 +11,7 @@ from . import download as _download
 from . import release as _release
 from . import run as _run
 from . import DOWNLOAD_SOURCES  # noqa: I100
+from .log import logger
 
 
 DOWNLOAD_SOURCES_STR = ' '.join(DOWNLOAD_SOURCES)
@@ -67,9 +70,15 @@ def main():
     if verbose:
         sys.argv.remove('--verbose')
 
+    logging.basicConfig(level=logging.INFO if verbose else logging.WARNING)
+
     try:
         cli()
+
     except RuntimeError as err:
-        if verbose:
-            raise err
-        sys.exit("bork: error: {}".format(str(err)))
+        thrower = inspect.trace()[-1]
+        log = logger(thrower)
+
+        (log.exception if verbose else log.error)(str(err))
+
+        sys.exit(1)

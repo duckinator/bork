@@ -9,17 +9,12 @@ def load_setup_cfg():
     return setup_cfg
 
 
-def find_files(globs, service):
+def find_files(globs):
     files = []
 
     for glob in globs:
         matches = map(str, Path().glob(glob))
         files += list(matches)
-
-    print('Uploading to {}:'.format(service))
-    for filename in files:
-        print('- {}'.format(filename))
-    print('')
 
     return files
 

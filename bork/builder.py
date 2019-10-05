@@ -64,9 +64,9 @@ def zipapp():
     config = load_setup_cfg()
 
     if 'metadata' not in config or 'name' not in config['metadata']:
-        print("The [metadata] section of setup.cfg needs the 'name' key set.",
-              file=sys.stderr)
-        sys.exit(1)
+        raise RuntimeError(
+            "The [metadata] section of setup.cfg needs the 'name' key set.",
+        )
 
     name = config['metadata']['name']
 
