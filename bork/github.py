@@ -49,11 +49,15 @@ def _get_download_info(repo, name, file_pattern, draft=False, prerelease=False):
         else:
             releases.append(release)
 
-    if name == 'latest':
-        release = sorted(releases, key=lambda x: x['created_at'])[-1]
-        log.info("Selected release '%s' as latest", release['name'])
-    else:
-        release = list(filter(lambda x: x['tag_name'] == name, releases))[0]
+    try:
+        if name == 'latest':
+            release = sorted(releases, key=lambda x: x['created_at'])[-1]
+            log.info("Selected release '%s' as latest", release['name'])
+        else:
+            release = list(filter(lambda x: x['tag_name'] == name, releases))[0]
+
+    except IndexError as e:
+        raise RuntimeError("No such Github release: '{}'".format(name)) from e
 
     all_assets = release['assets']
 
