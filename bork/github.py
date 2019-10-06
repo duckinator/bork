@@ -29,7 +29,7 @@ def _relevant_asset(asset, file_pattern):
     return False
 
 
-def _get_download_info(repo, name, file_pattern, draft=False, prerelease=False):
+def _get_release_info(repo, name, draft=False, prerelease=False):
     if '/' not in repo:
         raise ValueError(
             "repo must be of format <user>/<repo>, got '{}'".format(repo),
@@ -59,13 +59,11 @@ def _get_download_info(repo, name, file_pattern, draft=False, prerelease=False):
     except IndexError as e:
         raise RuntimeError("No such Github release: '{}'".format(name)) from e
 
-    all_assets = release['assets']
-
-    assets = filter(lambda x: _relevant_asset(x, file_pattern), all_assets)
-
-    return assets
+    return release
 
 
 def download(repo, release, file_pattern, directory):
-    asset_list = _get_download_info(repo, release, file_pattern)
-    download_assets(asset_list, directory, url_key='browser_download_url')
+    release_info = _get_release_info(repo, release, file_pattern)
+    assets = filter(lambda x: _relevant_asset(x, file_pattern),
+                    release_info['assets'])
+    download_assets(assets, directory, url_key='browser_download_url')
