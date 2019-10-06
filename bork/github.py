@@ -1,3 +1,4 @@
+from distutils.version import LooseVersion
 import fnmatch
 import json
 from urllib.request import urlopen
@@ -51,7 +52,8 @@ def _get_release_info(repo, name, draft=False, prerelease=False):
 
     try:
         if name == 'latest':
-            release = sorted(releases, key=lambda x: x['created_at'])[-1]
+            release = sorted(releases,
+                             key=lambda x: LooseVersion(x['tag_name'].lstrip('v')))[-1]
             log.info("Selected release '%s' as latest", release['name'])
         else:
             release = list(filter(lambda x: x['tag_name'] == name, releases))[0]
