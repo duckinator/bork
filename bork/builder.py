@@ -25,7 +25,7 @@ def dist():
 
 
 def version_from_sdist_file():
-    sdist = sorted(Path.cwd().glob('dist/*.tar.gz'))[-1].name
+    sdist = max(Path.cwd().glob('dist/*.tar.gz')).name
     sdist = sdist.replace('.tar.gz', '')
     sdist = sdist.split('-')[1]
     return sdist
