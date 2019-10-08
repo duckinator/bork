@@ -60,7 +60,7 @@ def _get_release_info(repo, name, draft=False, prerelease=False):
         else:
             release = list(filter(lambda x: x['tag_name'] == name, releases))[0]
 
-    except IndexError as e:
+    except (IndexError, ValueError) as e:
         raise RuntimeError("No such Github release: '{}'".format(name)) from e
 
     return release
