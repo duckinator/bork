@@ -52,8 +52,10 @@ def _get_release_info(repo, name, draft=False, prerelease=False):
 
     try:
         if name == 'latest':
-            release = sorted(releases,
-                             key=lambda x: LooseVersion(x['tag_name'].lstrip('v')))[-1]
+            release = max(
+                releases,
+                key=lambda x: LooseVersion(x['tag_name'].lstrip('v')),
+            )
             log.info("Selected release '%s' as latest", release['name'])
         else:
             release = list(filter(lambda x: x['tag_name'] == name, releases))[0]
