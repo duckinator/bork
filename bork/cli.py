@@ -71,7 +71,7 @@ def main():
         sys.argv.remove('--verbose')
 
     try:
-        import coloredlogs
+        import coloredlogs  # pylint: disable=import-outside-toplevel
         coloredlogs.install(
             level=logging.INFO if verbose else logging.WARNING,
             fmt="%(name)s %(levelname)s %(message)s",
