@@ -25,10 +25,8 @@ def dist():
 
 
 def version_from_sdist_file():
-    sdist = sorted(Path.cwd().glob('dist/*.tar.gz'))[-1].name
-    sdist = sdist.replace('.tar.gz', '')
-    sdist = sdist.split('-')[1]
-    return sdist
+    sdist = max(Path.cwd().glob('dist/*.tar.gz')).name
+    return sdist.replace('.tar.gz', '').split('-')[1]
 
 
 def _prepare_zipapp_directory(source, dest, name):
