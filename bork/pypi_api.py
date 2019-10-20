@@ -67,6 +67,10 @@ def _matches_version(filename, version):
 def get_download_info(base_url, package, release, file_pattern):
     results = []
 
+    # Normalize base_url so it never ends with a forward slash.
+    if base_url.endswith('/'):
+        base_url = base_url[:-1]
+
     html = urlopen('{}/{}/'.format(base_url, package)).read().decode()
     parser = SimplePypiParser()
     parser.feed(html)
