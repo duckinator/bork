@@ -28,5 +28,5 @@ class PypiHandler:
         download_assets(asset_list, directory)
 
 
-PRODUCTION = PypiHandler('https://pypi.org/simple')
-TESTING = PypiHandler('https://test.pypi.org/simple')
+PRODUCTION = PypiHandler('https://pypi.org/simple/')
+TESTING = PypiHandler('https://test.pypi.org/simple/')
