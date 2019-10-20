@@ -25,9 +25,12 @@ class PypiHandler:
             twine_upload(['upload', '--repository-url', self.upload_url, *files])
 
     def download(self, package, release, file_pattern, directory):
-        asset_list = get_download_info(self.download_url, package, release, file_pattern)
+        asset_list = get_download_info(self.download_url, package, release,
+                                       file_pattern)
         download_assets(asset_list, directory)
 
 
-PRODUCTION = PypiHandler('https://pypi.org/simple/', 'https://upload.pypi.org/legacy/')
-TESTING = PypiHandler('https://test.pypi.org/simple/', 'https://test.pypi.org/legacy/')
+PRODUCTION = PypiHandler('https://pypi.org/simple/',
+                         'https://upload.pypi.org/legacy/')
+TESTING = PypiHandler('https://test.pypi.org/simple/',
+                      'https://test.pypi.org/legacy/')
