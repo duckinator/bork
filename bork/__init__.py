@@ -11,6 +11,14 @@ from .filesystem import try_delete
 from .log import logger
 
 
+#: Bork's maintainer.
+__author__ = "Ellen Marie Dash"
+
+#: The running Bork version.
+#: Bork follows the Semantic Versioning convention; see https://semver.org/
+__version__ = "1.0.0"
+
+
 DOWNLOAD_SOURCES = {
     'gh': github,
     'github': github,
