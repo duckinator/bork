@@ -5,7 +5,7 @@ import sys
 # Slight kludge so we can have a function named zipapp().
 import zipapp as Zipapp  # noqa: N812
 
-import pep517.build
+import pep517.build  # type: ignore
 
 from .filesystem import load_setup_cfg, try_delete
 
