@@ -1,7 +1,7 @@
 import inspect
 import logging
 import sys
-from typing import Any, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, cast, Dict, Optional, TypeVar
 
 
 #+: Index mapping file names to module names.
@@ -54,4 +54,6 @@ def trace(func: F, level: int = logging.DEBUG) -> F:
         finally:
             log.log(level, 'exiting')
 
-    return wrapper
+    # Cast required, as mypy cannot (yet?) type decorators usefully:
+    #  https://github.com/python/mypy/issues/3157
+    return cast(F, wrapper)
