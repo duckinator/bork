@@ -1,8 +1,11 @@
 import inspect
 import logging
 import sys
-from typing import Any, Callable, Optional, TypeVar
+from typing import Any, Callable, Dict, Optional, TypeVar
 
+
+#+: Index mapping file names to module names.
+_module_index: Dict[str, str] = {}
 
 def _get_module(context: inspect.FrameInfo) -> str:
     """Find the module name for a given FrameInfo.
@@ -12,17 +15,14 @@ def _get_module(context: inspect.FrameInfo) -> str:
     Pilfered from Jamie Bliss' equivalent in pursuedpybear:
       https://github.com/ppb/pursuedpybear/blob/master/ppb/utils.py
     """
-    if context.filename not in _get_module.index:
-        _get_module.index = {
+    if context.filename not in _module_index:
+        _module_index = {
             mod.__file__: mod.__name__
             for mod in sys.modules.values()
             if hasattr(mod, '__file__') and hasattr(mod, '__name__')
         }
 
-    return _get_module.index[context.filename]
-
-
-_get_module.index = {}
+    return _module_index[context.filename]
 
 
 def logger(context: Optional[inspect.FrameInfo] = None) -> logging.Logger:
