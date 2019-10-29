@@ -1,4 +1,4 @@
-from twine.cli import dispatch as twine_upload
+from twine.cli import dispatch as twine_upload  # type: ignore
 
 from .asset_manager import download_assets
 from .filesystem import find_files
