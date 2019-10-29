@@ -1,11 +1,12 @@
 import fnmatch
 from html.parser import HTMLParser
 import re
+from typing import Dict
 from urllib.request import urlopen
 
 
 class SimplePypiParser(HTMLParser):
-    files = {}
+    files: Dict[str, str] = {}
     in_anchor = False
     current_url = None
 
