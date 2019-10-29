@@ -7,6 +7,7 @@ from typing import Any, Callable, cast, Dict, Optional, TypeVar
 #+: Index mapping file names to module names.
 _module_index: Dict[str, str] = {}
 
+
 def _get_module(context: inspect.FrameInfo) -> str:
     """Find the module name for a given FrameInfo.
 
@@ -15,6 +16,7 @@ def _get_module(context: inspect.FrameInfo) -> str:
     Pilfered from Jamie Bliss' equivalent in pursuedpybear:
       https://github.com/ppb/pursuedpybear/blob/master/ppb/utils.py
     """
+    global _module_index  # pylint: disable=global-statement
     if context.filename not in _module_index:
         _module_index = {
             mod.__file__: mod.__name__
