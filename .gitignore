@@ -1,4 +1,5 @@
 /.eggs/
+/.mypy_cache/
 /.pytest_cache/
 /.tox/
 /build/
