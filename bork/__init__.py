@@ -20,15 +20,8 @@ DOWNLOAD_SOURCES = {
 
 
 def build():
-    pyproject = toml.load('pyproject.toml')
-    config = pyproject.get('tool', {}).get('bork', {})
-    zipapp = config.get('zipapp', {})
-    want_zipapp = zipapp.get('enabled', False)
-
     builder.dist()
-
-    if want_zipapp:
-        builder.zipapp()
+    builder.zipapp()
 
 
 def clean():
