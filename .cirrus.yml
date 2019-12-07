@@ -4,7 +4,7 @@ use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true' || $CIRRUS_BRANCH == 'm
 
 Lint_task:
   container:
-    image: python:3.7-slim
+    image: python:3-slim
   install_script:
     - pip install .
     - pip install .[testing]
