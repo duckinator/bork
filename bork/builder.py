@@ -5,9 +5,8 @@ import sys
 # Slight kludge so we can have a function named zipapp().
 import zipapp as Zipapp  # noqa: N812
 
-import toml
-
 import pep517.build
+import toml
 
 from .filesystem import load_setup_cfg, try_delete
 
