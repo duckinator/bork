@@ -7,6 +7,11 @@ build-backend = "setuptools.build_meta"
 enabled = true
 main = "bork.cli:zipapp_main"
 
+[tool.bork.release]
+pypi = true
+github = true
+strip_zipapp_version = true
+
 [tool.bork.aliases]
 # Runs *only* pylint and flake8. (Not the actual tests.)
 lint = "pytest -k 'flake8 or pylint or mypy' --pylint --flake8 --mypy --verbose"

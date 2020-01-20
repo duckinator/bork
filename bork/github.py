@@ -4,20 +4,28 @@ import json
 from urllib.request import urlopen
 
 from .asset_manager import download_assets
+from .filesystem import find_files
 from .log import logger
-# from .filesystem import find_files
 
 
-def upload(*globs, dry_run=False):
-    # files = find_files(globs)
-    # logger().info("Uploading files to Github: %s",
-    #               ', '.join(("'{}'".format(file) for file in files)),
-    # )
-    #
-    # if dry_run:
-    #     logger().info('Skipping GitHub upload step since this is a dry run.')
-    # else:
-    #     pass
+def upload(*globs, dry_run=False, strip_zipapp_version=False):
+    log = logger()
+
+    files = find_files(globs)
+
+    log.info('Uploading files to Github.')
+    for filename in files:
+        if strip_zipapp_version and filename.endswith('.pyz'):
+            dest_filename = '-'.join(filename.split('-')[:-1]) + '.pyz'
+            log.info('- %s as %s', filename, dest_filename)
+        else:
+            dest_filename = filename
+            log.info('- %s', filename)
+
+    if dry_run:
+        log.info('Skipping GitHub upload step since this is a dry run.')
+    else:
+        pass
 
     raise NotImplementedError('github.upload() is not yet implemented')
 

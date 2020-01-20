@@ -49,14 +49,37 @@ def download(package, release_tag, file_pattern, directory):
 
 
 def release(test_pypi, dry_run):
-    if test_pypi:
-        pypi_instance = pypi.TESTING
-    else:
-        pypi_instance = pypi.PRODUCTION
-    pypi_instance.upload('./dist/*.tar.gz', './dist/*.whl', dry_run=dry_run)
+    pyproject = toml.load('pyproject.toml')
 
-    # if 'github' in args:
-    #     github.upload('./dist/*.pyz', dry_run=dry_run)
+    try:
+        release_dict = pyproject['tool']['bork']['release']
+        strip_zipapp_version = release_dict.get('strip_zipapp_version', False)
+    except KeyError:
+        # Not an error.
+        strip_zipapp_version = False
+
+    try:
+        release_dict = pyproject['tool']['bork']['release']
+        release_to_github = release_dict.get('github', False)
+        release_to_pypi = release_dict.get('pypi', True)
+    except KeyError:
+        release_to_github = False
+        release_to_pypi = True
+
+    if not release_to_github and not release_to_pypi:
+        print("Configured to release to neither PyPi nor GitHub?")
+
+    if release_to_pypi:
+        if test_pypi:
+            pypi_instance = pypi.TESTING
+        else:
+            pypi_instance = pypi.PRODUCTION
+        pypi_instance.upload('./dist/*.tar.gz', './dist/*.whl', dry_run=dry_run)
+
+    if release_to_github:
+        github.upload('./dist/*.pyz',
+                      dry_run=dry_run,
+                      strip_zipapp_version=strip_zipapp_version)
 
 
 def run(alias):
