@@ -1,16 +1,25 @@
-# bork [![Build Status][build-status-link]][build-status-img]
+# bork [![Build Status][build-status-img]][build-status-link] [![PyPI][pypi-version-img]][pypi-version-link]
 
 A frontend for building and releasing [PEP 517](https://www.python.org/dev/peps/pep-0517/) compliant projects, including support for generating a [ZipApp](https://docs.python.org/3/library/zipapp.html).
 
+Bork requires Python 3.5 or newer.
 
-[build-status-link]: https://api.cirrus-ci.com/github/duckinator/bork.svg
-[build-status-img]: https://cirrus-ci.com/github/duckinator/bork
+[build-status-img]: https://api.cirrus-ci.com/github/duckinator/bork.svg
+[build-status-link]: https://cirrus-ci.com/github/duckinator/bork
+
+[pypi-version-img]: https://img.shields.io/pypi/v/bork
+[pypi-version-link]: https://pypi.org/project/bork
 
 ## Installation
 
 ```
 $ pip3 install bork
 ```
+
+<!--
+Or download [the latest zipapp
+releases](https://github.com/duckinator/bork/releases/latest/download/bork.pyz)
+-->
 
 ## Usage
 
@@ -50,16 +59,16 @@ $ bork release # Release to PyPI
 
 ### ZipApp Support
 
-If you want to build a ZipApp, add this to your setup.cfg:
+If you want to build a ZipApp, add this to your pyproject.toml:
 
 ```
-[bork]
-zipapp_main = <entrypoint>
+[tool.bork.zipapp]
+enabled = true
+main = "<entrypoint>"
 ```
 
 Where `<entrypoint>` is of the form "module.submodule:function", and
-will likely be equivalent to the primary `console_script` entrypoint
-elsewhere in setup.cfg.
+may be equivalent to a `console_script` entrypoint in setup.cfg.
 
 ## Contributing
 
