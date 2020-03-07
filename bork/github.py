@@ -43,12 +43,14 @@ def _get_release_info(repo, name, draft=False, prerelease=False):
 
     try:
         if name == 'latest':
+            # Filter out prereleases and drafts (unless specified in the arguments)
+            release = (
+                r for r in releases
+                if (draft or not r['draft'])
+                and (prerelease or not r['prerelease'])  # noqa: W503
+            )
+            # Find the latest
             release = max(
-                (
-                    r for r in releases
-                    if (draft or not r['draft'])
-                    and (prerelease or not r['prerelease'])  # noqa: W503
-                ),
                 key=lambda x: LooseVersion(x['tag_name'].lstrip('v')),
             )
             log.info("Selected release '%s' as latest", release['name'])
