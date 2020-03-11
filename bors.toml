@@ -1,5 +1,8 @@
 status = [
   "Lint",
+  "Zipapp_bootstrap container:python:3.7-slim",
+  "Zipapp_bootstrap container:python:3.8-slim",
+  "downloads",
   "repos REPO:https://github.com/duckinator/bork.git",
   "repos REPO:https://github.com/duckinator/emanate.git",
   "repos REPO:https://github.com/ppb/ppb-vector.git",
