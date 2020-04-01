@@ -2,9 +2,14 @@
 # master, staging, and trying branches. (So bors can use them.)
 use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true' || $CIRRUS_BRANCH == 'master' || $CIRRUS_BRANCH == 'staging' || $CIRRUS_BRANCH == 'trying'
 
+# This makes Click behave itself.
+env:
+  LC_ALL: C.UTF-8
+  LANG: C.UTF-8
+
 Lint_task:
   container:
-    image: python:3.7-slim
+    image: python:3-slim
   install_script:
     - pip install .
     - pip install .[testing]
@@ -12,6 +17,36 @@ Lint_task:
     - flake8 --version
     - pylint --version
     - bork run lint
+
+Zipapp_bootstrap_task:
+  container:
+    matrix:
+      image: python:3.7-slim
+      image: python:3.8-slim
+  setup_script:
+    - cp -r . /tmp/bork-pristine
+    - cp -r /tmp/bork-pristine /tmp/pass1
+    - cp -r /tmp/bork-pristine /tmp/pass2
+    - cp -r /tmp/bork-pristine /tmp/pass3
+  # Make sure Bork can build itself.
+  pass_1_script:
+    - cd /tmp/pass1
+    - python3 --version
+    - pip install . .[testing]
+    - bork build
+  # Make sure the Bork zipapp from Pass 1 can build Bork.
+  pass_2_script:
+    - cd /tmp/pass2
+    - cp /tmp/pass1/dist/bork-*.pyz /tmp/bork-pass1.pyz
+    - python3 /tmp/bork-pass1.pyz build
+  # Make sure the Bork zipapp built from Pass 2 can build Bork.
+  # ime with other self-building software, this is prone to blowing up.
+  pass_3_script:
+    - cd /tmp/pass3
+    - cp /tmp/pass2/dist/bork-*.pyz /tmp/bork-pass2.pyz
+    - python3 /tmp/bork-pass2.pyz build
+    - cp ./dist/bork-*.pyz /tmp/bork-pass3.pyz
+    - python3 /tmp/bork-pass3.pyz run lint
 
 # Linux_task:
 #   allow_failures: $CIRRUS_TASK_NAME =~ '.*-rc-.*'

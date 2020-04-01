@@ -6,6 +6,7 @@ import sys
 import zipapp as Zipapp  # noqa: N812
 
 import pep517.build  # type: ignore
+import toml
 
 from .filesystem import load_setup_cfg, try_delete
 
@@ -59,14 +60,22 @@ def _zipapp_add_deps(dest):
 def zipapp():
     """Build a zipapp for the project."""
 
-    config = load_setup_cfg()
+    pyproject = toml.load('pyproject.toml')
+    config = pyproject.get('tool', {}).get('bork', {})
+    zipapp_cfg = config.get('zipapp', {})
+    want_zipapp = zipapp_cfg.get('enabled', False)
 
-    if 'metadata' not in config or 'name' not in config['metadata']:
+    if not want_zipapp:
+        return
+
+    setup_cfg = load_setup_cfg()
+
+    if 'metadata' not in setup_cfg or 'name' not in setup_cfg['metadata']:
         raise RuntimeError(
             "The [metadata] section of setup.cfg needs the 'name' key set.",
         )
 
-    name = config['metadata']['name']
+    name = setup_cfg['metadata']['name']
 
     # The code is assumed to be in ./<name>
     orig_source = str(Path(name))
@@ -81,14 +90,11 @@ def zipapp():
     #
     # [bork]
     # python_interpreter = /path/to/python
-    if 'bork' in config and 'python_interpreter' in config['bork']:
-        interpreter = config['bork']['python_interpreter']
-    else:
-        interpreter = DEFAULT_PYTHON_INTERPRETER
+    interpreter = config.get('python_interpreter', DEFAULT_PYTHON_INTERPRETER)
 
     # This is where GitHub issue #9 ("Allow specifying console_script
     # entrypoint") would likely be implemented.
-    main = config['bork']['zipapp_main']
+    main = zipapp_cfg['main']
 
     _prepare_zipapp_directory(orig_source, source, name)
     _zipapp_add_deps(source)

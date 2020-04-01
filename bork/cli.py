@@ -1,20 +1,17 @@
 import inspect
 import logging
+import os
 import sys
 
 import click
 from click import BadParameter
 
-from . import build as _build
-from . import clean as _clean
-from . import download as _download
-from . import release as _release
-from . import run as _run
-from . import DOWNLOAD_SOURCES  # noqa: I100
+from . import __version__
+from . import api
 from .log import logger
 
 
-DOWNLOAD_SOURCES_STR = ' '.join(DOWNLOAD_SOURCES)
+DOWNLOAD_SOURCES_STR = ' '.join(api.DOWNLOAD_SOURCES)
 
 
 @click.group()
@@ -24,12 +21,12 @@ def cli():
 
 @cli.command()
 def build():
-    _build()
+    api.build()
 
 
 @cli.command()
 def clean():
-    _clean()
+    api.clean()
 
 
 @cli.command()
@@ -45,7 +42,7 @@ def download(files, directory, package, release_tag):
     #       what makes sense on a CLI interface to what makes sense in a
     #       Python interface.
     try:
-        _download(package, release_tag, files, directory)
+        api.download(package, release_tag, files, directory)
     except ValueError as error:
         raise BadParameter(error)
 
@@ -56,19 +53,23 @@ def download(files, directory, package, release_tag):
 @click.option('--dry-run', is_flag=True, default=False,
               help="Don't actually release, just show what a release would do.")
 def release(test_pypi, dry_run):
-    _release(test_pypi, dry_run)
+    api.release(test_pypi, dry_run)
 
 
 @cli.command()
 @click.argument('alias', nargs=1)
 def run(alias):
-    _run(alias)
+    api.run(alias)
 
 
 def main():
     verbose = '--verbose' in sys.argv
     if verbose:
         sys.argv.remove('--verbose')
+
+    if '--version' in sys.argv:
+        print("bork v{}".format(__version__))
+        sys.exit()
 
     try:
         import coloredlogs  # pylint: disable=import-outside-toplevel
@@ -92,3 +93,14 @@ def main():
         (log.exception if verbose else log.error)(str(err))
 
         sys.exit(1)
+
+
+def zipapp_main():
+    # If Bork is put in a zipapp, this allows scripts executed as subprocesses
+    # to access pep517.compat.
+    #
+    # The problem area is the `import compat` line in pep517's _in_process.py.
+    # https://github.com/pypa/pep517/blob/master/pep517/_in_process.py
+    os.environ['PYTHONPATH'] = ':'.join([*sys.path, sys.argv[0] + '/pep517'])
+
+    main()

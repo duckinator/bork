@@ -39,19 +39,17 @@ def _get_release_info(repo, name, draft=False, prerelease=False):
     log = logger()
     url = 'https://api.github.com/repos/{}/releases'.format(repo)
     req = urlopen(url).read().decode()
-    data = json.loads(req)
-    releases = []
-
-    for release in data:
-        if not draft and release['draft']:
-            log.info("Discarding draft release '%s'", release['name'])
-        elif not prerelease and release['prerelease']:
-            log.info("Discarding prerelease '%s'", release['name'])
-        else:
-            releases.append(release)
+    releases = json.loads(req)
 
     try:
         if name == 'latest':
+            # Filter out prereleases and drafts (unless specified in the arguments)
+            releases = (
+                r for r in releases
+                if (draft or not r['draft'])
+                and (prerelease or not r['prerelease'])  # noqa: W503
+            )
+            # Find the latest
             release = max(
                 releases,
                 key=lambda x: LooseVersion(x['tag_name'].lstrip('v')),
