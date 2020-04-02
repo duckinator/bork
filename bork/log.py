@@ -33,7 +33,12 @@ def logger(context: Optional[inspect.FrameInfo] = None) -> logging.Logger:
     The default context is the caller's.
     """
     if context is None:
-        context = inspect.getframeinfo(inspect.currentframe().f_back)
+        context = inspect.getframeinfo(inspect.currentframe().f_back)  # type: ignore
+
+    if context is None:
+        # This may not be the best way to handle it, but if we get here
+        # it'll avoid causing errors, at least.
+        return logging.getLogger('??.??')
 
     return logging.getLogger('{}.{}'.format(_get_module(context), context.function))
 
