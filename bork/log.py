@@ -1,7 +1,11 @@
 import inspect
 import logging
 import sys
-from typing import Any, Callable, Optional, TypeVar
+from typing import Any, Callable, cast, Dict, Optional, TypeVar
+
+
+# Index mapping file names to module names.
+_module_index: Dict[str, str] = {}
 
 
 def _get_module(context: inspect.FrameInfo) -> str:
@@ -12,17 +16,15 @@ def _get_module(context: inspect.FrameInfo) -> str:
     Pilfered from Jamie Bliss' equivalent in pursuedpybear:
       https://github.com/ppb/pursuedpybear/blob/master/ppb/utils.py
     """
-    if context.filename not in _get_module.index:
-        _get_module.index = {
+    global _module_index  # pylint: disable=global-statement
+    if context.filename not in _module_index:
+        _module_index = {
             mod.__file__: mod.__name__
             for mod in sys.modules.values()
             if hasattr(mod, '__file__') and hasattr(mod, '__name__')
         }
 
-    return _get_module.index[context.filename]
-
-
-_get_module.index = {}
+    return _module_index[context.filename]
 
 
 def logger(context: Optional[inspect.FrameInfo] = None) -> logging.Logger:
@@ -31,7 +33,12 @@ def logger(context: Optional[inspect.FrameInfo] = None) -> logging.Logger:
     The default context is the caller's.
     """
     if context is None:
-        context = inspect.getframeinfo(inspect.currentframe().f_back)
+        context = inspect.getframeinfo(inspect.currentframe().f_back)  # type: ignore
+
+    if context is None:
+        # This may not be the best way to handle it, but if we get here
+        # it'll avoid causing errors, at least.
+        return logging.getLogger('??.??')
 
     return logging.getLogger('{}.{}'.format(_get_module(context), context.function))
 
@@ -54,4 +61,6 @@ def trace(func: F, level: int = logging.DEBUG) -> F:
         finally:
             log.log(level, 'exiting')
 
-    return wrapper
+    # Cast required, as mypy cannot (yet?) type decorators usefully:
+    #  https://github.com/python/mypy/issues/3157
+    return cast(F, wrapper)

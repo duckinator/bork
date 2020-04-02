@@ -72,7 +72,9 @@ def main():
         sys.exit()
 
     try:
-        import coloredlogs  # pylint: disable=import-outside-toplevel
+        # pylint: disable=import-outside-toplevel
+        import coloredlogs  # type: ignore
+        # pylint: enable=import-outside-toplevel
         coloredlogs.install(
             level=logging.INFO if verbose else logging.WARNING,
             fmt="%(name)s %(levelname)s %(message)s",

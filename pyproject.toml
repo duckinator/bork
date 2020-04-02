@@ -9,6 +9,6 @@ main = "bork.cli:zipapp_main"
 
 [tool.bork.aliases]
 # Runs *only* pylint and flake8. (Not the actual tests.)
-lint = "pytest -k 'flake8 or pylint' --pylint --flake8 --verbose"
+lint = "pytest -k 'flake8 or pylint or mypy' --pylint --flake8 --mypy --verbose"
 # Runs tests, pylint, and flake8.
-test = "pytest --pylint --flake8 --verbose"
+test = "pytest --pylint --flake8 --mypy --verbose"
