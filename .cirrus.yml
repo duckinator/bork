@@ -7,6 +7,20 @@ env:
   LC_ALL: C.UTF-8
   LANG: C.UTF-8
 
+docker_builder:
+  #only_if: $CIRRUS_BRANCH == 'master'
+  depends_on:
+    - Lint
+    - Zipapp_bootstrap
+    - downloads
+    - repos
+  #env:
+  #  DOCKER_USERNAME: ENCRYPTED[...]
+  #  DOCKER_PASSWORD: ENCRYPTED[...]
+  build_script: ./build-container.sh
+  #login_script: docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+  #push_script: docker push duckinator/bork:$CIRRUS_TAG
+
 Lint_task:
   container:
     image: python:3-slim
