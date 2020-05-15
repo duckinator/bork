@@ -23,9 +23,8 @@ def upload(*globs, dry_run=False, strip_zipapp_version=False):
             log.info('- %s', filename)
 
     if dry_run:
-        log.info('Skipping GitHub upload step since this is a dry run.')
-    else:
-        pass
+        log.warn('Skipping GitHub upload step since this is a dry run.')
+        return
 
     raise NotImplementedError('github.upload() is not yet implemented')
 
