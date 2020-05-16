@@ -20,7 +20,7 @@ class PypiHandler:
         )
 
         if dry_run:
-            logger().info('Skipping PyPI upload step since this is a dry run.')
+            logger().warning('Skipping PyPI upload step since this is a dry run.')
         else:
             twine_upload(['upload', '--repository-url', self.upload_url, *files])
 
