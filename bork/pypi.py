@@ -1,4 +1,4 @@
-from twine.cli import dispatch as twine_upload  # type: ignore
+from twine.cli import dispatch as twine_dispatch  # type: ignore
 
 from .asset_manager import download_assets
 from .filesystem import find_files
@@ -22,7 +22,7 @@ class PypiHandler:
         if dry_run:
             logger().warning('Skipping PyPI upload step since this is a dry run.')
         else:
-            twine_upload(['upload', '--repository-url', self.upload_url, *files])
+            twine_dispatch(['upload', '--repository-url', self.upload_url, *files])
 
     def download(self, package, release, file_pattern, directory):
         asset_list = get_download_info(self.download_url, package, release,
