@@ -22,7 +22,7 @@ def cli():
 @cli.command()
 def aliases():
     alias_list = api.aliases()
-    if not alias_list.keys():
+    if len(alias_list.keys()) == 0:
         print("No aliases available.")
         return
 
