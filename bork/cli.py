@@ -78,6 +78,10 @@ def main():
     if verbose:
         sys.argv.remove('--verbose')
 
+    debug = '--debug' in sys.argv
+    if debug:
+        sys.argv.remove('--debug')
+
     if '--version' in sys.argv:
         print("bork v{}".format(__version__))
         sys.exit()
@@ -86,8 +90,20 @@ def main():
         # pylint: disable=import-outside-toplevel
         import coloredlogs  # type: ignore
         # pylint: enable=import-outside-toplevel
+
+        # Default to only printing WARNING and higher severity messages.
+        log_level = logging.WARNING
+
+        # If we got '--verbose', print INFO and higher severity messages.
+        if verbose:
+            log_level = logging.INFO
+
+        # If we got '--debug', print DEBUG and higher severity messages.
+        if debug:
+            log_level = logging.DEBUG
+
         coloredlogs.install(
-            level=logging.INFO if verbose else logging.WARNING,
+            level=log_level,
             fmt="%(name)s %(levelname)s %(message)s",
         )
 
