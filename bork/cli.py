@@ -20,6 +20,17 @@ def cli():
 
 
 @cli.command()
+def aliases():
+    alias_list = api.aliases()
+    if len(alias_list.keys()) == 0:
+        print("No aliases available.")
+        return
+
+    for key in alias_list.keys():
+        print(key)
+
+
+@cli.command()
 def build():
     api.build()
 
