@@ -19,6 +19,11 @@ DOWNLOAD_SOURCES = {
 }
 
 
+def aliases():
+    pyproject = toml.loads(Path("pyproject.toml").read_text())
+    return pyproject.get('tool', {}).get('bork', {}).get('aliases', {})
+
+
 def build():
     builder.dist()
     builder.zipapp()
