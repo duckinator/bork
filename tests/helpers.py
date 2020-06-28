@@ -1,4 +1,4 @@
-from click.testing import CliRunner
+from click.testing import CliRunner  # noqa: I202
 import bork.cli
 
 

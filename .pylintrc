@@ -10,10 +10,6 @@ load-plugins=pylint.extensions.check_elif,
              pylint.extensions.overlapping_exceptions,
              pylint.extensions.redefined_variable_type,
 
-# TODO: Should we do this? I mostly added it because of the number of errors
-#       when integrating it into pytest, since it seems to use . not ./emanate.
-ignore=test
-
 [MESSAGES CONTROL]
 
 # Enable the message, report, category or checker with the given id(s). You can
