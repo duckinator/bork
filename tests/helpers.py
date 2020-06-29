@@ -34,7 +34,8 @@ def bork_check(*args):
 
 
 def _check_call(cmd, **kwargs):
-    return subprocess.run(cmd, capture_output=True, text=True, check=True, **kwargs)
+    return subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                          text=True, check=True, **kwargs)
 
 
 def python_check(*args):
