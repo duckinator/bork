@@ -59,12 +59,18 @@ def download(files, directory, package, release_tag):
 
 
 @cli.command()
+@click.option('--pypi-repository', default='pypi',
+              help='Repository to use. Valid values are pypi, testpypi, or'
+                   'anything defined in ".pypirc".')
 @click.option('--test-pypi', is_flag=True, default=False,
-              help='Release to test.pypi.org instead of pypi.org.')
+              help='Release to test.pypi.org instead of pypi.org.\n'
+                   'Equivalent to `--pypi-repository testpypi`.')
 @click.option('--dry-run', is_flag=True, default=False,
               help="Don't actually release, just show what a release would do.")
-def release(test_pypi, dry_run):
-    api.release(test_pypi, dry_run)
+def release(repository, test_pypi, dry_run):
+    if test_pypi:
+        repository = 'testpypi'
+    api.release(repository, dry_run)
 
 
 @cli.command()

@@ -14,8 +14,9 @@ from .log import logger
 DOWNLOAD_SOURCES = {
     'gh': github,
     'github': github,
-    'pypi': pypi.PRODUCTION,
-    'pypi-test': pypi.TESTING,
+    'pypi': pypi.Downloader('pypi'),
+    'testpypi': pypi.Downloader('testpypi'),
+    'pypi-test': pypi.Downloader('testpypi'),  # for backwards compatibility
 }
 
 
@@ -53,7 +54,7 @@ def download(package, release_tag, file_pattern, directory):
     source.download(package, release_tag, file_pattern, directory)
 
 
-def release(test_pypi, dry_run):
+def release(repository_name, dry_run):
     pyproject = toml.load('pyproject.toml')
 
     try:
@@ -75,11 +76,8 @@ def release(test_pypi, dry_run):
         print("Configured to release to neither PyPi nor GitHub?")
 
     if release_to_pypi:
-        if test_pypi:
-            pypi_instance = pypi.TESTING
-        else:
-            pypi_instance = pypi.PRODUCTION
-        pypi_instance.upload('./dist/*.tar.gz', './dist/*.whl', dry_run=dry_run)
+        pypi.upload(repository_name, './dist/*.tar.gz', './dist/*.whl',
+                    dry_run=dry_run)
 
     if release_to_github:
         github.upload('./dist/*.pyz',
