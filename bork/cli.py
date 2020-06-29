@@ -67,10 +67,10 @@ def download(files, directory, package, release_tag):
                    'Equivalent to `--pypi-repository testpypi`.')
 @click.option('--dry-run', is_flag=True, default=False,
               help="Don't actually release, just show what a release would do.")
-def release(repository, test_pypi, dry_run):
+def release(pypi_repository, test_pypi, dry_run):
     if test_pypi:
-        repository = 'testpypi'
-    api.release(repository, dry_run)
+        pypi_repository = 'testpypi'
+    api.release(pypi_repository, dry_run)
 
 
 @cli.command()
