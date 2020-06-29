@@ -1,7 +1,11 @@
+import os
+
 from helpers import bork_check, python_check, check_zipfile, check_tgz
 
 
-def test_download():
+def test_download(tmpdir):
+    os.chdir(tmpdir)
+
     # Download a pyz file from GitHub, saved to ./downloads, and check
     # that it can be run with Python.
     bork_check("download", "gh:duckinator/emanate", "v7.0.0")
