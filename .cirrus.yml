@@ -66,7 +66,6 @@ Linux_task:
   allow_failures: $CIRRUS_TASK_NAME =~ '.*-rc$'
   container:
     matrix:
-      - image: python:3.5-slim
       - image: python:3.6-slim
       - image: python:3.7-slim
       - image: python:3.8-slim
