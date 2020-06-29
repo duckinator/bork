@@ -62,56 +62,56 @@ Zipapp_bootstrap_task:
     - cp ./dist/bork-*.pyz /tmp/bork-pass3.pyz
     - python3 /tmp/bork-pass3.pyz run lint
 
-# Linux_task:
-#   allow_failures: $CIRRUS_TASK_NAME =~ '.*-rc-.*'
-#   container:
-#     matrix:
-#       - image: python:3.5-slim
-#       - image: python:3.6-slim
-#       - image: python:3.7-slim
-#       - image: python:3.8-rc-slim
-#   install_script:
-#     - pip install -e .[testing]
-#   script:
-#     - python3 --version
-#     - python3 -m pytest --verbose
+Linux_task:
+  allow_failures: $CIRRUS_TASK_NAME =~ '.*-rc$'
+  container:
+    matrix:
+      - image: python:3.5-slim
+      - image: python:3.6-slim
+      - image: python:3.7-slim
+      - image: python:3.8-slim
+      - image: python:rc
+  install_script:
+    - pip install . .[testing]
+  script:
+    - python3 --version
+    - bork run test
 
-# macOS_task:
-#   osx_instance:
-#     image: mojave-base
-#   env:
-#     PATH: ${HOME}/.pyenv/shims:${PATH}
-#     matrix:
-#       - PYTHON: 3.6.8
-#       - PYTHON: 3.7.2
-#   install_script:
-#     # Per the pyenv homebrew recommendations.
-#     # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
-#     - sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
-#     - brew install openssl readline pyenv
-#     - pyenv install ${PYTHON}
-#     - pyenv global ${PYTHON}
-#     - pyenv rehash
-#     - pip install -e .[testing]
-#   script:
-#     - python3 --version
-#     - python3 -m pytest --verbose
+macOS_task:
+  osx_instance:
+    image: catalina-xcode
+  env:
+    PATH: ${HOME}/.pyenv/shims:${PATH}
+    matrix:
+      - PYTHON: 3.6.8
+      - PYTHON: 3.7.2
+  install_script:
+    # Per the pyenv homebrew recommendations.
+    # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
+    - brew install openssl readline pyenv
+    - pyenv install ${PYTHON}
+    - pyenv global ${PYTHON}
+    - pyenv rehash
+    - pip install -e .[testing]
+  script:
+    - python3 --version
+    - bork run test
 
-# FreeBSD_task:
-#   freebsd_instance:
-#     image: freebsd-12-0-release-amd64
-#   env:
-#     matrix:
-#       - PYTHON: 3.6
-#       - PYTHON: 3.7
-#   install_script:
-#     - PY=`echo $PYTHON | tr -d '.'`
-#     - pkg install -y python${PY} py${PY}-setuptools
-#     - python${PYTHON} -m ensurepip
-#     - python${PYTHON} -m pip install -e .[testing]
-#   script:
-#     - python${PYTHON} --version
-#     - python${PYTHON} -m pytest --verbose
+FreeBSD_task:
+  freebsd_instance:
+    image: freebsd-12-0-release-amd64
+  env:
+    matrix:
+      - PYTHON: 3.6
+      - PYTHON: 3.7
+  install_script:
+    - PY=`echo $PYTHON | tr -d '.'`
+    - pkg install -y python${PY} py${PY}-setuptools
+    - python${PYTHON} -m ensurepip
+    - python${PYTHON} -m pip install -e .[testing]
+  script:
+    - python${PYTHON} --version
+    - bork run test
 
 # Windows_task:
 #   allow_failures: $CIRRUS_TASK_NAME =~ '.*-rc-.*'
