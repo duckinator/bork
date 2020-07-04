@@ -127,34 +127,6 @@ FreeBSD_task:
 #     - C:\Python\python.exe --version
 #     - C:\Python\python.exe -m pytest --verbose
 
-downloads_task:
-  container:
-    image: python:3-slim
-  env:
-    LC_ALL: C.UTF-8
-    LANG: C.UTF-8
-  install_script:
-    - apt-get update
-    - apt-get install -y file
-    - pip3 install .
-  script:
-    # Download a pyz file from GitHub, saved to ./downloads
-    - bork download gh:duckinator/emanate v7.0.0
-    - python3 ./downloads/emanate-7.0.0.pyz --help | head -n 1
-    # Download a pyz file for a specific version from GitHub, saved to ./bin
-    - bork download gh:duckinator/emanate v7.0.0 --directory bin/
-    - python3 bin/emanate-7.0.0.pyz --help | head -n 1
-    # Download a .tar.gz file from GitHub, saved to ./downloads
-    - bork download gh:ppb/pursuedpybear v0.6.0 --files '*.tar.gz' --directory downloads
-    - test "$(file downloads/ppb-0.6.0.tar.gz | cut -d ' ' -f 2)" == 'gzip'
-    # Download a .whl file from PyPi.
-    - bork download pypi:emanate v6.0.0 --files '*.whl'
-    - test "$(file downloads/emanate-6.0.0-py3-none-any.whl | cut -d ' ' -f 2)" == 'Zip'
-    # Download a .whl file from PyPi's test instance.
-    - bork download pypi-test:whaledo 1.0.1 --files '*.whl'
-    - test "$(file downloads/whaledo-1.0.1-py3-none-any.whl | cut -d ' ' -f 2)" == 'Zip'
-
-
 repos_task:
   container:
     image: python:3-slim
