@@ -2,7 +2,10 @@
 
 A frontend for building and releasing [PEP 517](https://www.python.org/dev/peps/pep-0517/) compliant projects, including support for generating a [ZipApp](https://docs.python.org/3/library/zipapp.html).
 
-Bork requires Python 3.5 or newer.
+Includes a basic task runner, in the form of `bork run <task name>`. Tasks
+are defined in your `pyproject.toml` file.
+
+Bork requires Python 3.6 or newer.
 
 [build-status-img]: https://api.cirrus-ci.com/github/duckinator/bork.svg
 [build-status-link]: https://cirrus-ci.com/github/duckinator/bork
@@ -16,10 +19,8 @@ Bork requires Python 3.5 or newer.
 $ pip3 install bork
 ```
 
-<!--
 Or download [the latest zipapp
 releases](https://github.com/duckinator/bork/releases/latest/download/bork.pyz)
--->
 
 ## Usage
 
@@ -44,7 +45,7 @@ $ bork download pypi:emanate 6.0.0 --files '*.whl'
 To download a wheel from a release on PyPi's test instance:
 
 ```
-$ bork download pypi-test:whaledo 1.0.1 --files '*.whl'
+$ bork download testpypi:whaledo 1.0.1 --files '*.whl'
 ```
 
 ### Building and Releasing
@@ -72,12 +73,7 @@ may be equivalent to a `console_script` entrypoint in setup.cfg.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/duckinator/bork. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/duckinator/bork. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the
+[code of conduct](https://github.com/duckinator/bork/blob/master/CODE_OF_CONDUCT.md).
 
-## License
-
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the bork project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/duckinator/bork/blob/master/CODE_OF_CONDUCT.md).
+The code for Bork is available under the [MIT License](http://opensource.org/licenses/MIT).
