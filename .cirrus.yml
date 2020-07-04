@@ -12,7 +12,10 @@ docker_builder:
   depends_on:
     - Lint
     - Zipapp_bootstrap
-    - downloads
+    - Linux
+    - macOS
+    - FreeBSD
+    #- Windows
     - repos
   env:
     DOCKER_USERNAME: ENCRYPTED[a957943032559f0859a16a4421bc3602338080e6d9ce63a980db4fd34dbdc2afbe3a20c620139c669182eced4211a515]
