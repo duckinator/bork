@@ -20,7 +20,8 @@ docker_builder:
   env:
     DOCKER_USERNAME: ENCRYPTED[a957943032559f0859a16a4421bc3602338080e6d9ce63a980db4fd34dbdc2afbe3a20c620139c669182eced4211a515]
     DOCKER_PASSWORD: ENCRYPTED[dd7f31d490b645298258ac9ec78ac3a7e034e8bfcf8fbfec0137787eef3934e01a42ef3b5eda42b1b1f7a3296fae619e]
-  build_script: docker build --tag duckinator/bork:${CIRRUS_TAG} --build-arg "VERSION=${CIRRUS_TAG}" .
+  build_script:
+    - docker build --tag duckinator/bork:${CIRRUS_TAG} --tag duckinator/bork:latest --build-arg "VERSION=${CIRRUS_TAG}" .
   login_script: docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
   push_script: docker push duckinator/bork:$CIRRUS_TAG
 
