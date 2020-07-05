@@ -21,7 +21,7 @@ DOWNLOAD_SOURCES = {
 
 
 def aliases():
-    pyproject = toml.loads(Path("pyproject.toml").read_text())
+    pyproject = toml.loads(Path('pyproject.toml').read_text())
     return pyproject.get('tool', {}).get('bork', {}).get('aliases', {})
 
 
@@ -31,8 +31,8 @@ def build():
 
 
 def clean():
-    try_delete("./build")
-    try_delete("./dist")
+    try_delete('./build')
+    try_delete('./dist')
     for name in Path.cwd().glob('*.egg-info'):
         if name.is_dir():
             try_delete(name)
@@ -73,7 +73,7 @@ def release(repository_name, dry_run):
         release_to_pypi = True
 
     if not release_to_github and not release_to_pypi:
-        print("Configured to release to neither PyPi nor GitHub?")
+        print('Configured to release to neither PyPi nor GitHub?')
 
     if release_to_pypi:
         pypi.upload(repository_name, './dist/*.tar.gz', './dist/*.whl',
