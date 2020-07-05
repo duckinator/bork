@@ -23,7 +23,7 @@ def cli():
 def aliases():
     alias_list = api.aliases()
     if len(alias_list.keys()) == 0:
-        print("No aliases available.")
+        print('No aliases available.')
         return
 
     for key in alias_list.keys():
@@ -89,7 +89,7 @@ def main():
         sys.argv.remove('--debug')
 
     if '--version' in sys.argv:
-        print("bork v{}".format(__version__))
+        print('bork v{}'.format(__version__))
         sys.exit()
 
     try:
@@ -110,13 +110,13 @@ def main():
 
         coloredlogs.install(
             level=log_level,
-            fmt="%(name)s %(levelname)s %(message)s",
+            fmt='%(name)s %(levelname)s %(message)s',
         )
 
     except ModuleNotFoundError:
         logging.basicConfig(
             level=logging.INFO if verbose else logging.WARNING,
-            format="%(name)s %(levelname)s %(message)s",
+            format='%(name)s %(levelname)s %(message)s',
         )
 
     try:

@@ -13,7 +13,7 @@ from .filesystem import load_setup_cfg, try_delete
 
 # The "proper" way to handle the default would be to check python_requires
 # in setup.cfg. But, since Bork needs Python 3, there's no point.
-DEFAULT_PYTHON_INTERPRETER = "/usr/bin/env python3"
+DEFAULT_PYTHON_INTERPRETER = '/usr/bin/env python3'
 
 
 def dist():
@@ -46,7 +46,7 @@ def _zipapp_add_deps(dest):
     if 'options' in config:
         options = config['options']
         if 'install_requires' in options:
-            deps = options['install_requires'].strip().split("\n")
+            deps = options['install_requires'].strip().split('\n')
             deps = list(map(str.strip, deps))
 
     if not deps:
@@ -84,7 +84,7 @@ def zipapp():
     version = version_from_sdist_file()
 
     # Output file is dist/<package name>-<package version>.pyz.
-    target = "dist/{}-{}.pyz".format(name, version)
+    target = 'dist/{}-{}.pyz'.format(name, version)
 
     # To override the default interpreter, add this to your project's setup.cfg:
     #
@@ -101,4 +101,4 @@ def zipapp():
 
     Zipapp.create_archive(source, target, interpreter, main)
     if not Path(target).exists():
-        raise RuntimeError("Failed to build zipapp: {}".format(target))
+        raise RuntimeError('Failed to build zipapp: {}'.format(target))
