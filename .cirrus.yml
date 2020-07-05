@@ -23,7 +23,7 @@ docker_builder:
   build_script:
     - docker build --tag duckinator/bork:${CIRRUS_TAG} --tag duckinator/bork:latest --build-arg "VERSION=${CIRRUS_TAG}" .
   login_script: docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
-  push_script: docker push duckinator/bork:$CIRRUS_TAG
+  push_script: docker push duckinator/bork:$CIRRUS_TAG duckinator/bork:latest
 
 Lint_task:
   container:
