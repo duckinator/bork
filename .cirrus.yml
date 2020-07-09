@@ -153,7 +153,7 @@ repos_task:
     - bork build
     - bork release --dry-run
 
-release_task:
+Release_task:
   only_if: "changesInclude('bork/__init__.py')"
   trigger_type: manual
   depends_on:
@@ -164,6 +164,9 @@ release_task:
     - FreeBSD
     #- Windows
     - repos
+  env:
+    TWINE_USERNAME: "__token__"
+    TWINE_PASSWORD: ENCRYPTED[00007524e18bea7b59efea288653efa57b1dbd235ed8af00cc325febfc9076631a2bf58ed330d8fa7ca057adb81579b0]
   container:
     image: python:3.8-slim
   install_script:
@@ -173,5 +176,5 @@ release_task:
     - bork build
   test_script:
     - bork run test
-  #release_script:
-  #  - bork release
+  release_script:
+    - bork release
