@@ -23,7 +23,9 @@ class GithubApi:
     def publish(self, release):
         pass
 
-    def create_release(self, tag_name, commitish=None, body=None, draft=True, prerelease=False, assets=None):
+    # pylint: disable=too-many-arguments
+    def create_release(self, tag_name, commitish=None, body=None, draft=True,
+                       prerelease=False, assets=None):
         """
         `tag_name` is the name of the tag.
         `commitish` is a commit hash, branch, tag, etc.
@@ -42,7 +44,8 @@ class GithubApi:
             draft_indicator = ' as a draft'
         else:
             draft_indicator = ''
-        logger().info('Creating GitHub release %s%s. (commit=%s)', tag_name, draft_indicator, commitish)
+        logger().info('Creating GitHub release %s%s. (commit=%s)', tag_name,
+                      draft_indicator, commitish)
 
         request = {
             'tag_name': tag_name,
@@ -61,6 +64,7 @@ class GithubApi:
             self.add_release_asset(upload_url, local_file, name)
 
         return response
+    # pylint: enable=too-many-arguments
 
     def add_release_asset(self, upload_url, local_file, name):
         logger().info('Adding asset %s to release (original file: %s).',

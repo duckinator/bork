@@ -9,7 +9,7 @@ from .github_api import GithubApi
 from .log import logger
 
 
-class GithubConfig:
+class GithubConfig:  # pylint: disable=too-few-public-methods
     def __init__(self, token: str, repository: str):
         owner, repo = repository.split('/')
         self.token = token
@@ -17,7 +17,8 @@ class GithubConfig:
         self.repo = repo
 
 
-class GithubRelease:
+class GithubRelease:  # pylint: disable=too-many-instance-attributes
+    # pylint: disable=too-many-arguments
     def __init__(self, config: GithubConfig,
                  tag: str, commitish: str = None,
                  body: str = None, globs=None,
@@ -44,6 +45,7 @@ class GithubRelease:
         self.release = None
 
         self.assets = self._build_asset_list(find_files(globs))
+    # pylint: enable=too-many-arguments
 
     def _build_asset_list(self, files):
         results = {}
