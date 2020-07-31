@@ -21,7 +21,8 @@ class GithubApi:
         self.token = token
 
     def publish(self, release):
-        pass
+        url = '/' + release['url'].split('/', 3)[3]
+        return self._api_patch(url, {'draft': False})
 
     # pylint: disable=too-many-arguments
     def create_release(self, tag_name, commitish=None, body=None, draft=True,
@@ -60,8 +61,9 @@ class GithubApi:
 
         upload_url = response['upload_url'].split('{?')[0]
 
-        for local_file, name in assets.items():
-            self.add_release_asset(upload_url, local_file, name)
+        if assets:
+            for local_file, name in assets.items():
+                self.add_release_asset(upload_url, local_file, name)
 
         return response
     # pylint: enable=too-many-arguments
@@ -111,3 +113,6 @@ class GithubApi:
 
     def _api_get(self, endpoint, headers=None, server=None):
         return self._api_post(endpoint, None, headers, server, 'GET')
+
+    def _api_patch(self, endpoint, data, headers=None, server=None):
+        return self._api_post(endpoint, data, headers, server, 'PATCH')
