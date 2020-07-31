@@ -1,46 +1,70 @@
 import json
 from pathlib import Path
 import subprocess
-import urllib
+import urllib.request
 
 from .log import logger
 
 
 class GithubApi:
+    """
+    Basic wrapper for the GitHub API.
+
+    Usage:
+        gh = GithubApi('duckinator', 'bork', '<token>')
+        gh.create_release('TEST-RELEASE', assets={'dist/bork-4.0.5.pyz': 'bork.pyz'})
+    """
+
     def __init__(self, owner, repo, token):
         self.owner = owner
         self.repo = repo
         self.token = token
 
-    def create_release_with_file(self, tag_name, commitish, local_file,
-                                 remote_file):
-        response1 = self.create_release(tag_name, commitish)
-        upload_url = json.loads(response1)['upload_url']
-        # Is there a better way to do this `upload_url.replace(...)`?
-        upload_url = upload_url.replace('{?name,label}', '')
-        response2 = self.add_release_asset(upload_url, local_file, remote_file)
-        return response2
+    def publish(self, release):
+        pass
 
-    def create_release(self, tag_name, commitish, body=None, prerelease=False):
+    # pylint: disable=too-many-arguments
+    def create_release(self, tag_name, commitish=None, body=None, draft=True,
+                       prerelease=False, assets=None):
+        """
+        `tag_name` is the name of the tag.
+        `commitish` is a commit hash, branch, tag, etc.
+        `body` is the body of the commit.
+        `draft` indicates whether it should be a draft release or not.
+        `prerelease` indicates whether it should be a prerelease or not.
+        `assets` is a dict mapping local file paths to the uploaded asset name.
+        """
         if commitish is None:
             commitish = self.run('git', 'rev-parse', 'HEAD')
 
         if body is None:
-            body = tag_name + ' release.'
+            body = f'{self.repo} {tag_name}.'
 
-        logger().info('Creating GitHub release %s. (commit=%s)', tag_name, commitish)
+        if draft:
+            draft_indicator = ' as a draft'
+        else:
+            draft_indicator = ''
+        logger().info('Creating GitHub release %s%s. (commit=%s)', tag_name,
+                      draft_indicator, commitish)
 
         request = {
             'tag_name': tag_name,
             'target_commitish': commitish,
-            'name': tag_name,
+            'name': f'{self.repo} {tag_name}',
             'body': body,
-            'draft': False,
+            'draft': draft,
             'prerelease': prerelease,
         }
         url = '/repos/{}/{}/releases'.format(self.owner, self.repo)
         response = self._api_post(url, request)
+
+        upload_url = response['upload_url'].split('{?')[0]
+
+        for local_file, name in assets.items():
+            self.add_release_asset(upload_url, local_file, name)
+
         return response
+    # pylint: enable=too-many-arguments
 
     def add_release_asset(self, upload_url, local_file, name):
         logger().info('Adding asset %s to release (original file: %s).',
@@ -81,7 +105,7 @@ class GithubApi:
         logger().debug('%s %s', req.method, req.full_url)
 
         response = urllib.request.urlopen(req).read().decode()
-        return response
+        return json.loads(response)
 
     # pylint: enable=too-many-arguments
 
