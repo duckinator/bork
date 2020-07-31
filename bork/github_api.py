@@ -3,6 +3,8 @@ from pathlib import Path
 import subprocess
 import urllib.request
 
+import packaging.version
+
 from .log import logger
 
 
@@ -26,7 +28,7 @@ class GithubApi:
 
     # pylint: disable=too-many-arguments
     def create_release(self, tag_name, commitish=None, body=None, draft=True,
-                       prerelease=False, assets=None):
+                       prerelease=None, assets=None):
         """
         `tag_name` is the name of the tag.
         `commitish` is a commit hash, branch, tag, etc.
@@ -47,6 +49,9 @@ class GithubApi:
             draft_indicator = ''
         logger().info('Creating GitHub release %s%s. (commit=%s)', tag_name,
                       draft_indicator, commitish)
+
+        if prerelease is None:
+            prerelease = packaging.version.parse(tag_name).is_prerelease
 
         request = {
             'tag_name': tag_name,
