@@ -24,12 +24,7 @@ class GithubApi:
 
     def publish(self, release):
         url = '/' + release['url'].split('/', 3)[3]
-        # For some reason, prerelease information seems to be lost with PATCH.
-        prerelease = release['prerelease']
-        return self._api_patch(url, {
-            'draft': False,
-            'prerelease': prerelease,
-        })
+        return self._api_patch(url, {'draft': False})
 
     # pylint: disable=too-many-arguments
     def create_release(self, tag_name, commitish=None, body=None, draft=True,
