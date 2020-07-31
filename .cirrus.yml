@@ -178,4 +178,5 @@ docker_builder:
     - docker build --tag duckinator/bork:${CIRRUS_TAG} --tag duckinator/bork:latest --build-arg "VERSION=$(echo $CIRRUS_TAG | sed 's/^v//')" .
   login_script: docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
   push_tag_script: docker push duckinator/bork:$CIRRUS_TAG
-  push_latest_script: docker push duckinator/bork:latest
+  push_latest_script:
+    - grep -E "^__version__\s+=\s+['\"]([0-9.]+)['\"]$" bork/version.py && docker push duckinator/bork:latest
