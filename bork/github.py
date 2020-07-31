@@ -5,29 +5,80 @@ from urllib.request import urlopen
 
 from .asset_manager import download_assets
 from .filesystem import find_files
-# from .github_api import GithubApi
+from .github_api import GithubApi
 from .log import logger
 
 
-def upload(*globs, dry_run=False, strip_zipapp_version=False):
-    log = logger()
+class GithubConfig:
+    def __init__(self, token: str, repository: str):
+        owner, repo = repository.split('/')
+        self.token = token
+        self.owner = owner
+        self.repo = repo
 
-    files = find_files(globs)
 
-    log.info('Uploading files to Github.')
-    for filename in files:
-        if strip_zipapp_version and filename.endswith('.pyz'):
-            dest_filename = '-'.join(filename.split('-')[:-1]) + '.pyz'
-            log.info('- %s as %s', filename, dest_filename)
-        else:
-            dest_filename = filename
-            log.info('- %s', filename)
+class GithubRelease:
+    def __init__(self, config: GithubConfig,
+                 tag: str, commitish: str = None,
+                 body: str = None, globs=None,
+                 dry_run=False, prerelease=False, strip_zipapp_version=False):
+        self.log = logger()
 
-    if dry_run:
-        log.warning('Skipping GitHub upload step since this is a dry run.')
-        return
+        self.owner = config.owner
+        self.repo = config.repo
+        self.token = config.token
 
-    raise NotImplementedError('github.upload() is not yet implemented')
+        self.tag_name = tag
+        self.commitish = commitish
+        self.body = body
+        self.prerelease = prerelease
+
+        self.globs = globs
+        if self.globs is None:
+            self.globs = []
+
+        self.dry_run = dry_run
+        self.strip_zipapp_version = strip_zipapp_version
+
+        self.github = None
+        self.release = None
+
+        self.assets = self._build_asset_list(find_files(globs))
+
+    def _build_asset_list(self, files):
+        results = {}
+        for filename in files:
+            if self.strip_zipapp_version and filename.endswith('.pyz'):
+                asset_name = '-'.join(filename.split('-')[:-1]) + '.pyz'
+            else:
+                asset_name = filename
+            results[filename] = asset_name
+        return results
+
+    def prepare(self):
+        self.log.info('Preparing release for GitHub.')
+
+        for (filename, asset_name) in self.assets.items():
+            self.log.info('- %s as %s', filename, asset_name)
+
+        if self.dry_run:
+            self.log.warning(
+                'Skipping creating draft GitHub release since this is a dry run.')
+            return
+
+        self.github = GithubApi(self.owner, self.repo, self.token)
+        self.release = self.github.create_release(
+            self.tag_name, commitish=self.commitish, body=self.body,
+            draft=True, prerelease=self.prerelease,
+            assets=self.assets)
+
+    def publish(self):
+        if self.dry_run:
+            self.log.warning(
+                'Skipping publishing GitHub release since this is a dry run.')
+            return
+
+        self.github.publish(self.release)
 
 
 def _relevant_asset(asset, file_pattern):

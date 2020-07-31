@@ -20,6 +20,9 @@ class GithubApi:
         self.repo = repo
         self.token = token
 
+    def publish(self, release):
+        pass
+
     def create_release(self, tag_name, commitish=None, body=None, draft=True, prerelease=False, assets=None):
         """
         `tag_name` is the name of the tag.
@@ -35,7 +38,11 @@ class GithubApi:
         if body is None:
             body = f'{self.repo} {tag_name}.'
 
-        logger().info('Creating GitHub release %s. (commit=%s)', tag_name, commitish)
+        if draft:
+            draft_indicator = ' as a draft'
+        else:
+            draft_indicator = ''
+        logger().info('Creating GitHub release %s%s. (commit=%s)', tag_name, draft_indicator, commitish)
 
         request = {
             'tag_name': tag_name,

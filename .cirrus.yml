@@ -149,6 +149,7 @@ Release_task:
   env:
     TWINE_USERNAME: "__token__"
     TWINE_PASSWORD: ENCRYPTED[00007524e18bea7b59efea288653efa57b1dbd235ed8af00cc325febfc9076631a2bf58ed330d8fa7ca057adb81579b0]
+    BORK_GITHUB_TOKEN: ENCRYPTED[cc80f90b8db1cbe53aabf4f50bf73331c88ea3e1b5412bb0f7bc264bd233f23bf8df4fc2b4c41f87ec07310d63619801]
   container:
     image: python:3.8-slim
   install_script:

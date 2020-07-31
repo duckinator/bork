@@ -1,6 +1,7 @@
 from pathlib import Path
 from signal import Signals
 import subprocess
+import os
 
 import toml
 
@@ -56,6 +57,8 @@ def download(package, release_tag, file_pattern, directory):
 
 def release(repository_name, dry_run):
     pyproject = toml.load('pyproject.toml')
+    github_token = os.environ.get('BORK_GITHUB_TOKEN', None)
+    version = builder.version_from_sdist_file()
 
     try:
         release_dict = pyproject['tool']['bork']['release']
@@ -75,14 +78,22 @@ def release(repository_name, dry_run):
     if not release_to_github and not release_to_pypi:
         print('Configured to release to neither PyPi nor GitHub?')
 
+    if release_to_github:
+        github_repository = release_dict.get('github_repository', None)
+
+        config = github.GithubConfig(github_token, github_repository)
+        github_release = github.GithubRelease(
+            config, tag=f'v{version}', commitish=None, body=None,
+            globs=['./dist/*.pyz'],
+            dry_run=dry_run, strip_zipapp_version=strip_zipapp_version)
+        github_release.prepare()
+
     if release_to_pypi:
         pypi.upload(repository_name, './dist/*.tar.gz', './dist/*.whl',
                     dry_run=dry_run)
 
     if release_to_github:
-        github.upload('./dist/*.pyz',
-                      dry_run=dry_run,
-                      strip_zipapp_version=strip_zipapp_version)
+        github_release.publish()
 
 
 def run(alias):
