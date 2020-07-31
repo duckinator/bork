@@ -149,7 +149,7 @@ repos_task:
     - bork release --dry-run
 
 Release_task:
-  only_if: "changesInclude('bork/__init__.py')"
+  only_if: "changesInclude('bork/version.py')"
   name: "Release on PyPi"
   depends_on:
     - Lint
