@@ -49,12 +49,13 @@ class GithubRelease:  # pylint: disable=too-many-instance-attributes
 
     def _build_asset_list(self, files):
         results = {}
-        for filename in files:
+        for file_path in files:
+            filename = file_path.split('/')[-1]
             if self.strip_zipapp_version and filename.endswith('.pyz'):
                 asset_name = '-'.join(filename.split('-')[:-1]) + '.pyz'
             else:
                 asset_name = filename
-            results[filename] = asset_name
+            results[file_path] = asset_name
         return results
 
     def prepare(self):
