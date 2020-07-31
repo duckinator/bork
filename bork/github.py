@@ -22,7 +22,7 @@ class GithubRelease:  # pylint: disable=too-many-instance-attributes
     def __init__(self, config: GithubConfig,
                  tag: str, commitish: str = None,
                  body: str = None, globs=None,
-                 dry_run=False, prerelease=False, strip_zipapp_version=False):
+                 dry_run=False, prerelease=None, strip_zipapp_version=False):
         self.log = logger()
 
         self.owner = config.owner
