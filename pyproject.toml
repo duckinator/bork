@@ -9,7 +9,7 @@ main = "bork.cli:zipapp_main"
 
 [tool.bork.release]
 pypi = true
-github = false
+github = true
 github_repository = "duckinator/bork"
 strip_zipapp_version = true
 
