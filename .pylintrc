@@ -24,7 +24,7 @@ disable=missing-docstring,
         bad-continuation,
         len-as-condition,
         compare-to-zero,
-        invalid-name  # flake8 already enforces PEP8 naming
+        invalid-name
 
 
 [REPORTS]

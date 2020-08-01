@@ -1,8 +1,10 @@
 import os
 
+import pytest
 from helpers import bork_check, python_check, check_zipfile, check_tgz
 
 
+@pytest.mark.network
 def test_download(tmpdir):
     os.chdir(tmpdir)
 
