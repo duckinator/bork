@@ -21,13 +21,14 @@ class GithubApi:
         self.owner = owner
         self.repo = repo
         self.token = token
+        self._last_release = None
 
     def publish(self, release):
         url = '/' + release['url'].split('/', 3)[3]
         return self._api_patch(url, {'draft': False})
 
-    # pylint: disable=too-many-arguments
-    def create_release(self, tag_name, commitish=None, body=None, draft=True,
+    # pylint: disable=too-many-arguments,too-many-locals
+    def create_release(self, tag_name, name=None, commitish=None, body=None, draft=True,
                        prerelease=None, assets=None):
         """
         `tag_name` is the name of the tag.
@@ -41,7 +42,10 @@ class GithubApi:
             commitish = self.run('git', 'rev-parse', 'HEAD')
 
         if body is None:
-            body = f'{self.repo} {tag_name}.'
+            body = '{repo} {tag}'
+
+        if name is None:
+            name = '{repo} {tag}'
 
         if draft:
             draft_indicator = ' as a draft'
@@ -53,11 +57,26 @@ class GithubApi:
         if prerelease is None:
             prerelease = packaging.version.parse(tag_name).is_prerelease
 
+        repo_capitalized = self.repo
+        repo_capitalized[0] = repo_capitalized[0].upper()
+        format_dict = {
+            'owner': self.owner,
+            'repo': self.repo,
+            'repo_capitalized': repo_capitalized,
+            'tag': tag_name,
+            'tag_name': tag_name,
+            'version': packaging.version.parse(tag_name).public,
+        }
+
+        # Don't fetch more data unless needed.
+        if 'changelog' in body:
+            format_dict['changelog'] = self.changelog()
+
         request = {
             'tag_name': tag_name,
             'target_commitish': commitish,
-            'name': f'{self.repo} {tag_name}',
-            'body': body,
+            'name': name.format(**format_dict),
+            'body': body.format(**format_dict),
             'draft': draft,
             'prerelease': prerelease,
         }
@@ -67,11 +86,37 @@ class GithubApi:
         upload_url = response['upload_url'].split('{?')[0]
 
         if assets:
-            for local_file, name in assets.items():
-                self.add_release_asset(upload_url, local_file, name)
+            for local_file, asset_name in assets.items():
+                self.add_release_asset(upload_url, local_file, asset_name)
 
         return response
-    # pylint: enable=too-many-arguments
+    # pylint: enable=too-many-arguments,too-many-locals
+
+    def changelog(self):
+        prs = self._api_get(f'/repos/{self.owner}/{self.repo}/pulls?state=closed')
+        prs = filter(self._relevant_to_changelog, prs)
+        summaries = map(self._format_for_changelog, prs)
+        return "\n".join(summaries)
+
+    @staticmethod
+    def _format_for_changelog(pr):
+        return f'* {pr["title"]} (#{pr["number"]} by @{pr["user"]["login"]})'
+
+    def _relevant_to_changelog(self, pr):
+        if not pr or not pr['merged_at']:
+            return False
+
+        if pr['merged_at'] > self.last_release['created_at']:
+            return True
+
+        return False
+
+    @property
+    def last_release(self):
+        if not self._last_release:
+            self._last_release = self._api_get(
+                f'/repos/{self.owner}/{self.repo}/releases')[0]
+        return self._last_release
 
     def add_release_asset(self, upload_url, local_file, name):
         logger().info('Adding asset %s to release (original file: %s).',

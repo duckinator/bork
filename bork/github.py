@@ -1,6 +1,7 @@
 from distutils.version import LooseVersion
 import fnmatch
 import json
+from pathlib import Path
 from urllib.request import urlopen
 
 from .asset_manager import download_assets
@@ -22,7 +23,7 @@ class GithubRelease:  # pylint: disable=too-many-instance-attributes
     def __init__(self, config: GithubConfig,
                  tag: str, commitish: str = None,
                  body: str = None, globs=None,
-                 dry_run=False, prerelease=False, strip_zipapp_version=False):
+                 dry_run=False, prerelease=None, strip_zipapp_version=False):
         self.log = logger()
 
         self.owner = config.owner
@@ -32,6 +33,10 @@ class GithubRelease:  # pylint: disable=too-many-instance-attributes
         self.tag_name = tag
         self.commitish = commitish
         self.body = body
+
+        if self.body is None:
+            self.body = self.release_template()
+
         self.prerelease = prerelease
 
         self.globs = globs
@@ -49,12 +54,13 @@ class GithubRelease:  # pylint: disable=too-many-instance-attributes
 
     def _build_asset_list(self, files):
         results = {}
-        for filename in files:
+        for file_path in files:
+            filename = file_path.split('/')[-1]
             if self.strip_zipapp_version and filename.endswith('.pyz'):
                 asset_name = '-'.join(filename.split('-')[:-1]) + '.pyz'
             else:
                 asset_name = filename
-            results[filename] = asset_name
+            results[file_path] = asset_name
         return results
 
     def prepare(self):
@@ -81,6 +87,13 @@ class GithubRelease:  # pylint: disable=too-many-instance-attributes
             return
 
         self.github.publish(self.release)
+
+    @staticmethod
+    def release_template():
+        release_template_path = Path('.github/BORK_RELEASE_TEMPLATE.md')
+        if release_template_path.exists():
+            return release_template_path.read_text()
+        return None
 
 
 def _relevant_asset(asset, file_pattern):
