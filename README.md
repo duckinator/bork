@@ -71,6 +71,32 @@ main = "<entrypoint>"
 Where `<entrypoint>` is of the form "module.submodule:function", and
 may be equivalent to a `console_script` entrypoint in setup.cfg.
 
+### Uploading To GitHub Releases
+
+If you want to upload assets to GitHub Releases, you can
+add the following configuration to your pyproject.toml:
+
+```
+[tool.bork]
+# GitHub Releases will have names that are "{project_name} {tag}".
+# The default is the repository name -- e.g., if your repo is at "foo/bar-baz",
+# the default would be "bar-baz".
+# This lets you change that, so it looks nicer. (E.g., "Bar Baz".)
+project_name = "<nicely formatted project name>"
+
+[tool.bork.release]
+# If true, release to PyPi; otherwise, don't.
+pypi = true
+# If true, release to GitHub; otherwise, don't.
+github = true # release to GitHub
+# GitHub repository, e.g. "duckinator/bork".
+github_repository = "<owner>/<repo>"
+# List of file globs to include in GitHub Releases.
+github_release_globs = ["dist/*.pyz", "dist/*.whl"]
+# If true, zipapps are named "<name>.pyz", otherwise "<name>-<version>.pyz".
+strip_zipapp_version = true
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/duckinator/bork. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the
