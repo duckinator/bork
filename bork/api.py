@@ -55,7 +55,7 @@ def download(package, release_tag, file_pattern, directory):
     source.download(package, release_tag, file_pattern, directory)
 
 
-def release(repository_name, dry_run):
+def release(repository_name, dry_run):  # pylint: disable=too-many-locals
     pyproject = toml.load('pyproject.toml')
     bork_config = pyproject.get('tool', {}).get('bork', {})
     github_token = os.environ.get('BORK_GITHUB_TOKEN', None)
