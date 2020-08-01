@@ -19,5 +19,9 @@ strip_zipapp_version = true
 [tool.bork.aliases]
 # Runs *only* pylint and flake8. (Not the actual tests.)
 lint = "pytest -k 'flake8 or pylint or mypy' --pylint --flake8 --mypy --verbose"
-# Runs tests, pylint, and flake8.
-test = "pytest --pylint --flake8 --mypy --verbose"
+# Runs fast tests, pylint, and flake8.
+test = "pytest --pylint --flake8 --mypy --verbose -m 'not slow'"
+# Runs slow tests.
+test-slow = "pytest --verbose -m slow"
+# Runs fast tests, slow tests, pylint, and flake8.
+test-all = "pytest --pylint --flake8 --mypy --verbose"

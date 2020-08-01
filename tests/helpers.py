@@ -40,5 +40,9 @@ def _check_call(cmd, **kwargs):
                           universal_newlines=True, check=True, **kwargs)
 
 
+def check_run(*args):
+    return _check_call(*args)
+
+
 def python_check(*args):
     return _check_call([sys.executable, *args])
