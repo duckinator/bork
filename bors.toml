@@ -9,10 +9,6 @@ status = [
   "Zipapp_bootstrap container:python:3.8-slim",
   "macOS PYTHON:3.6.8",
   "macOS PYTHON:3.7.2",
-  "repos REPO:https://github.com/duckinator/bork.git",
-  "repos REPO:https://github.com/duckinator/emanate.git",
-  "repos REPO:https://github.com/ppb/ppb-vector.git",
-  "repos REPO:https://github.com/astronouth7303/ppb-mutant.git",
 ]
 
 delete_merged_branches = true

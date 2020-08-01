@@ -117,28 +117,6 @@ FreeBSD_task:
 #     - C:\Python\python.exe --version
 #     - C:\Python\python.exe -m pytest --verbose
 
-#repos_task:
-#  container:
-#    image: python:3-slim
-#  env:
-#    LC_ALL: C.UTF-8
-#    LANG: C.UTF-8
-#    matrix:
-#      - REPO: https://github.com/ppb/ppb-vector.git
-#      - REPO: https://github.com/duckinator/emanate.git
-#      - REPO: https://github.com/duckinator/bork.git
-#      - REPO: https://github.com/astronouth7303/ppb-mutant.git
-#  install_script:
-#    - apt-get update
-#    - apt-get install -y git
-#    - pip3 install .
-#  script:
-#    - git clone $REPO /tmp/repo
-#    - cd /tmp/repo
-#    - bork clean
-#    - bork build
-#    - bork release --dry-run
-
 # If bork/version.py is modified on the master branch, make a release.
 Release_task:
   only_if: "changesInclude('bork/version.py') && $BRANCH == 'master'"
