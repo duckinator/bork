@@ -1,8 +1,9 @@
-from distutils.version import LooseVersion
 import fnmatch
 import json
 from pathlib import Path
 from urllib.request import urlopen
+
+import packaging.version
 
 from .asset_manager import download_assets
 from .filesystem import find_files
@@ -132,7 +133,7 @@ def _get_release_info(repo, name, draft=False, prerelease=False):
             # Find the latest
             release = max(
                 releases,
-                key=lambda x: LooseVersion(x['tag_name'].lstrip('v')),
+                key=lambda x: packaging.version.parse(x['tag_name']).public,
             )
             log.info("Selected release '%s' as latest", release['name'])
         else:
