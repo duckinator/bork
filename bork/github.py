@@ -11,11 +11,16 @@ from .log import logger
 
 
 class GithubConfig:  # pylint: disable=too-few-public-methods
-    def __init__(self, token: str, repository: str):
+    def __init__(self, token: str, repository: str, project_name: str):
         owner, repo = repository.split('/')
         self.token = token
         self.owner = owner
         self.repo = repo
+
+        if project_name is None:
+            project_name = self.repo
+
+        self.project_name = project_name
 
 
 class GithubRelease:  # pylint: disable=too-many-instance-attributes
@@ -29,6 +34,7 @@ class GithubRelease:  # pylint: disable=too-many-instance-attributes
         self.owner = config.owner
         self.repo = config.repo
         self.token = config.token
+        self.project_name = config.project_name
 
         self.tag_name = tag
         self.commitish = commitish
@@ -74,7 +80,7 @@ class GithubRelease:  # pylint: disable=too-many-instance-attributes
                 'Skipping creating draft GitHub release since this is a dry run.')
             return
 
-        self.github = GithubApi(self.owner, self.repo, self.token)
+        self.github = GithubApi(self.owner, self.repo, self.project_name, self.token)
         self.release = self.github.create_release(
             self.tag_name, commitish=self.commitish, body=self.body,
             draft=True, prerelease=self.prerelease,
