@@ -69,6 +69,8 @@ def release(repository_name, dry_run):
         strip_zipapp_version = False
 
     project_name = bork_config.get('project_name', None)
+    release_config = bork_config.get('release', {})
+    globs = release_config.get('github_release_globs', ['./dist/*.pyz'])
 
     try:
         release_dict = pyproject['tool']['bork']['release']
@@ -87,7 +89,7 @@ def release(repository_name, dry_run):
         config = github.GithubConfig(github_token, github_repository, project_name)
         github_release = github.GithubRelease(
             config, tag=f'v{version}', commitish=None, body=None,
-            globs=['./dist/*.pyz'],
+            globs=globs,
             dry_run=dry_run, strip_zipapp_version=strip_zipapp_version)
         github_release.prepare()
 
