@@ -27,7 +27,7 @@ class GithubApi:
         url = '/' + release['url'].split('/', 3)[3]
         return self._api_patch(url, {'draft': False})
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments,too-many-locals
     def create_release(self, tag_name, name=None, commitish=None, body=None, draft=True,
                        prerelease=None, assets=None):
         """
@@ -90,7 +90,7 @@ class GithubApi:
                 self.add_release_asset(upload_url, local_file, asset_name)
 
         return response
-    # pylint: enable=too-many-arguments
+    # pylint: enable=too-many-arguments,too-many-locals
 
     def changelog(self):
         prs = self._api_get(f'/repos/{self.owner}/{self.repo}/pulls?state=closed')
@@ -98,7 +98,8 @@ class GithubApi:
         summaries = map(self._format_for_changelog, prs)
         return "\n".join(summaries)
 
-    def _format_for_changelog(self, pr):
+    @staticmethod
+    def _format_for_changelog(pr):
         return f'* {pr["title"]} (#{pr["number"]} by @{pr["user"]["login"]})'
 
     def _relevant_to_changelog(self, pr):
@@ -113,7 +114,8 @@ class GithubApi:
     @property
     def last_release(self):
         if not self._last_release:
-            self._last_release = self._api_get(f'/repos/{self.owner}/{self.repo}/releases')[0]
+            self._last_release = self._api_get(
+                f'/repos/{self.owner}/{self.repo}/releases')[0]
         return self._last_release
 
     def add_release_asset(self, upload_url, local_file, name):
