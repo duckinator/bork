@@ -57,6 +57,7 @@ def download(package, release_tag, file_pattern, directory):
 
 def release(repository_name, dry_run):
     pyproject = toml.load('pyproject.toml')
+    bork_config = pyproject.get('tool', {}).get('bork', {})
     github_token = os.environ.get('BORK_GITHUB_TOKEN', None)
     version = builder.version_from_sdist_file()
 
@@ -66,6 +67,8 @@ def release(repository_name, dry_run):
     except KeyError:
         # Not an error.
         strip_zipapp_version = False
+
+    project_name = bork_config.get('project_name', None)
 
     try:
         release_dict = pyproject['tool']['bork']['release']
@@ -81,7 +84,7 @@ def release(repository_name, dry_run):
     if release_to_github:
         github_repository = release_dict.get('github_repository', None)
 
-        config = github.GithubConfig(github_token, github_repository)
+        config = github.GithubConfig(github_token, github_repository, project_name)
         github_release = github.GithubRelease(
             config, tag=f'v{version}', commitish=None, body=None,
             globs=['./dist/*.pyz'],

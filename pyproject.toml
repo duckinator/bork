@@ -3,6 +3,9 @@
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[tool.bork]
+project_name = "Bork"
+
 [tool.bork.zipapp]
 enabled = true
 main = "bork.cli:zipapp_main"

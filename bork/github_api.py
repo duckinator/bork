@@ -17,10 +17,11 @@ class GithubApi:
         gh.create_release('TEST-RELEASE', assets={'dist/bork-4.0.5.pyz': 'bork.pyz'})
     """
 
-    def __init__(self, owner, repo, token):
+    def __init__(self, owner, repo, project_name, token):
         self.owner = owner
         self.repo = repo
         self.token = token
+        self.project_name = project_name
         self._last_release = None
 
     def publish(self, release):
@@ -45,7 +46,7 @@ class GithubApi:
             body = '{repo} {tag}'
 
         if name is None:
-            name = '{repo} {tag}'
+            name = '{project_name} {tag}'
 
         if draft:
             draft_indicator = ' as a draft'
@@ -57,12 +58,10 @@ class GithubApi:
         if prerelease is None:
             prerelease = packaging.version.parse(tag_name).is_prerelease
 
-        repo_capitalized = self.repo
-        repo_capitalized[0] = repo_capitalized[0].upper()
         format_dict = {
+            'project_name': self.project_name,
             'owner': self.owner,
             'repo': self.repo,
-            'repo_capitalized': repo_capitalized,
             'tag': tag_name,
             'tag_name': tag_name,
             'version': packaging.version.parse(tag_name).public,

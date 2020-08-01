@@ -1,4 +1,4 @@
-{repo_capitalized} {tag} has been released.
+{project_name} {tag} is now available!
 
 PyPI package: https://pypi.org/project/bork/{version}/
 Docker image: https://hub.docker.com/r/duckinator/bork/
