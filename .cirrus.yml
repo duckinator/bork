@@ -55,8 +55,8 @@ Linux_task:
       - image: python:3.7-slim
       - image: python:3.8-slim
   install_script:
-    - apt update
-    - apt install git
+    - apt-get update
+    - apt-get install -y git
     - pip install . .[testing]
   script:
     - python3 --version
