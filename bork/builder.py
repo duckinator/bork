@@ -99,6 +99,6 @@ def zipapp():
     _prepare_zipapp_directory(orig_source, source, name)
     _zipapp_add_deps(source)
 
-    Zipapp.create_archive(source, target, interpreter, main)
+    Zipapp.create_archive(source, target, interpreter, main, compressed=True)
     if not Path(target).exists():
         raise RuntimeError('Failed to build zipapp: {}'.format(target))
