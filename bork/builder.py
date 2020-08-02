@@ -9,6 +9,7 @@ import pep517.build  # type: ignore
 import toml
 
 from .filesystem import load_setup_cfg, try_delete
+from .log import logger
 
 
 # The "proper" way to handle the default would be to check python_requires
@@ -99,6 +100,18 @@ def zipapp():
     _prepare_zipapp_directory(orig_source, source, name)
     _zipapp_add_deps(source)
 
-    Zipapp.create_archive(source, target, interpreter, main)
+    # The `compressed=True` kwarg was added to create_archive in Python 3.7.
+    # For older versions, we print a warning.
+    if sys.version_info >= (3, 7):
+        kwargs = {'compressed': True}
+    else:
+        kwargs = {}
+        logger().warning(
+            'Creating compressed ZipApps requires Python 3.7 or newer. '
+            "You're using and older version, so your ZipApp (.pyz) files may be larger."
+        )
+
+    # pylint has a false positive and thinks the `compressed` kwarg is always passed.
+    Zipapp.create_archive(source, target, interpreter, main, **kwargs)  # pylint: disable=unexpected-keyword-arg
     if not Path(target).exists():
         raise RuntimeError('Failed to build zipapp: {}'.format(target))
