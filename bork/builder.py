@@ -111,6 +111,7 @@ def zipapp():
             "You're using and older version, so your ZipApp (.pyz) files may be larger."
         )
 
-    Zipapp.create_archive(source, target, interpreter, main, **kwargs)
+    # pylint has a false positive and thinks the `compressed` kwarg is always passed.
+    Zipapp.create_archive(source, target, interpreter, main, **kwargs)  # pylint: disable=unexpected-keyword-arg
     if not Path(target).exists():
         raise RuntimeError('Failed to build zipapp: {}'.format(target))
