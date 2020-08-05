@@ -119,7 +119,7 @@ FreeBSD_task:
 
 # If bork/version.py is modified on the master branch, make a release.
 Release_task:
-  only_if: "changesInclude('bork/version.py') && $BRANCH == 'master'"
+  only_if: "changesInclude('bork/version.py') && $BRANCH == 'master' && $CIRRUS_CRON == ''"
   depends_on:
     - Lint
     - Zipapp_bootstrap
@@ -127,7 +127,6 @@ Release_task:
     - macOS
     - FreeBSD
     #- Windows
-    #- repos
   env:
     TWINE_USERNAME: "__token__"
     TWINE_PASSWORD: ENCRYPTED[00007524e18bea7b59efea288653efa57b1dbd235ed8af00cc325febfc9076631a2bf58ed330d8fa7ca057adb81579b0]
