@@ -71,7 +71,7 @@ main = "<entrypoint>"
 Where `<entrypoint>` is of the form "module.submodule:function", and
 may be equivalent to a `console_script` entrypoint in setup.cfg.
 
-**NOTE**: ZipApps will only be compressed when using Python 3.7 and earlier. This means ZipApps created with older versions may be significantly larger.
+**NOTE**: ZipApps will only be compressed when using Python 3.7 and later. This means ZipApps created with older versions may be significantly larger.
 
 ### Uploading To GitHub Releases
 
