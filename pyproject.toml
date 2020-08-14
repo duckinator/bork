@@ -19,9 +19,11 @@ strip_zipapp_version = true
 [tool.bork.aliases]
 # Runs *only* pylint and mypy. (Not the actual tests.)
 lint = "pytest -k 'pylint or mypy' --pylint --mypy --verbose"
+# Runs all tests and pylint.
+test = "pytest --pylint --mypy --verbose"
 # Runs fast tests, and pylint.
-test = "pytest --pylint --mypy --verbose -m 'not slow'"
+test-fast = "pytest --pylint --mypy --verbose -m 'not slow'"
 # Runs slow tests.
 test-slow = "pytest --verbose -m slow"
-# Runs fast tests, slow tests, and pylint.
-test-all = "pytest --pylint --mypy --verbose"
+# Runs fast tests and slow tests, but not pylint.
+_test-only = "pytest --verbose"

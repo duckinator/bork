@@ -60,7 +60,6 @@ Linux_task:
   script:
     - python3 --version
     - bork run test
-    - bork run test-slow
 
 macOS_task:
   osx_instance:
@@ -83,7 +82,6 @@ macOS_task:
   script:
     - python3 --version
     - bork run test
-    - bork run test-slow
 
 FreeBSD_task:
   freebsd_instance:
@@ -96,11 +94,10 @@ FreeBSD_task:
     - PY=`echo $PYTHON | tr -d '.'`
     - pkg install -y python${PY} py${PY}-setuptools git
     - python${PYTHON} -m ensurepip
-    - python${PYTHON} -m pip install -e .[testing]
+    - python${PYTHON} -m pip install -e .[testing_only]
   script:
     - python${PYTHON} --version
-    - bork run test
-    - bork run test-slow
+    - bork run _test-only
 
 # Windows_task:
 #   allow_failures: $CIRRUS_TASK_NAME =~ '.*-rc-.*'
