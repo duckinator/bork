@@ -106,8 +106,8 @@ def run(alias):
 
     try:
         command = pyproject['tool']['bork']['aliases'][alias]
-    except KeyError:
-        raise RuntimeError("No such alias: '{}'".format(alias))
+    except KeyError as error:
+        raise RuntimeError("No such alias: '{}'".format(alias)) from error
 
     logger().info("Running '%s'", command)
 
