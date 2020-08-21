@@ -55,7 +55,7 @@ def download(files, directory, package, release_tag):
     try:
         api.download(package, release_tag, files, directory)
     except ValueError as error:
-        raise BadParameter(error)
+        raise BadParameter(error) from error
 
 
 @cli.command()
