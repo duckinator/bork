@@ -55,36 +55,26 @@ def download(package, release_tag, file_pattern, directory):
     source.download(package, release_tag, file_pattern, directory)
 
 
-def release(repository_name, dry_run):  # pylint: disable=too-many-locals
+def release(repository_name, dry_run):
     pyproject = toml.load('pyproject.toml')
     bork_config = pyproject.get('tool', {}).get('bork', {})
+    release_config = bork_config.get('release', {})
     github_token = os.environ.get('BORK_GITHUB_TOKEN', None)
     version = builder.version_from_sdist_file()
 
-    try:
-        release_dict = pyproject['tool']['bork']['release']
-        strip_zipapp_version = release_dict.get('strip_zipapp_version', False)
-    except KeyError:
-        # Not an error.
-        strip_zipapp_version = False
-
     project_name = bork_config.get('project_name', None)
-    release_config = bork_config.get('release', {})
+
+    strip_zipapp_version = release_config.get('strip_zipapp_version', False)
     globs = release_config.get('github_release_globs', ['./dist/*.pyz'])
 
-    try:
-        release_dict = pyproject['tool']['bork']['release']
-        release_to_github = release_dict.get('github', False)
-        release_to_pypi = release_dict.get('pypi', True)
-    except KeyError:
-        release_to_github = False
-        release_to_pypi = True
+    release_to_github = release_config.get('github', False)
+    release_to_pypi = release_config.get('pypi', True)
 
     if not release_to_github and not release_to_pypi:
         print('Configured to release to neither PyPi nor GitHub?')
 
     if release_to_github:
-        github_repository = release_dict.get('github_repository', None)
+        github_repository = release_config.get('github_repository', None)
 
         config = github.GithubConfig(github_token, github_repository, project_name)
         github_release = github.GithubRelease(
