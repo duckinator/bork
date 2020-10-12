@@ -1,5 +1,4 @@
 from pathlib import Path
-import shutil
 import subprocess
 import sys
 # Slight kludge so we can have a function named zipapp().
@@ -26,40 +25,48 @@ def dist():
     pep517.build.main(pep517.build.parser.parse_args(['.', *args]))
 
 
-def version_from_sdist_file():
-    sdist = max(Path.cwd().glob('dist/*.tar.gz')).name
-    return sdist.replace('.tar.gz', '').split('-')[1]
+def _package_name():
+    setup_cfg = load_setup_cfg()
+
+    if 'metadata' not in setup_cfg or 'name' not in setup_cfg['metadata']:
+        raise RuntimeError(
+            "The [metadata] section of setup.cfg needs the 'name' key set.",
+        )
+
+    return setup_cfg['metadata']['name']
 
 
-def _prepare_zipapp_directory(source, dest, name):
-    ignore = shutil.ignore_patterns('**/__pycache__/**')
+def _python_interpreter(config):
+    # To override the default interpreter, add this to your project's setup.cfg:
+    #
+    # [bork]
+    # python_interpreter = /path/to/python
+    return config.get('python_interpreter', DEFAULT_PYTHON_INTERPRETER)
+
+
+def _bdist_file():
+    return max(Path.cwd().glob('dist/*.whl'))
+
+
+def _prepare_zipapp(dest, bdist_file):
+    # Prepare zipapp directory.
     try_delete(dest)
     Path(dest).mkdir()
-    realdest = Path(dest, name)
-    shutil.copytree(source, realdest, ignore=ignore)
-
-    return Path(realdest).is_dir()
-
-
-def _zipapp_add_deps(dest):
-    config = load_setup_cfg()
-    deps = None
-    if 'options' in config:
-        options = config['options']
-        if 'install_requires' in options:
-            deps = options['install_requires'].strip().split('\n')
-            deps = list(map(str.strip, deps))
-
-    if not deps:
-        return
-
-    cmd = [sys.executable, '-m', 'pip', 'install', '--target', dest] + deps
-    subprocess.check_call(cmd)
+    return subprocess.check_call([
+        sys.executable, '-m', 'pip', 'install', '--target', dest, bdist_file
+    ])
 
 
-# BAD ASSUMPTION: We assume dist() is called before zipapp().
+def version_from_bdist_file():
+    return _bdist_file().name.replace('.tar.gz', '').split('-')[1]
+
+
 def zipapp():
-    """Build a zipapp for the project."""
+    """
+    Build a zipapp for the project.
+
+    dist() should be called before zipapp().
+    """
 
     pyproject = toml.load('pyproject.toml')
     config = pyproject.get('tool', {}).get('bork', {})
@@ -69,36 +76,15 @@ def zipapp():
     if not want_zipapp:
         return
 
-    setup_cfg = load_setup_cfg()
-
-    if 'metadata' not in setup_cfg or 'name' not in setup_cfg['metadata']:
-        raise RuntimeError(
-            "The [metadata] section of setup.cfg needs the 'name' key set.",
-        )
-
-    name = setup_cfg['metadata']['name']
-
-    # The code is assumed to be in ./<name>
-    orig_source = str(Path(name))
-    source = str(Path('build', 'zipapp'))
-
-    version = version_from_sdist_file()
+    name = _package_name()
+    dest = str(Path('build', 'zipapp'))
+    version = version_from_bdist_file()
+    main = zipapp_cfg['main']
 
     # Output file is dist/<package name>-<package version>.pyz.
     target = 'dist/{}-{}.pyz'.format(name, version)
 
-    # To override the default interpreter, add this to your project's setup.cfg:
-    #
-    # [bork]
-    # python_interpreter = /path/to/python
-    interpreter = config.get('python_interpreter', DEFAULT_PYTHON_INTERPRETER)
-
-    # This is where GitHub issue #9 ("Allow specifying console_script
-    # entrypoint") would likely be implemented.
-    main = zipapp_cfg['main']
-
-    _prepare_zipapp_directory(orig_source, source, name)
-    _zipapp_add_deps(source)
+    _prepare_zipapp(dest, _bdist_file())
 
     # The `compressed=True` kwarg was added to create_archive in Python 3.7.
     # For older versions, we print a warning.
@@ -111,7 +97,12 @@ def zipapp():
             "You're using and older version, so your ZipApp (.pyz) files may be larger."
         )
 
-    # pylint has a false positive and thinks the `compressed` kwarg is always passed.
-    Zipapp.create_archive(source, target, interpreter, main, **kwargs)  # pylint: disable=unexpected-keyword-arg
+    # pylint has a false positive and thinks the `compressed` kwarg is passed
+    # on Python 3.6, so we ignore that error.
+
+    # pylint: disable=unexpected-keyword-arg
+    Zipapp.create_archive(dest, target, _python_interpreter(config), main,
+        **kwargs)
+    # pylint: enable=unexpected-keyword-arg
     if not Path(target).exists():
         raise RuntimeError('Failed to build zipapp: {}'.format(target))
