@@ -10,6 +10,17 @@ from . import __version__
 from . import api
 from .log import logger
 
+try:
+    from click._unicodefun import _verify_python3_env  # type: ignore
+    _verify_python3_env()
+except RuntimeError:
+    # Kludge to fix environment for Click.
+    # If we ever switch away from Click, this can probably be removed.
+    os.environ['LANG'] = 'C.UTF-8'
+    os.environ['LC_ALL'] = 'C.UTF-8'
+    os.execvpe(sys.argv[0], sys.argv, os.environ)
+    raise
+
 
 DOWNLOAD_SOURCES_STR = ' '.join(api.DOWNLOAD_SOURCES)
 

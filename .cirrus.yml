@@ -2,11 +2,6 @@
 # master, staging, and trying branches. (So bors can use them.)
 use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true' || $CIRRUS_BRANCH == 'master' || $CIRRUS_BRANCH == 'staging' || $CIRRUS_BRANCH == 'trying'
 
-# This makes Click behave itself.
-env:
-  LC_ALL: C.UTF-8
-  LANG: C.UTF-8
-
 Lint_task:
   container:
     image: python:3.8-slim
