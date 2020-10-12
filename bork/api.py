@@ -60,7 +60,7 @@ def release(repository_name, dry_run):
     bork_config = pyproject.get('tool', {}).get('bork', {})
     release_config = bork_config.get('release', {})
     github_token = os.environ.get('BORK_GITHUB_TOKEN', None)
-    version = builder.version_from_sdist_file()
+    version = builder.version_from_bdist_file()
 
     project_name = bork_config.get('project_name', None)
 
