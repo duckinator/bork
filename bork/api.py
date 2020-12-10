@@ -1,7 +1,8 @@
+import os
 from pathlib import Path
 from signal import Signals
 import subprocess
-import os
+import sys
 
 import toml
 
@@ -75,6 +76,15 @@ def release(repository_name, dry_run):
 
     if release_to_github:
         github_repository = release_config.get('github_repository', None)
+
+        if github_token is None:
+            logger().error('No GitHub token specified. Use the BORK_GITHUB_TOKEN '
+                      'environment variable to set it.')
+
+            if dry_run:
+                logger().error('When not using --dry-run, this error is fatal.')
+            else:
+                sys.exit(1)
 
         config = github.GithubConfig(github_token, github_repository, project_name)
         github_release = github.GithubRelease(
