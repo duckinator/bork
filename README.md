@@ -99,6 +99,45 @@ github_release_globs = ["dist/*.pyz", "dist/*.whl"]
 strip_zipapp_version = true
 ```
 
+## Aliases (Basic task runner)
+
+Bork includes a very basic task runner, for single-line commands.
+
+As an example [from Emanate](https://github.com/duckinator/emanate/blob/master/pyproject.toml),
+if you put this in pyproject.toml:
+
+```toml
+[tool.bork.aliases]
+# Runs *only* pylint. (Not the actual tests.)
+lint = "pytest -k 'pylint' --pylint --verbose"
+# Runs tests and pylint.
+test = "pytest --pylint --verbose"
+test-only = "pytest --verbose"
+docs = "env PYTHONPATH=./ pdoc3 --html --output-dir ./html --force emanate"
+```
+
+Then you can run `bork aliases` to get the list of aliases:
+
+```
+~/emanate$ bork aliases
+lint
+test
+test-only
+docs
+~/emanate$
+```
+
+And run `bork run <alias>` to run that alias:
+
+```
+~/emanate$ bork run docs
+./html/emanate/index.html
+./html/emanate/cli.html
+./html/emanate/config.html
+./html/emanate/version.html
+~/emanate$
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/duckinator/bork. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the
