@@ -109,7 +109,12 @@ if you put this in pyproject.toml:
 ```toml
 [tool.bork.aliases]
 # Runs *only* pylint. (Not the actual tests.)
-lint = "pytest -k 'pylint' --pylint --verbose"
+lint = [
+	# Runs *only* pylint. (Not the actual tests.)
+	"pytest -k 'pylint' --pylint --verbose",
+	# Typecheck the project
+	"mypy .",
+]
 # Runs tests and pylint.
 test = "pytest --pylint --verbose"
 test-only = "pytest --verbose"
