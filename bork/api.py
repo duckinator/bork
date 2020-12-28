@@ -105,14 +105,23 @@ def run(alias):
     pyproject = toml.load('pyproject.toml')
 
     try:
-        command = pyproject['tool']['bork']['aliases'][alias]
+        commands = pyproject['tool']['bork']['aliases'][alias]
     except KeyError as error:
         raise RuntimeError("No such alias: '{}'".format(alias)) from error
 
-    logger().info("Running '%s'", command)
+    logger().info("Running '%s'", commands)
+
+    if isinstance(commands, str):
+        commands = [commands]
+    elif isinstance(commands, list):
+        pass
+    else:
+        raise TypeError(f"commands must be str or list, was {type(commands)}")
 
     try:
-        subprocess.run(command, check=True, shell=True)
+        for command in commands:
+            print(command)
+            subprocess.run(command, check=True, shell=True)
 
     except subprocess.CalledProcessError as error:
         if error.returncode < 0:
