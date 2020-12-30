@@ -97,7 +97,7 @@ FreeBSD_task:
     - python${PYTHON} -m pip install -e .[testing_only]
   script:
     - python${PYTHON} --version
-    - bork run _test-only
+    - bork run test
 
 # Windows_task:
 #   allow_failures: $CIRRUS_TASK_NAME =~ '.*-rc-.*'
