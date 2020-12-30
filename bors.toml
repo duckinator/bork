@@ -5,10 +5,13 @@ status = [
   "Linux container:python:3.6-slim",
   "Linux container:python:3.7-slim",
   "Linux container:python:3.8-slim",
+  "Linux container:python:3.9-slim",
   "Zipapp_bootstrap container:python:3.7-slim",
   "Zipapp_bootstrap container:python:3.8-slim",
+  "Zipapp_bootstrap container:python:3.9-slim",
   "macOS PYTHON:3.6.8",
   "macOS PYTHON:3.7.2",
+  "macOS PYTHON:3.9.0",
 ]
 
 delete_merged_branches = true
