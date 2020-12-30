@@ -20,6 +20,7 @@ def dist():
     """Build the sdist and wheel distributions."""
 
     builder = build.ProjectBuilder('.')
+    (Path.cwd() / 'dist').mkdir(mode=0o755, exist_ok=True)
     builder.build('sdist', './dist/')
     builder.build('wheel', './dist/')
 
