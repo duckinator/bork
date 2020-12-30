@@ -44,8 +44,8 @@ Zipapp_bootstrap_task:
     - cd /tmp/pass3
     - cp /tmp/pass2/dist/bork-*.pyz /tmp/bork-pass2.pyz
     - python3 /tmp/bork-pass2.pyz build
-    - cp ./dist/bork-*.pyz /tmp/bork-pass3.pyz
-    - python3 /tmp/bork-pass3.pyz run lint
+    - '[ -e ./dist/bork-*.pyz ]'
+
 
 Linux_task:
   container:
