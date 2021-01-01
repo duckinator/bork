@@ -78,6 +78,7 @@ macOS_task:
     - pyenv install ${PYTHON}
     - pyenv global ${PYTHON}
     - pyenv rehash
+    - pip install -U --upgrade-strategy eager pip 'setuptools>42'
     - pip install -e .[testing]
   script:
     - python3 --version
