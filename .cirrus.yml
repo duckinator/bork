@@ -125,6 +125,7 @@ FreeBSD_task:
 
 success_task:
   name: CI success
+  container: {image: "busybox"}
   depends_on:
     - FreeBSD tests
     - Linux tests
