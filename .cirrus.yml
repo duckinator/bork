@@ -22,6 +22,7 @@ Zipapp_bootstrap_task:
     matrix:
       image: python:3.7-slim
       image: python:3.8-slim
+      image: python:3.9-slim
   setup_script:
     - cp -r . /tmp/bork-pristine
     - cp -r /tmp/bork-pristine /tmp/pass1
@@ -53,6 +54,7 @@ Linux_task:
       - image: python:3.6-slim
       - image: python:3.7-slim
       - image: python:3.8-slim
+      - image: python:3.9-slim
   install_script:
     - apt-get update
     - apt-get install -y git
@@ -69,11 +71,13 @@ macOS_task:
     LANG: en_US.UTF-8
     PATH: ${HOME}/.pyenv/shims:${PATH}
     matrix:
-      - PYTHON: 3.6.8
-      - PYTHON: 3.7.2
+      - PYTHON: 3.6.9
+      - PYTHON: 3.7.9
+      - PYTHON: 3.8.6
+      - PYTHON: 3.9.0
   install_script:
     # Per the pyenv homebrew recommendations.
-    # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
+    #  https://github.com/pyenv/pyenv/wiki#suggested-build-environment
     - brew install openssl readline pyenv git
     - pyenv install ${PYTHON}
     - pyenv global ${PYTHON}
@@ -90,6 +94,7 @@ FreeBSD_task:
     matrix:
       - PYTHON: 3.6
       - PYTHON: 3.7
+      - PYTHON: 3.8
   install_script:
     - PY=`echo $PYTHON | tr -d '.'`
     - pkg install -y python${PY} py${PY}-setuptools git
