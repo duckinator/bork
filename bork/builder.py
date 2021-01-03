@@ -4,7 +4,7 @@ import sys
 # Slight kludge so we can have a function named zipapp().
 import zipapp as Zipapp  # noqa: N812
 
-import pep517.build  # type: ignore
+import build
 import toml
 
 from .filesystem import load_setup_cfg, try_delete
@@ -19,10 +19,9 @@ DEFAULT_PYTHON_INTERPRETER = '/usr/bin/env python3'
 def dist():
     """Build the sdist and wheel distributions."""
 
-    # We can use the pep517 library to add separate source and binary build
-    # functions, but I'm leaving that alone unless someone asks for it.
-    args = ['--source', '--binary']
-    pep517.build.main(pep517.build.parser.parse_args(['.', *args]))
+    builder = build.ProjectBuilder('.')
+    builder.build('sdist', './dist/')
+    builder.build('wheel', './dist/')
 
 
 def _package_name():
