@@ -50,7 +50,7 @@ def build():
 
         logger().error(
             "You need a 'pyproject.toml' file describing which buildsystem to "
-            "use, per PEP 517. " + msg
+            "use, per PEP 517. %s", msg
         )
 
         raise e
