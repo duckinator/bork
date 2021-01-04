@@ -105,7 +105,7 @@ FreeBSD_task:
       - PYTHON: 3.8
   install_script:
     - PY=`echo $PYTHON | tr -d '.'`
-    - pkg install -y python${PY} py${PY}-setuptools git
+    - pkg install -y python${PY} git
     - python${PYTHON} -m ensurepip
     - python${PYTHON} -m pip install -U --upgrade-strategy eager pip 'setuptools>42'
     - python${PYTHON} -m pip install -e .[testing_only]
