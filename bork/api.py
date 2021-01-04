@@ -41,10 +41,10 @@ def build():
         if setup("cfg").exists() or setup("py").exists():
             msg = """If you use setuptools, the following should be sufficient:
 
-            	[build-system]
-            	requires = ["setuptools > 42", "wheel"]
-            	build-backend = "setuptools.build_meta"
-            """
+	[build-system]
+	requires = ["setuptools > 42", "wheel"]
+	build-backend = "setuptools.build_meta" """
+
         else:
             msg = "Please refer to your build system's documentation."
 
