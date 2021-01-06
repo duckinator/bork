@@ -4,6 +4,7 @@ from signal import Signals
 import subprocess
 import sys
 
+import pep517  # type:ignore
 import toml
 
 from . import builder
@@ -38,6 +39,11 @@ def clean():
     for name in Path.cwd().glob('*.egg-info'):
         if name.is_dir():
             try_delete(name)
+
+
+def dependencies():
+    """Get the list of dependencies."""
+    return pep517.meta.load('.').metadata.get_all('Requires-Dist')
 
 
 def download(package, release_tag, file_pattern, directory):
