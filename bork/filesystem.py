@@ -29,7 +29,8 @@ def load_pyproject():
                     'requires': ['setuptools>=42'],
                 },
             }
-        else:
+        else:  # noqa: R1705
+            # Can't figure out what kind of project it is.
             raise
 
 
