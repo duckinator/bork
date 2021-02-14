@@ -1,6 +1,6 @@
 # Allow compute credits usage for collaborators and anything pushed to the
-# master, staging, and trying branches. (So bors can use them.)
-use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true' || $CIRRUS_BRANCH == 'master' || $CIRRUS_BRANCH == 'staging' || $CIRRUS_BRANCH == 'trying'
+# main, staging, and trying branches. (So bors can use them.)
+use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true' || $CIRRUS_BRANCH == 'main' || $CIRRUS_BRANCH == 'staging' || $CIRRUS_BRANCH == 'trying'
 
 # This makes Click behave itself.
 env:
@@ -97,7 +97,7 @@ macOS_task:
 FreeBSD_task:
   alias: FreeBSD tests
   freebsd_instance:
-    image_family: freebsd-12-1-snap
+    image_family: freebsd-12-2
   env:
     matrix:
       - PYTHON: 3.6
@@ -140,9 +140,9 @@ success_task:
     - Lint
     #- Windows
 
-# If bork/version.py is modified on the master branch, make a release.
+# If bork/version.py is modified on the main branch, make a release.
 Release_task:
-  only_if: "changesInclude('bork/version.py') && $BRANCH == 'master' && $CIRRUS_CRON == ''"
+  only_if: "changesInclude('bork/version.py') && $BRANCH == 'main' && $CIRRUS_CRON == ''"
   depends_on: [CI success]
   env:
     TWINE_USERNAME: "__token__"
