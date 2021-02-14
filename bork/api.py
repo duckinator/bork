@@ -5,12 +5,11 @@ import subprocess
 import sys
 
 import pep517  # type:ignore
-import toml
 
 from . import builder
 from . import github
 from . import pypi
-from .filesystem import try_delete
+from .filesystem import try_delete, load_pyproject
 from .log import logger
 
 
@@ -24,7 +23,7 @@ DOWNLOAD_SOURCES = {
 
 
 def aliases():
-    pyproject = toml.loads(Path('pyproject.toml').read_text())
+    pyproject = load_pyproject()
     return pyproject.get('tool', {}).get('bork', {}).get('aliases', {})
 
 
@@ -87,7 +86,7 @@ def download(package, release_tag, file_pattern, directory):
 
 
 def release(repository_name, dry_run):
-    pyproject = toml.load('pyproject.toml')
+    pyproject = load_pyproject()
     bork_config = pyproject.get('tool', {}).get('bork', {})
     release_config = bork_config.get('release', {})
     github_token = os.environ.get('BORK_GITHUB_TOKEN', None)
@@ -132,7 +131,7 @@ def release(repository_name, dry_run):
 
 
 def run(alias):
-    pyproject = toml.load('pyproject.toml')
+    pyproject = load_pyproject()
 
     try:
         commands = pyproject['tool']['bork']['aliases'][alias]

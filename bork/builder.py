@@ -5,9 +5,8 @@ import sys
 import zipapp as Zipapp  # noqa: N812
 
 import build
-import toml
 
-from .filesystem import load_setup_cfg, try_delete
+from .filesystem import load_setup_cfg, load_pyproject, try_delete
 from .log import logger
 
 
@@ -67,7 +66,7 @@ def zipapp():
     dist() should be called before zipapp().
     """
 
-    pyproject = toml.load('pyproject.toml')
+    pyproject = load_pyproject()
     config = pyproject.get('tool', {}).get('bork', {})
     zipapp_cfg = config.get('zipapp', {})
     want_zipapp = zipapp_cfg.get('enabled', False)

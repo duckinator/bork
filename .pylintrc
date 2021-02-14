@@ -24,7 +24,8 @@ disable=missing-docstring,
         bad-continuation,
         len-as-condition,
         compare-to-zero,
-        invalid-name
+        invalid-name,
+        no-else-return
 
 
 [REPORTS]

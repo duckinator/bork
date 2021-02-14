@@ -2,11 +2,36 @@ import configparser
 from pathlib import Path
 import shutil
 
+import toml
+
 
 def load_setup_cfg():
     setup_cfg = configparser.ConfigParser()
     setup_cfg.read('setup.cfg')
     return setup_cfg
+
+
+def load_pyproject():
+    """
+    Loads the pyproject.toml data.
+
+    Will synthesize data if a legacy setuptools project is detected.
+    """
+    try:
+        return toml.load('pyproject.toml')
+    except FileNotFoundError:
+        if Path('setup.py').exists() or Path('setup.cfg').exists():
+            # Legacy project, use setuptools' legacy backend
+            # (This backend is specified in PEP517)
+            return {
+                'build-system': {
+                    'build-backend': 'setuptools.build_meta:__legacy__',
+                    'requires': ['setuptools>=42'],
+                },
+            }
+        else:
+            # Can't figure out what kind of project it is.
+            raise
 
 
 def find_files(globs):
