@@ -7,7 +7,7 @@ import zipapp as Zipapp  # noqa: N812
 import build
 
 from .filesystem import load_setup_cfg, load_pyproject, try_delete
-from .log import logger
+# from .log import logger
 
 
 # The "proper" way to handle the default would be to check python_requires
@@ -84,23 +84,7 @@ def zipapp():
 
     _prepare_zipapp(dest, _bdist_file())
 
-    # The `compressed=True` kwarg was added to create_archive in Python 3.7.
-    # For older versions, we print a warning.
-    if sys.version_info >= (3, 7):
-        kwargs = {'compressed': True}
-    else:
-        kwargs = {}
-        logger().warning(
-            'Creating compressed ZipApps requires Python 3.7 or newer. '
-            "You're using and older version, so your ZipApp (.pyz) files may be larger."
-        )
-
-    # pylint has a false positive and thinks the `compressed` kwarg is passed
-    # on Python 3.6, so we ignore that error.
-
-    # pylint: disable=unexpected-keyword-arg
     Zipapp.create_archive(dest, target, _python_interpreter(config), main,
-        **kwargs)
-    # pylint: enable=unexpected-keyword-arg
+        compressed=True)
     if not Path(target).exists():
         raise RuntimeError('Failed to build zipapp: {}'.format(target))

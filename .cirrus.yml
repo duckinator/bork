@@ -55,7 +55,6 @@ Linux_task:
   alias: Linux tests
   container:
     matrix:
-      - image: python:3.6-slim
       - image: python:3.7-slim
       - image: python:3.8-slim
       - image: python:3.9-slim
@@ -77,7 +76,6 @@ macOS_task:
     LANG: en_US.UTF-8
     PATH: ${HOME}/.pyenv/shims:${PATH}
     matrix:
-      - PYTHON: 3.6.9
       - PYTHON: 3.7.9
       - PYTHON: 3.8.6
       - PYTHON: 3.9.0
@@ -100,7 +98,6 @@ FreeBSD_task:
     image_family: freebsd-12-2
   env:
     matrix:
-      - PYTHON: 3.6
       - PYTHON: 3.7
       - PYTHON: 3.8
       - PYTHON: 3.9
@@ -119,7 +116,6 @@ FreeBSD_task:
 #   windows_container:
 #     os_version: 2019
 #     matrix:
-#       - image: python:3.6-windowsservercore-1809
 #       - image: python:3.7-windowsservercore-1809
 #       - image: python:3.8-rc-windowsservercore-1809
 
