@@ -88,6 +88,9 @@ def run(alias):
 
 
 def main():
+    if sys.version_info < (3, 7):
+        print('ERROR: Bork requires Python 3.7 or newer', file=sys.stderr)
+
     verbose = '--verbose' in sys.argv
     if verbose:
         sys.argv.remove('--verbose')

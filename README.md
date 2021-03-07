@@ -5,7 +5,7 @@ A frontend for building and releasing [PEP 517](https://www.python.org/dev/peps/
 Includes a basic task runner, in the form of `bork run <task name>`. Tasks
 are defined in your `pyproject.toml` file.
 
-Bork requires Python 3.6 or newer.
+Bork requires Python 3.7 or newer.
 
 [build-status-img]: https://api.cirrus-ci.com/github/duckinator/bork.svg
 [build-status-link]: https://cirrus-ci.com/github/duckinator/bork
