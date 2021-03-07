@@ -7,7 +7,7 @@ import zipapp as Zipapp  # noqa: N812
 import build
 
 from .filesystem import load_setup_cfg, load_pyproject, try_delete
-from .log import logger
+# from .log import logger
 
 
 # The "proper" way to handle the default would be to check python_requires
