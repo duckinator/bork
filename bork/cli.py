@@ -3,7 +3,7 @@ import logging
 import os
 import sys
 
-import click
+import click  # type: ignore
 from click import BadParameter
 
 from . import __version__
