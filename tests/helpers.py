@@ -3,7 +3,7 @@ import sys
 import tarfile
 import zipfile
 
-from click.testing import CliRunner  # noqa: I202
+from click.testing import CliRunner  # type: ignore
 import bork.cli
 
 

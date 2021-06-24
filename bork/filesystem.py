@@ -2,7 +2,7 @@ import configparser
 from pathlib import Path
 import shutil
 
-import toml
+import toml  # type: ignore
 
 
 def load_setup_cfg():
