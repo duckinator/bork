@@ -9,7 +9,7 @@ env:
 
 Lint_task:
   container:
-    image: python:3.8-slim
+    image: python:3.10-slim
   install_script:
     - pip install -U --upgrade-strategy eager pip 'setuptools>42'
     - pip install .
@@ -25,6 +25,7 @@ Zipapp_bootstrap_task:
       image: python:3.7-slim
       image: python:3.8-slim
       image: python:3.9-slim
+      image: python:3.10-slim
   setup_script:
     - pip install -U --upgrade-strategy eager pip 'setuptools>42'
     - cp -r . /tmp/bork-pristine
@@ -58,6 +59,7 @@ Linux_task:
       - image: python:3.7-slim
       - image: python:3.8-slim
       - image: python:3.9-slim
+      - image: python:3.10-slim
   install_script:
     - apt-get update
     - apt-get install -y git
@@ -70,15 +72,17 @@ Linux_task:
 macOS_task:
   alias: macOS tests
   osx_instance:
-    image: catalina-xcode
+    image: monterey-xcode
   env:
     LC_ALL: en_US.UTF-8
     LANG: en_US.UTF-8
     PATH: ${HOME}/.pyenv/shims:${PATH}
     matrix:
-      - PYTHON: 3.7.9
-      - PYTHON: 3.8.6
-      - PYTHON: 3.9.0
+      # https://formulae.brew.sh/formula/python@3.10
+      - PYTHON: 3.7.12
+      - PYTHON: 3.8.12
+      - PYTHON: 3.9.8
+      - PYTHON: 3.10.0
   install_script:
     # Per the pyenv homebrew recommendations.
     #  https://github.com/pyenv/pyenv/wiki#suggested-build-environment
@@ -101,6 +105,7 @@ FreeBSD_task:
       - PYTHON: 3.7
       - PYTHON: 3.8
       - PYTHON: 3.9
+      - PYTHON: 3.10
   install_script:
     - PY=`echo $PYTHON | tr -d '.'`
     - pkg install -y python${PY} git
@@ -145,7 +150,7 @@ Release_task:
     TWINE_PASSWORD: ENCRYPTED[00007524e18bea7b59efea288653efa57b1dbd235ed8af00cc325febfc9076631a2bf58ed330d8fa7ca057adb81579b0]
     BORK_GITHUB_TOKEN: ENCRYPTED[cc80f90b8db1cbe53aabf4f50bf73331c88ea3e1b5412bb0f7bc264bd233f23bf8df4fc2b4c41f87ec07310d63619801]
   container:
-    image: python:3.8-slim
+    image: python:3.10-slim
   install_script:
     - apt-get update
     - apt-get install -y git
