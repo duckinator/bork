@@ -9,7 +9,7 @@ env:
 
 Lint_task:
   container:
-    image: python:3.10-slim
+    image: python:3.8-slim
   install_script:
     - pip install -U --upgrade-strategy eager pip 'setuptools>42'
     - pip install .
