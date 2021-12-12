@@ -83,13 +83,17 @@ macOS_task:
       - PYTHON: 3.8.12
       - PYTHON: 3.9.8
       - PYTHON: 3.10.0
-  install_script:
+  brew_update_script:
+    - brew update
+  brew_install_script:
     # Per the pyenv homebrew recommendations.
     #  https://github.com/pyenv/pyenv/wiki#suggested-build-environment
-    - brew install openssl readline pyenv git
+    - brew install openssl readline sqlite3 xz zlib pyenv git
+  pyenv_install_script:
     - pyenv install ${PYTHON}
     - pyenv global ${PYTHON}
     - pyenv rehash
+  pip_install_script:
     - pip install -U --upgrade-strategy eager pip 'setuptools>42'
     - pip install -e .[testing]
   script:
