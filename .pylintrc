@@ -25,7 +25,11 @@ disable=missing-docstring,
         len-as-condition,
         compare-to-zero,
         invalid-name,
-        no-else-return
+        no-else-return,
+        consider-using-f-string,
+        consider-iterating-dictionary,
+        consider-using-with, # FIXME: this is worth investigating
+        unspecified-encoding
 
 
 [REPORTS]
