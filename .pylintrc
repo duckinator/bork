@@ -27,7 +27,8 @@ disable=missing-docstring,
         invalid-name,
         no-else-return,
         consider-using-f-string,
-        consider-iterating-dictionary
+        consider-iterating-dictionary,
+        consider-using-with # FIXME: this is worth investigating
 
 
 [REPORTS]
