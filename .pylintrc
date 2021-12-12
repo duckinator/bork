@@ -25,7 +25,8 @@ disable=missing-docstring,
         len-as-condition,
         compare-to-zero,
         invalid-name,
-        no-else-return
+        no-else-return,
+        consider-using-f-string
 
 
 [REPORTS]
