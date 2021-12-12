@@ -26,7 +26,8 @@ disable=missing-docstring,
         compare-to-zero,
         invalid-name,
         no-else-return,
-        consider-using-f-string
+        consider-using-f-string,
+        consider-iterating-dictionary
 
 
 [REPORTS]
