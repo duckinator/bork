@@ -28,7 +28,8 @@ disable=missing-docstring,
         no-else-return,
         consider-using-f-string,
         consider-iterating-dictionary,
-        consider-using-with # FIXME: this is worth investigating
+        consider-using-with, # FIXME: this is worth investigating
+        unspecified-encoding
 
 
 [REPORTS]
