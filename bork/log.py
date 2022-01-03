@@ -5,7 +5,8 @@ from typing import Any, Callable, cast, Dict, Optional, TypeVar
 
 
 # Index mapping file names to module names.
-_module_index: Dict[str, str] = {}
+# I have no idea why the key has to be `Optional[str]` instead of just `str`.
+_module_index: Dict[Optional[str], str] = {}
 
 
 def _get_module(context: inspect.FrameInfo) -> str:
