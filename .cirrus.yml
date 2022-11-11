@@ -124,7 +124,6 @@ FreeBSD_task:
     - bork run test
 
 Windows_task:
-  allow_failures: $CIRRUS_TASK_NAME =~ '.*-rc-.*'
   windows_container:
     image: cirrusci/windowsservercore:2019
   env:
