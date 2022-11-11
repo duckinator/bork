@@ -2,6 +2,7 @@ import fnmatch
 import json
 from pathlib import Path
 from urllib.request import urlopen
+from typing import Optional
 
 import packaging.version
 
@@ -27,8 +28,8 @@ class GithubConfig:  # pylint: disable=too-few-public-methods
 class GithubRelease:  # pylint: disable=too-many-instance-attributes
     # pylint: disable=too-many-arguments
     def __init__(self, config: GithubConfig,
-                 tag: str, commitish: str = None,
-                 body: str = None, globs=None,
+                 tag: str, commitish: Optional[str] = None,
+                 body: Optional[str] = None, globs=None,
                  dry_run=False, prerelease=None, strip_zipapp_version=False):
         self.log = logger()
 
