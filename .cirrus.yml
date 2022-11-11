@@ -126,13 +126,16 @@ FreeBSD_task:
 Windows_task:
   allow_failures: $CIRRUS_TASK_NAME =~ '.*-rc-.*'
   windows_container:
-    os_version: 2019
+    image: cirrusci/windowsservercore:2019
+  env:
     matrix:
-      - image: python:3.7-windowsservercore-ltsc2022
-      - image: python:3.8-windowsservercore-ltsc2022
-      - image: python:3.9-windowsservercore-ltsc2022
-      - image: python:3.10-windowsservercore-ltsc2022
-      - image: python:3.11-windowsservercore-ltsc2022
+      - PYTHON: 3.7.9
+      - PYTHON: 3.8.10
+      - PYTHON: 3.9.13
+      - PYTHON: 3.10.8
+      - PYTHON: 3.11.0
+  python_install_script:
+    - choco install -y python --version=%PYTHON%
   install_script:
     - C:\Python\python.exe -m pip install -e .[testing]
   version_info_script:
