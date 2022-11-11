@@ -134,7 +134,9 @@ Windows_task:
       - PYTHON: 3.10.8
       - PYTHON: 3.11.0
   python_install_script:
-    - choco install -y python --version=%PYTHON%
+    # https://docs.python.org/3.6/using/windows.html#installing-without-ui
+    - ps: Invoke-WebRequest -Uri https://www.python.org/ftp/python/${env:PYTHON}/python-${env:PYTHON}-amd64.exe -OutFile C:\python-installer.exe
+    - C:\python-installer.exe /quiet TargetDir=C:\Python SimpleInstall=1
   install_script:
     - C:\Python\python.exe -m pip install -e .[testing]
   version_info_script:
