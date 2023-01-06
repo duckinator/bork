@@ -131,8 +131,8 @@ Windows_task:
       - PYTHON: 3.7.9
       - PYTHON: 3.8.10
       - PYTHON: 3.9.13
-      - PYTHON: 3.10.8
-      - PYTHON: 3.11.0
+      - PYTHON: 3.10.9
+      - PYTHON: 3.11.1
   python_install_script:
     # https://docs.python.org/3.6/using/windows.html#installing-without-ui
     - ps: Invoke-WebRequest -Uri https://www.python.org/ftp/python/${env:PYTHON}/python-${env:PYTHON}-amd64.exe -OutFile C:\python-installer.exe
