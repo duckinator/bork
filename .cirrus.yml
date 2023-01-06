@@ -128,7 +128,6 @@ Windows_task:
     image: cirrusci/windowsservercore:2019
   env:
     matrix:
-      - PYTHON: 3.7.9
       - PYTHON: 3.8.10
       - PYTHON: 3.9.13
       - PYTHON: 3.10.9
