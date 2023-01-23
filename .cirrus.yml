@@ -22,7 +22,6 @@ Zipapp_bootstrap_task:
   alias: Zipapp bootstraps
   container:
     matrix:
-      image: python:3.7-slim
       image: python:3.8-slim
       image: python:3.9-slim
       image: python:3.10-slim
@@ -57,7 +56,6 @@ Linux_task:
   alias: Linux tests
   container:
     matrix:
-      - image: python:3.7-slim
       - image: python:3.8-slim
       - image: python:3.9-slim
       - image: python:3.10-slim
@@ -108,7 +106,6 @@ FreeBSD_task:
     image_family: freebsd-12-2
   env:
     matrix:
-      - PYTHON: 3.7
       - PYTHON: 3.8
       - PYTHON: 3.9
       - PYTHON: 3.10
