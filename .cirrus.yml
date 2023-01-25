@@ -9,7 +9,7 @@ env:
 
 Lint_task:
   container:
-    image: python:3.10-slim
+    image: python:3.11-slim
   install_script:
     - pip install -U --upgrade-strategy eager pip 'setuptools>42'
     - pip install .
@@ -22,10 +22,10 @@ Zipapp_bootstrap_task:
   alias: Zipapp bootstraps
   container:
     matrix:
-      image: python:3.7-slim
       image: python:3.8-slim
       image: python:3.9-slim
       image: python:3.10-slim
+      image: python:3.11-slim
   setup_script:
     - pip install -U --upgrade-strategy eager pip 'setuptools>42'
     - cp -r . /tmp/bork-pristine
@@ -56,10 +56,10 @@ Linux_task:
   alias: Linux tests
   container:
     matrix:
-      - image: python:3.7-slim
       - image: python:3.8-slim
       - image: python:3.9-slim
       - image: python:3.10-slim
+      - image: python:3.11-slim
   install_script:
     - apt-get update
     - apt-get install -y git
@@ -71,18 +71,18 @@ Linux_task:
 
 macOS_task:
   alias: macOS tests
-  osx_instance:
-    image: monterey-xcode
+  macos_instance:
+    image: ghcr.io/cirruslabs/macos-ventura-base:latest
   env:
     LC_ALL: en_US.UTF-8
     LANG: en_US.UTF-8
     PATH: ${HOME}/.pyenv/shims:${PATH}
     matrix:
       # https://formulae.brew.sh/formula/python@3.10
-      - PYTHON: 3.7.12
-      - PYTHON: 3.8.12
-      - PYTHON: 3.9.8
-      - PYTHON: 3.10.0
+      - PYTHON: 3.8.16
+      - PYTHON: 3.9.16
+      - PYTHON: 3.10.9
+      - PYTHON: 3.11.1
   brew_update_script:
     - brew update
   brew_install_script:
@@ -106,10 +106,10 @@ FreeBSD_task:
     image_family: freebsd-12-2
   env:
     matrix:
-      - PYTHON: 3.7
       - PYTHON: 3.8
       - PYTHON: 3.9
       - PYTHON: 3.10
+      - PYTHON: 3.11
   install_script:
     - PY=`echo $PYTHON | tr -d '.'`
     - pkg install -y python${PY} git
@@ -120,19 +120,32 @@ FreeBSD_task:
     - python${PYTHON} --version
     - bork run test
 
-# Windows_task:
-#   allow_failures: $CIRRUS_TASK_NAME =~ '.*-rc-.*'
-#   windows_container:
-#     os_version: 2019
-#     matrix:
-#       - image: python:3.7-windowsservercore-1809
-#       - image: python:3.8-rc-windowsservercore-1809
-
-#   install_script:
-#     - C:\Python\python.exe -m pip install -e .[testing]
-#   script:
-#     - C:\Python\python.exe --version
-#     - C:\Python\python.exe -m pytest --verbose
+Windows_task:
+  windows_container:
+    image: cirrusci/windowsservercore:2019
+  env:
+    matrix:
+      - PYTHON: 3.8.10
+      - PYTHON: 3.9.13
+      - PYTHON: 3.10.9
+      - PYTHON: 3.11.1
+  python_install_script:
+    # https://docs.python.org/3.6/using/windows.html#installing-without-ui
+    - ps: Invoke-WebRequest -Uri https://www.python.org/ftp/python/${env:PYTHON}/python-${env:PYTHON}-amd64.exe -OutFile C:\python-installer.exe
+    - C:\python-installer.exe /quiet TargetDir=C:\Python SimpleInstall=1
+  install_script:
+    - C:\Python\python.exe -m pip install -e .[testing]
+  version_info_script:
+    - C:\Python\python.exe --version
+  # NOTE: The current configuration for `bork lint` doesn't play nice
+  #       with the Windows command prompt, because it doesn't support
+  #       quoted arguments. (E.g. `-k 'pylint or mypy'`)
+  pylint_script:
+    - C:\Python\python.exe -m pytest -k pylint --pylint --verbose
+  mypy_script:
+    - C:\Python\python.exe -m pytest -k mypy --mypy --verbose
+  test_script:
+    - C:\Python\python.exe -m pytest --verbose
 
 success_task:
   name: CI success
@@ -143,7 +156,7 @@ success_task:
     - macOS tests
     - Zipapp bootstraps
     - Lint
-    #- Windows
+    - Windows
 
 # If bork/version.py is modified on the main branch, make a release.
 Release_task:
@@ -154,7 +167,7 @@ Release_task:
     TWINE_PASSWORD: ENCRYPTED[00007524e18bea7b59efea288653efa57b1dbd235ed8af00cc325febfc9076631a2bf58ed330d8fa7ca057adb81579b0]
     BORK_GITHUB_TOKEN: ENCRYPTED[cc80f90b8db1cbe53aabf4f50bf73331c88ea3e1b5412bb0f7bc264bd233f23bf8df4fc2b4c41f87ec07310d63619801]
   container:
-    image: python:3.10-slim
+    image: python:3.11-slim
   install_script:
     - apt-get update
     - apt-get install -y git

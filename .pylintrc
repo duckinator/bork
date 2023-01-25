@@ -28,8 +28,9 @@ disable=missing-docstring,
         no-else-return,
         consider-using-f-string,
         consider-iterating-dictionary,
-        consider-using-with, # FIXME: this is worth investigating
-        unspecified-encoding
+        consider-using-with, # FIXME: re-enabling this is worth investigating
+        unspecified-encoding,
+        unnecessary-lambda-assignment # FIXME: also worth investigating
 
 
 [REPORTS]
