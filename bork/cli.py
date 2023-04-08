@@ -1,3 +1,18 @@
+"""Command-line interface for Bork.
+
+General usage: `bork COMMAND [OPTIONS] [ARGS]`
+
+Options that exist for all commands include:
+
+`--verbose`: enable verbose logging
+
+`--debug`: enable even more verbose logging (sometimes too noisy to be helpful)
+
+## Commands
+
+<dl>
+"""
+
 import inspect
 import logging
 import os
@@ -21,6 +36,11 @@ def cli():
 
 @cli.command()
 def aliases():
+    """
+    ### `bork aliases`
+
+    Prints a list of aliases (configured via pyproject.toml).
+    """
     alias_list = api.aliases()
     if len(alias_list.keys()) == 0:
         print('No aliases available.')
@@ -32,11 +52,21 @@ def aliases():
 
 @cli.command()
 def build():
+    """
+    ### `bork build`
+
+    Build the project.
+    """
     api.build()
 
 
 @cli.command()
 def clean():
+    """
+    ### `bork clean`
+
+    Remove files created by `bork build`.
+    """
     api.clean()
 
 
@@ -44,6 +74,11 @@ def clean():
 @click.option('-o', '--output', type=click.File('w'), default='-',
               help='File in which to save the list of dependencies.')
 def dependencies(output):
+    """
+    ### `bork dependencies`
+
+    List dependencies of the project.
+    """
     for dep in api.dependencies():
         print(dep, file=output)
 
@@ -57,6 +92,26 @@ def dependencies(output):
 @click.argument('package', nargs=1)
 @click.argument('release_tag', nargs=1, default='latest')
 def download(files, directory, package, release_tag):
+    """
+    ### `bork download [--files FILES] [--directory DIRECTORY] PACKAGE RELEASE`
+
+    Download a release of the specified project.
+
+    Arguments:
+        --files=FILES:
+            (default `*.pyz`)
+            A comma-separated list of filenames to download.
+            Supports wildcards (* = everything, ? = any single character).
+        --directory=DIRECTORY:
+            (default `downloads`)
+            The directory to save files in. Created if missing.
+        PACKAGE:
+            The package to download. Of the format `SOURCE:PACKAGE_NAME`, where
+            `PACKAGE_NAME` is the name of the package to download, and `SOURCE`
+            is one of `gh`, `github`, `pypi`, or `testpypi`.
+        RELEASE:
+            The release or tag of the package that you want to download.
+    """
     # NOTE: We change the order of the arguments here, to move away from
     #       what makes sense on a CLI interface to what makes sense in a
     #       Python interface.
@@ -76,6 +131,21 @@ def download(files, directory, package, release_tag):
 @click.option('--dry-run', is_flag=True, default=False,
               help="Don't actually release, just show what a release would do.")
 def release(pypi_repository, test_pypi, dry_run):
+    """
+    ### `bork release [--pypi-repository=REPO | --test-pypi] [--dry-run]`
+
+    Arguments:
+        --pypi-repository=REPO:
+            (default `pypi`)
+            Repository to use. Valid values are pypi, testpypi, or anything
+            defined in ".pypirc".
+
+        --test-pypi:
+            Equivalent to `--pypi-repository testpypi`
+
+        --dry-run:
+            Don't actually release, just show what a release would do.
+    """
     if test_pypi:
         pypi_repository = 'testpypi'
     api.release(pypi_repository, dry_run)
@@ -84,6 +154,11 @@ def release(pypi_repository, test_pypi, dry_run):
 @cli.command()
 @click.argument('alias', nargs=1)
 def run(alias):
+    """
+    ### `bork run NAME`
+
+    Run the alias specified by NAME, as defined in pyproject.toml.
+    """
     api.run(alias)
 
 
