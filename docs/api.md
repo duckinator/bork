@@ -1,3 +1,3 @@
-# Bork API
+# bork.api
 
 ::: bork.api

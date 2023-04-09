@@ -1,6 +1,8 @@
 """Command-line interface for Bork.
 
-General usage: `bork COMMAND [OPTIONS] [ARGS]`
+Usage:
+
+`bork COMMAND [OPTIONS] [ARGS]`
 
 Options that exist for all commands include:
 
@@ -8,9 +10,8 @@ Options that exist for all commands include:
 
 `--debug`: enable even more verbose logging (sometimes too noisy to be helpful)
 
-## Commands
+**Commands:**
 
-<dl>
 """
 
 import inspect

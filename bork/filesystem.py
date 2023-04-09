@@ -29,9 +29,8 @@ def load_pyproject():
                     'requires': ['setuptools>=42'],
                 },
             }
-        else:
-            # Can't figure out what kind of project it is.
-            raise
+        # Can't figure out what kind of project it is.
+        raise
 
 
 def find_files(globs):
