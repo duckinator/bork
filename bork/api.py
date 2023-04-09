@@ -152,7 +152,7 @@ def release(repository_name, dry_run):
 
         if github_token is None:
             logger().error('No GitHub token specified. Use the BORK_GITHUB_TOKEN '
-                      'environment variable to set it.')
+                'environment variable to set it.')
 
             if dry_run:
                 logger().error('When not using --dry-run, this error is fatal.')
