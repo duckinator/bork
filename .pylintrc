@@ -23,7 +23,6 @@ disable=missing-docstring,
         len-as-condition,
         compare-to-zero,
         invalid-name,
-        no-else-return,
         consider-using-f-string,
         consider-iterating-dictionary,
         consider-using-with, # FIXME: re-enabling this is worth investigating
