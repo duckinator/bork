@@ -20,7 +20,6 @@ enable=all
 
 # Disable the message, report, category or checker with the given id(s).
 disable=missing-docstring,
-        len-as-condition,
         compare-to-zero,
         invalid-name,
         consider-using-f-string,
