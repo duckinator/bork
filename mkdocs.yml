@@ -3,14 +3,17 @@ site_description: "Documentation for Bork, the build and release management tool
 repo_url: https://github.com/duckinator/bork
 edit_uri: blob/main/docs/
 
-nav:
-- Home: index.md
-- API: api.md
-
+# Enable search, and include documentation from docstrings.
 plugins:
 - search
 - mkdocstrings
 
+# Use the readthedocs theme, with syntax highlighting.
 theme:
   name: readthedocs
   highlightjs: true
+
+# Build PDF & ePub versions of docs.
+formats:
+  - epub
+  - pdf
