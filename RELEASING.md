@@ -12,5 +12,5 @@ Any time `__version__` is changed in `bork/version.py` on the `main` branch, a n
 
 Full release process:
 
-1. Merge PR incrementing `__version__` in `bork/__init__.py`.
+1. Merge PR incrementing `__version__` in `bork/version.py`.
 2. Let the automated processes do everything else.
