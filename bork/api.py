@@ -4,7 +4,7 @@ from signal import Signals
 import subprocess
 import sys
 
-import pep517  # type:ignore
+import pep517.meta  # type:ignore
 
 from . import builder
 from . import github
