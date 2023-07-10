@@ -12,8 +12,3 @@ plugins:
 theme:
   name: readthedocs
   highlightjs: true
-
-# Build PDF & ePub versions of docs.
-formats:
-  - epub
-  - pdf

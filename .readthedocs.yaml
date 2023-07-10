@@ -11,3 +11,8 @@ python:
 
 mkdocs:
   configuration: mkdocs.yml
+
+# Build PDF & ePub versions of docs.
+formats:
+  - epub
+  - pdf
