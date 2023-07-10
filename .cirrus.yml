@@ -13,7 +13,7 @@ Lint_task:
   install_script:
     - pip install -U --upgrade-strategy eager pip 'setuptools>61'
     - pip install .
-    - pip install .[lint]
+    - pip install .[lint] .[test]
   script:
     - pylint --version
     - mypy --version
