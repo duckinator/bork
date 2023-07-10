@@ -138,15 +138,8 @@ Windows_task:
     - C:\Python\python.exe -m pip install -e .[test]
   version_info_script:
     - C:\Python\python.exe --version
-  # NOTE: The current configuration for `bork lint` doesn't play nice
-  #       with the Windows command prompt, because it doesn't support
-  #       quoted arguments. (E.g. `-k 'pylint or mypy'`)
-  pylint_script:
-    - C:\Python\python.exe -m pytest -k pylint --pylint --verbose
-  mypy_script:
-    - C:\Python\python.exe -m pytest -k mypy --mypy --verbose
   test_script:
-    - C:\Python\python.exe -m pytest --verbose
+    - C:\Python\python.exe -m bork run test
 
 success_task:
   name: CI success
