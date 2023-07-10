@@ -86,5 +86,5 @@ test = "pytest --verbose"
 test-fast = "pytest --verbose -m 'not slow'"
 # Runs slow tests.
 test-slow = "pytest --verbose -m slow"
-# Run local docs server
+# Build docs locally.
 docs = "mkdocs build"
