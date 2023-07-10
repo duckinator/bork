@@ -136,7 +136,7 @@ def release(repository_name, dry_run):
     github_token = os.environ.get('BORK_GITHUB_TOKEN', None)
     version = builder.version_from_bdist_file()
 
-    project_name = bork_config.get('project_name', None)
+    project_name = pyproject.get('project', {}).get('name', None)
 
     strip_zipapp_version = release_config.get('strip_zipapp_version', False)
     globs = release_config.get('github_release_globs', ['./dist/*.pyz'])
