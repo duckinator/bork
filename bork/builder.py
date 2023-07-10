@@ -76,7 +76,9 @@ def zipapp():
 
     # If the project name is specified in pyproject.toml, use it.
     # Otherwise, try getting it from setup.cfg.
-    name = pyproject.get('project', {}).get('name', _setup_cfg_package_name())
+    name = pyproject.get('project', {}).get('name', None)
+    if name is None:
+        name = _setup_cfg_package_name()
     dest = str(Path('build', 'zipapp'))
     version = version_from_bdist_file()
     main = zipapp_cfg['main']
