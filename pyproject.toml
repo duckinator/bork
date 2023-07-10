@@ -77,7 +77,8 @@ strip_zipapp_version = true
 [tool.bork.aliases]
 lint = [
     "pylint bork tests",
-    "mypy bork",
+# TODO: Re-enable mypy after we move away from Click.
+#    "mypy bork",
 ]
 # Runs all tests.
 test = "pytest --verbose"
