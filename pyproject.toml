@@ -43,17 +43,13 @@ repository = "https://github.com/duckinator/bork"
 documentation = "https://bork.readthedocs.io/en/latest/"
 
 [project.optional-dependencies]
-tests = ["bork[testing]"]
-
-testing_only = [
-    "pytest==7.3.0",
+lint = [
+    "pylint==2.17.2",
+    "mypy==1.4.1",
 ]
 
-testing = [
-    "pylint==2.17.2",
+test = [
     "pytest==7.3.0",
-    "pytest-pylint==0.19.0",
-    "pytest-mypy==0.10.3",
 ]
 
 docs = [
@@ -68,9 +64,6 @@ bork = "bork.cli:main"
 [tool.setuptools.dynamic]
 version = {attr = "bork.__version__"}
 
-[tool.bork]
-project_name = "Bork"
-
 [tool.bork.zipapp]
 enabled = true
 main = "bork.cli:zipapp_main"
@@ -82,11 +75,15 @@ github_repository = "duckinator/bork"
 strip_zipapp_version = true
 
 [tool.bork.aliases]
-# Runs *only* pylint and mypy. (Not the actual tests.)
-lint = "pytest -k 'pylint or mypy' --pylint --mypy --verbose"
+lint = [
+    "pylint bork tests",
+    "mypy bork",
+]
 # Runs all tests.
 test = "pytest --verbose"
 # Runs fast tests.
 test-fast = "pytest --verbose -m 'not slow'"
 # Runs slow tests.
 test-slow = "pytest --verbose -m slow"
+# Run local docs server
+docs = "mkdocs build"

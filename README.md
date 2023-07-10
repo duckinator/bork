@@ -79,12 +79,8 @@ If you want to upload assets to GitHub Releases, you can
 add the following configuration to your pyproject.toml:
 
 ```
-[tool.bork]
-# GitHub Releases will have names that are "{project_name} {tag}".
-# The default is the repository name -- e.g., if your repo is at "foo/bar-baz",
-# the default would be "bar-baz".
-# This lets you change that, so it looks nicer. (E.g., "Bar Baz".)
-project_name = "<nicely formatted project name>"
+[project]
+name = "<project name>"
 
 [tool.bork.release]
 # If true, release to PyPi; otherwise, don't.
@@ -103,44 +99,44 @@ strip_zipapp_version = true
 
 Bork includes a very basic task runner, for single-line commands.
 
-As an example [from Emanate](https://github.com/duckinator/emanate/blob/master/pyproject.toml),
-if you put this in pyproject.toml:
+As an example, here is what Bork uses:
 
 ```toml
 [tool.bork.aliases]
-# Runs *only* pylint. (Not the actual tests.)
 lint = [
-	# Runs *only* pylint. (Not the actual tests.)
-	"pytest -k 'pylint' --pylint --verbose",
-	# Typecheck the project
-	"mypy .",
+    "pylint bork tests",
+    "mypy bork",
 ]
-# Runs tests and pylint.
-test = "pytest --pylint --verbose"
-test-only = "pytest --verbose"
-docs = "env PYTHONPATH=./ pdoc3 --html --output-dir ./html --force emanate"
+# Runs all tests.
+test = "pytest --verbose"
+# Runs fast tests.
+test-fast = "pytest --verbose -m 'not slow'"
+# Runs slow tests.
+test-slow = "pytest --verbose -m slow"
+# Build docs
+docs = "mkdocs build"
 ```
 
 Then you can run `bork aliases` to get the list of aliases:
 
 ```
-~/emanate$ bork aliases
+~/bork$ bork aliases
 lint
 test
-test-only
-docs
-~/emanate$
+test-fast
+test-slow
+~/bork$
 ```
 
 And run `bork run <alias>` to run that alias:
 
 ```
-~/emanate$ bork run docs
-./html/emanate/index.html
-./html/emanate/cli.html
-./html/emanate/config.html
-./html/emanate/version.html
-~/emanate$
+~/bork$ bork run docs
+mkdocs build
+INFO     -  Cleaning site directory
+INFO     -  Building documentation to directory: /usr/home/puppy/bork/site
+INFO     -  Documentation built in 0.25 seconds
+~/bork$
 ```
 
 ## Contributing

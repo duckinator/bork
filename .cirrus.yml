@@ -11,11 +11,12 @@ Lint_task:
   container:
     image: python:3.11-slim
   install_script:
-    - pip install -U --upgrade-strategy eager pip 'setuptools>42'
+    - pip install -U --upgrade-strategy eager pip 'setuptools>61'
     - pip install .
-    - pip install .[testing]
+    - pip install .[lint]
   script:
     - pylint --version
+    - mypy --version
     - bork run lint
 
 Zipapp_bootstrap_task:
@@ -27,7 +28,7 @@ Zipapp_bootstrap_task:
       image: python:3.10-slim
       image: python:3.11-slim
   setup_script:
-    - pip install -U --upgrade-strategy eager pip 'setuptools>42'
+    - pip install -U --upgrade-strategy eager pip 'setuptools>61'
     - cp -r . /tmp/bork-pristine
     - cp -r /tmp/bork-pristine /tmp/pass1
     - cp -r /tmp/bork-pristine /tmp/pass2
@@ -36,7 +37,7 @@ Zipapp_bootstrap_task:
   pass_1_script:
     - cd /tmp/pass1
     - python3 --version
-    - pip install . .[testing]
+    - pip install . .[test]
     - bork build
   # Make sure the Bork zipapp from Pass 1 can build Bork.
   pass_2_script:
@@ -63,8 +64,8 @@ Linux_task:
   install_script:
     - apt-get update
     - apt-get install -y git
-    - pip install -U --upgrade-strategy eager pip 'setuptools>42'
-    - pip install . .[testing]
+    - pip install -U --upgrade-strategy eager pip 'setuptools>61'
+    - pip install . .[test]
   script:
     - python3 --version
     - bork run test
@@ -94,8 +95,8 @@ macOS_task:
     - pyenv global ${PYTHON}
     - pyenv rehash
   pip_install_script:
-    - pip install -U --upgrade-strategy eager pip 'setuptools>42'
-    - pip install -e .[testing]
+    - pip install -U --upgrade-strategy eager pip 'setuptools>61'
+    - pip install -e .[test]
   script:
     - python3 --version
     - bork run test
@@ -114,7 +115,7 @@ FreeBSD_task:
     - PY=`echo $PYTHON | tr -d '.'`
     - pkg install -y python${PY} git
     - python${PYTHON} -m ensurepip
-    - python${PYTHON} -m pip install -U --upgrade-strategy eager pip 'setuptools>42'
+    - python${PYTHON} -m pip install -U --upgrade-strategy eager pip 'setuptools>61'
     - python${PYTHON} -m pip install -e .[testing_only]
   script:
     - python${PYTHON} --version
@@ -134,7 +135,7 @@ Windows_task:
     - ps: Invoke-WebRequest -Uri https://www.python.org/ftp/python/${env:PYTHON}/python-${env:PYTHON}-amd64.exe -OutFile C:\python-installer.exe
     - C:\python-installer.exe /quiet TargetDir=C:\Python SimpleInstall=1
   install_script:
-    - C:\Python\python.exe -m pip install -e .[testing]
+    - C:\Python\python.exe -m pip install -e .[test]
   version_info_script:
     - C:\Python\python.exe --version
   # NOTE: The current configuration for `bork lint` doesn't play nice
@@ -171,8 +172,8 @@ Release_task:
   install_script:
     - apt-get update
     - apt-get install -y git
-    - pip install -U --upgrade-strategy eager pip 'setuptools>42'
-    - pip3 install . .[testing]
+    - pip install -U --upgrade-strategy eager pip 'setuptools>61'
+    - pip3 install . .[test]
   build_script:
     - bork clean
     - bork build
