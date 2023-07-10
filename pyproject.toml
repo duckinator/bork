@@ -1,10 +1,68 @@
 [build-system]
 # Specify the required build system.
-requires = ["setuptools > 42", "wheel"]
+requires = ["setuptools >= 61", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.bork]
-project_name = "Bork"
+[project]
+name = "bork"
+dynamic = ["version"]
+authors = [
+    {name = "Ellen Marie Dash", email = "me@duckie.co"},
+]
+description = "A program to help build, maintain, and release PEP 517-compliant projects."
+readme = "README.md"
+license = {text = "MIT"}
+#packages = ["bork"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+# The packaging library is used by bork.github_api, and also pulled in via
+# twine -> readme_renderer -> bleach -> packaging.
+dependencies = [
+    "wheel~=0.38.4",
+    "build~=0.9.0",
+    "pep517~=0.13.0",
+    "packaging~=21.3",
+    "toml~=0.10.2",
+    "twine~=4.0.1",
+    "click~=8.1.3",
+    "coloredlogs~=15.0.1",
+]
+
+requires-python = ">= 3.8"
+
+[project.urls]
+repository = "https://github.com/duckinator/bork"
+documentation = "https://bork.readthedocs.io/en/latest/"
+
+[project.optional-dependencies]
+lint = [
+    "pylint==2.17.2",
+    "mypy==1.4.1",
+]
+
+test = [
+    "pytest==7.3.0",
+]
+
+docs = [
+    "mkdocs==1.4.2",
+    "mkdocstrings[python]==0.21.2",
+    "jinja2==3.0.0",
+]
+
+[project.scripts]
+bork = "bork.cli:main"
+
+[tool.setuptools.dynamic]
+version = {attr = "bork.__version__"}
 
 [tool.bork.zipapp]
 enabled = true
@@ -17,11 +75,16 @@ github_repository = "duckinator/bork"
 strip_zipapp_version = true
 
 [tool.bork.aliases]
-# Runs *only* pylint and mypy. (Not the actual tests.)
-lint = "pytest -k 'pylint or mypy' --pylint --mypy --verbose"
+lint = [
+    "pylint bork tests",
+# TODO: Re-enable mypy after we move away from Click.
+#    "mypy bork",
+]
 # Runs all tests.
 test = "pytest --verbose"
 # Runs fast tests.
 test-fast = "pytest --verbose -m 'not slow'"
 # Runs slow tests.
 test-slow = "pytest --verbose -m slow"
+# Build docs locally.
+docs = "mkdocs build"

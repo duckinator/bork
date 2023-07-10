@@ -23,7 +23,7 @@ def dist():
     builder.build('wheel', './dist/')
 
 
-def _package_name():
+def _setup_cfg_package_name():
     setup_cfg = load_setup_cfg()
 
     if 'metadata' not in setup_cfg or 'name' not in setup_cfg['metadata']:
@@ -74,7 +74,11 @@ def zipapp():
     if not want_zipapp:
         return
 
-    name = _package_name()
+    # If the project name is specified in pyproject.toml, use it.
+    # Otherwise, try getting it from setup.cfg.
+    name = pyproject.get('project', {}).get('name', None)
+    if name is None:
+        name = _setup_cfg_package_name()
     dest = str(Path('build', 'zipapp'))
     version = version_from_bdist_file()
     main = zipapp_cfg['main']
