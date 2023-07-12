@@ -96,7 +96,7 @@ macOS_task:
     - pyenv rehash
   pip_install_script:
     - pip install -U --upgrade-strategy eager pip 'setuptools>61'
-    - pip install -e .[test]
+    - pip install .[test]
   script:
     - python3 --version
     - bork run test
@@ -116,7 +116,7 @@ FreeBSD_task:
     - pkg install -y python${PY} git
     - python${PYTHON} -m ensurepip
     - python${PYTHON} -m pip install -U --upgrade-strategy eager pip 'setuptools>61'
-    - python${PYTHON} -m pip install -e .[test]
+    - python${PYTHON} -m pip install .[test]
   script:
     - python${PYTHON} --version
     - bork run test
@@ -135,7 +135,8 @@ Windows_task:
     - ps: Invoke-WebRequest -Uri https://www.python.org/ftp/python/${env:PYTHON}/python-${env:PYTHON}-amd64.exe -OutFile C:\python-installer.exe
     - C:\python-installer.exe /quiet TargetDir=C:\Python SimpleInstall=1
   install_script:
-    - C:\Python\python.exe -m pip install -e .[test]
+    - C:\Python\python.exe -m pip install -U --upgrade-strategy eager pip "setuptools>61"
+    - C:\Python\python.exe -m pip install .[test]
   version_info_script:
     - C:\Python\python.exe --version
   test_script:
