@@ -135,7 +135,7 @@ Windows_task:
     - ps: Invoke-WebRequest -Uri https://www.python.org/ftp/python/${env:PYTHON}/python-${env:PYTHON}-amd64.exe -OutFile C:\python-installer.exe
     - C:\python-installer.exe /quiet TargetDir=C:\Python SimpleInstall=1
   install_script:
-    - C:\Python\python.exe -m pip install -U --upgrade-strategy eager pip 'setuptools>61'
+    - C:\Python\python.exe -m pip install -U --upgrade-strategy eager pip "setuptools>61"
     - C:\Python\python.exe -m pip install .[test]
   version_info_script:
     - C:\Python\python.exe --version
