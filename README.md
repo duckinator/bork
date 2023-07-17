@@ -1,4 +1,4 @@
-# bork [![Build Status][build-status-img]][build-status-link] [![PyPI][pypi-version-img]][pypi-version-link]
+# bork [![Build Status][build-status-img]][build-status-link] [![PyPI][pypi-version-img]][pypi-version-link] [![Documentation Status](https://readthedocs.org/projects/bork/badge/?version=latest)](https://bork.readthedocs.io/en/latest/?badge=latest)
 
 A frontend for building and releasing [PEP 517](https://www.python.org/dev/peps/pep-0517/) compliant projects, including support for generating a [ZipApp](https://docs.python.org/3/library/zipapp.html).
 
@@ -24,8 +24,9 @@ releases](https://github.com/duckinator/bork/releases/latest/download/bork.pyz)
 
 ## Usage
 
-### Downloading Existing Builds
+Example usage information is provided below. Additional documentation can be found at [bork.readthedocs.io](https://bork.readthedocs.io/).
 
+### Downloading Existing Builds
 
 To download a release from GitHub:
 
