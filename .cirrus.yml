@@ -115,6 +115,7 @@ FreeBSD_task:
     - PY=`echo $PYTHON | tr -d '.'`
     - pkg install -y python${PY} git
     - python${PYTHON} -m ensurepip
+  pip_install_script:
     - python${PYTHON} -m pip install -U --upgrade-strategy eager pip 'setuptools>61'
     - python${PYTHON} -m pip install .[test]
   script:
