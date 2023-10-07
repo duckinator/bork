@@ -32,7 +32,7 @@ class SimplePypiParser(HTMLParser):
         self.files[data] = self.current_url
 
     def error(self, message):
-        raise RuntimeError('{}: {}'.format(self.__class__.__name__, message))
+        raise RuntimeError(f"{self.__class__.__name__}: {message}")
 
 
 def _normalize(name):
@@ -72,7 +72,7 @@ def get_download_info(base_url, package, release, file_pattern):
     if base_url.endswith('/'):
         base_url = base_url[:-1]
 
-    with urlopen('{}/{}/'.format(base_url, package)) as f:
+    with urlopen(f"{base_url}/{package}/") as f:
         html = f.read().decode()
     parser = SimplePypiParser()
     parser.feed(html)

@@ -79,7 +79,7 @@ class GithubApi:
             'draft': draft,
             'prerelease': prerelease,
         }
-        url = '/repos/{}/{}/releases'.format(self.owner, self.repo)
+        url = f"/repos/{self.owner}/{self.repo}/releases"
         response = self._api_post(url, request)
 
         upload_url = response['upload_url'].split('{?')[0]
@@ -127,7 +127,7 @@ class GithubApi:
             'Content-Type': 'application/octet-stream',
         }
 
-        url = '{}?name={}'.format(upload_url, name)
+        url = f"{upload_url}?name={name}"
         response = self._api_post(url, data, headers=headers, server='')
         return response
 

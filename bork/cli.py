@@ -163,7 +163,7 @@ def main():
         sys.argv.remove('--debug')
 
     if '--version' in sys.argv:
-        print('bork v{}'.format(__version__))
+        print(f"bork v{__version__}")
         sys.exit()
 
     try:
