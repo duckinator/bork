@@ -86,11 +86,11 @@ def zipapp():
     main = zipapp_cfg['main']
 
     # Output file is dist/<package name>-<package version>.pyz.
-    target = 'dist/{}-{}.pyz'.format(name, version)
+    target = f"dist/{name}-{version}.pyz"
 
     _prepare_zipapp(dest, _bdist_file())
 
     Zipapp.create_archive(dest, target, _python_interpreter(config), main,
         compressed=True)
     if not Path(target).exists():
-        raise RuntimeError('Failed to build zipapp: {}'.format(target))
+        raise RuntimeError(f"Failed to build zipapp: {target}")

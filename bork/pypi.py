@@ -55,7 +55,7 @@ def upload(repository_name, *globs, dry_run=False):
     logger().info(
         "Uploading files to PyPI instance '%s': %s",
         repository_name,
-        ', '.join(("'{}'".format(file) for file in files)),
+        ', '.join((f"'{file}'" for file in files)),
     )
 
     if dry_run:
