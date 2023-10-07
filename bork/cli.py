@@ -72,19 +72,6 @@ def clean():
 
 
 @cli.command()
-@click.option('-o', '--output', type=click.File('w'), default='-',
-              help='File in which to save the list of dependencies.')
-def dependencies(output):
-    """
-    ### `bork dependencies`
-
-    List dependencies of the project.
-    """
-    for dep in api.dependencies():
-        print(dep, file=output)
-
-
-@cli.command()
 @click.option('--files', default='*.pyz',
               help='Comma-separated list of filenames to download. Supports '
                    'wildcards (* = everything, ? = any single character).')
