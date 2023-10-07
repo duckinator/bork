@@ -115,11 +115,11 @@ def _relevant_asset(asset, file_pattern):
 def _get_release_info(repo, name, draft=False, prerelease=False):
     if '/' not in repo:
         raise ValueError(
-            "repo must be of format <user>/<repo>, got '{}'".format(repo),
+            f"repo must be of format <user>/<repo>, got '{repo}'",
         )
 
     log = logger()
-    url = 'https://api.github.com/repos/{}/releases'.format(repo)
+    url = f"https://api.github.com/repos/{repo}/releases"
     with urlopen(url) as f:
         req = f.read().decode()
     releases = json.loads(req)
@@ -142,7 +142,7 @@ def _get_release_info(repo, name, draft=False, prerelease=False):
             release = list(filter(lambda x: x['tag_name'] == name, releases))[0]
 
     except (IndexError, ValueError) as e:
-        raise RuntimeError("No such Github release: '{}'".format(name)) from e
+        raise RuntimeError(f"No such Github release: '{name}'") from e
 
     return release
 
