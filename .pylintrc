@@ -24,7 +24,6 @@ disable=missing-docstring,
         invalid-name,
         consider-using-f-string,
         consider-iterating-dictionary,
-        unspecified-encoding,
         unnecessary-lambda-assignment # FIXME: also worth investigating
 
 

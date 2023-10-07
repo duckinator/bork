@@ -100,7 +100,7 @@ class GithubRelease:  # pylint: disable=too-many-instance-attributes
     def release_template():
         release_template_path = Path('.github/BORK_RELEASE_TEMPLATE.md')
         if release_template_path.exists():
-            return release_template_path.read_text()
+            return release_template_path.read_text(encoding='utf-8')
         return None
 
 
