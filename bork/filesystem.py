@@ -1,14 +1,7 @@
-import configparser
 from pathlib import Path
 import shutil
 
 import toml  # type: ignore
-
-
-def load_setup_cfg():
-    setup_cfg = configparser.ConfigParser()
-    setup_cfg.read('setup.cfg')
-    return setup_cfg
 
 
 def load_pyproject():
