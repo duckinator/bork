@@ -105,7 +105,7 @@ def download(package, release_tag, file_pattern, directory):
 
     source, package = package.split(':')
 
-    if source not in DOWNLOAD_SOURCES.keys():
+    if source not in DOWNLOAD_SOURCES:
         raise ValueError('Invalid package/repository -- unknown source given.')
 
     downloader = DOWNLOAD_SOURCES[source]
