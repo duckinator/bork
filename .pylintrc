@@ -5,8 +5,6 @@ jobs=1
 # List of plugins (as comma separated values of python modules names) to load,
 # usually to register additional checkers.
 load-plugins=pylint.extensions.check_elif,
-             pylint.extensions.comparetozero,
-             pylint.extensions.emptystring,
              pylint.extensions.overlapping_exceptions,
              pylint.extensions.redefined_variable_type,
 
