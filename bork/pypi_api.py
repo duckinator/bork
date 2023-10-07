@@ -72,7 +72,8 @@ def get_download_info(base_url, package, release, file_pattern):
     if base_url.endswith('/'):
         base_url = base_url[:-1]
 
-    html = urlopen('{}/{}/'.format(base_url, package)).read().decode()
+    with urlopen('{}/{}/'.format(base_url, package)) as f:
+        html = f.read().decode()
     parser = SimplePypiParser()
     parser.feed(html)
     files = parser.files

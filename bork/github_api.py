@@ -155,7 +155,8 @@ class GithubApi:
                                      headers=headers, method=method)
         logger().debug('%s %s', req.method, req.full_url)
 
-        response = urllib.request.urlopen(req).read().decode()
+        with urllib.request.urlopen(req) as f:
+            response = f.read().decode()
         return json.loads(response)
 
     # pylint: enable=too-many-arguments

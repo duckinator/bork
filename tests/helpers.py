@@ -11,13 +11,14 @@ def check_tgz(path):
     assert tarfile.is_tarfile(path)
     # tarfile.open() throws an exception if it's not a tarfile or we used
     # the wrong mode.
-    tarfile.open(path, mode='r:gz')
+    with tarfile.open(path, mode='r:gz') as _:
+        pass
     return True
 
 
 def check_zipfile(path):
-    zf = zipfile.ZipFile(str(path))
-    bad_file = zf.testzip()
+    with zipfile.ZipFile(str(path)) as zf:
+        bad_file = zf.testzip()
     assert bad_file is None
     return True
 

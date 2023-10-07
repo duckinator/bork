@@ -120,7 +120,8 @@ def _get_release_info(repo, name, draft=False, prerelease=False):
 
     log = logger()
     url = 'https://api.github.com/repos/{}/releases'.format(repo)
-    req = urlopen(url).read().decode()
+    with urlopen(url) as f:
+        req = f.read().decode()
     releases = json.loads(req)
 
     try:
