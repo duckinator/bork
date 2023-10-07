@@ -18,8 +18,7 @@ enable=all
 
 # Disable the message, report, category or checker with the given id(s).
 disable=missing-docstring,
-        compare-to-zero,
-        unnecessary-lambda-assignment # FIXME: also worth investigating
+        compare-to-zero
 
 
 [REPORTS]

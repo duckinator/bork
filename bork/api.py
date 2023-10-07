@@ -36,7 +36,8 @@ def build():
         if e.filename != 'pyproject.toml':
             raise e
 
-        setup = lambda ext: Path.cwd() / f"setup.{ext}"
+        def setup(ext):
+            return Path.cwd() / f"setup.{ext}"
 
         if setup("cfg").exists() or setup("py").exists():
             msg = """If you use setuptools, the following should be sufficient:
