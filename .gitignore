@@ -6,4 +6,6 @@
 /dist/
 /*.egg-info/
 /venv
+/bork-junit.xml
+/bork-junit.xml.html
 __pycache__
