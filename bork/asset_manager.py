@@ -20,7 +20,8 @@ def download_assets(asset_list, directory, name_key=None, url_key=None):
         url = asset[url_key]
         path = directory / name
 
-        contents = urlopen(url).read()
+        with urlopen(url) as f:
+            contents = f.read()
 
         path.write_bytes(contents)
         log.info("Downloaded '%s'", path)

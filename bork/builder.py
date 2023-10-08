@@ -1,3 +1,4 @@
+import configparser
 from pathlib import Path
 import subprocess
 import sys
@@ -6,7 +7,7 @@ import zipapp as Zipapp  # noqa: N812
 
 import build
 
-from .filesystem import load_setup_cfg, load_pyproject, try_delete
+from .filesystem import load_pyproject, try_delete
 # from .log import logger
 
 
@@ -24,11 +25,12 @@ def dist():
 
 
 def _setup_cfg_package_name():
-    setup_cfg = load_setup_cfg()
+    setup_cfg = configparser.ConfigParser()
+    setup_cfg.read('setup.cfg')
 
     if 'metadata' not in setup_cfg or 'name' not in setup_cfg['metadata']:
         raise RuntimeError(
-            "The [metadata] section of setup.cfg needs the 'name' key set.",
+            "You need to set project.name in pyproject.toml OR metadata.name in setup.cfg"
         )
 
     return setup_cfg['metadata']['name']
@@ -84,11 +86,11 @@ def zipapp():
     main = zipapp_cfg['main']
 
     # Output file is dist/<package name>-<package version>.pyz.
-    target = 'dist/{}-{}.pyz'.format(name, version)
+    target = f"dist/{name}-{version}.pyz"
 
     _prepare_zipapp(dest, _bdist_file())
 
     Zipapp.create_archive(dest, target, _python_interpreter(config), main,
         compressed=True)
     if not Path(target).exists():
-        raise RuntimeError('Failed to build zipapp: {}'.format(target))
+        raise RuntimeError(f"Failed to build zipapp: {target}")

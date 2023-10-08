@@ -41,7 +41,7 @@ def logger(context: Optional[inspect.FrameInfo] = None) -> logging.Logger:
         # it'll avoid causing errors, at least.
         return logging.getLogger('??.??')
 
-    return logging.getLogger('{}.{}'.format(_get_module(context), context.function))
+    return logging.getLogger(f"{_get_module(context)}.{context.function}")
 
 
 F = TypeVar('F', bound=Callable[..., Any])
@@ -49,11 +49,11 @@ F = TypeVar('F', bound=Callable[..., Any])
 
 def trace(func: F, level: int = logging.DEBUG) -> F:
     """Decorator to log function entry and exit."""
-    log = logging.getLogger('{}.{}'.format(func.__module__, func.__qualname__))
+    log = logging.getLogger(f"{func.__module__}.{func.__qualname__}")
 
     def wrapper(*args, **kwargs):
         arglist = map(repr, args) + [
-            '{}={}'.format(repr(k), repr(v)) for k, v in kwargs
+            f"{repr(k)}={repr(v)}" for k, v in kwargs
         ]
 
         try:

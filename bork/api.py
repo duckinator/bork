@@ -36,7 +36,8 @@ def build():
         if e.filename != 'pyproject.toml':
             raise e
 
-        setup = lambda ext: Path.cwd() / f"setup.{ext}"
+        def setup(ext):
+            return Path.cwd() / f"setup.{ext}"
 
         if setup("cfg").exists() or setup("py").exists():
             msg = """If you use setuptools, the following should be sufficient:
@@ -105,7 +106,7 @@ def download(package, release_tag, file_pattern, directory):
 
     source, package = package.split(':')
 
-    if source not in DOWNLOAD_SOURCES.keys():
+    if source not in DOWNLOAD_SOURCES:
         raise ValueError('Invalid package/repository -- unknown source given.')
 
     downloader = DOWNLOAD_SOURCES[source]
@@ -174,7 +175,7 @@ def run(alias):
     try:
         commands = pyproject['tool']['bork']['aliases'][alias]
     except KeyError as error:
-        raise RuntimeError("No such alias: '{}'".format(alias)) from error
+        raise RuntimeError(f"No such alias: '{alias}'") from error
 
     logger().info("Running '%s'", commands)
 
@@ -193,13 +194,9 @@ def run(alias):
     except subprocess.CalledProcessError as error:
         if error.returncode < 0:
             signal = Signals(- error.returncode)
-            msg = "command '{}' exited due to signal {} ({})".format(
-                error.cmd, signal.name, signal.value,
-            )
+            msg = f"command '{error.cmd}' exited due to signal {signal.name} ({signal.value})"
 
         else:
-            msg = "bork: command '{}' exited with error code {}".format(
-                error.cmd, error.returncode,
-            )
+            msg = f"bork: command '{error.cmd}' exited with error code {error.returncode}"
 
         raise RuntimeError(msg) from error

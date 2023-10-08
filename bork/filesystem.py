@@ -1,14 +1,7 @@
-import configparser
 from pathlib import Path
 import shutil
 
 import toml  # type: ignore
-
-
-def load_setup_cfg():
-    setup_cfg = configparser.ConfigParser()
-    setup_cfg.read('setup.cfg')
-    return setup_cfg
 
 
 def load_pyproject():
@@ -47,4 +40,4 @@ def try_delete(path):
     if Path(path).is_dir():
         shutil.rmtree(path)
     elif Path(path).exists():
-        raise RuntimeError("'{}' is not a directory".format(path))
+        raise RuntimeError(f"'{path}' is not a directory")
