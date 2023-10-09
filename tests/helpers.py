@@ -3,7 +3,6 @@ import sys
 import tarfile
 import zipfile
 
-from click.testing import CliRunner  # type: ignore
 import bork.cli
 
 
@@ -23,17 +22,6 @@ def check_zipfile(path):
     return True
 
 
-def bork_cli(*args):
-    runner = CliRunner()
-    return runner.invoke(bork.cli.cli, args)
-
-
-def bork_check(*args):
-    result = bork_cli(*args)
-    assert result.exit_code == 0
-    return result
-
-
 def _check_call(cmd, **kwargs):
     # `universal_newlines` is the old name for the `text` kwarg.
     # Since we want 3.6 support, we use that instead.
@@ -47,3 +35,7 @@ def check_run(*args):
 
 def python_check(*args):
     return _check_call([sys.executable, *args])
+
+
+def bork_check(*args):
+    return python_check("-m", "bork", *args)
