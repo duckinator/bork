@@ -87,13 +87,7 @@ def download(args):
     package = args.PACKAGE
     release_tag = args.RELEASE
 
-    # NOTE: We change the order of the arguments here, to move away from
-    #       what makes sense on a CLI interface to what makes sense in a
-    #       Python interface.
-    #try:
     api.download(package, release_tag, files, directory)
-    #except ValueError as error:
-    #    raise BadParameter(error) from error
 
 
 def release(args):
