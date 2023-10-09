@@ -100,6 +100,11 @@ macOS_task:
   script:
     - python3 --version
     - bork run test
+  always:
+    upload_results_artifacts:
+      path: ./bork-junit.xml
+      format: junit
+      type: text/xml
 
 FreeBSD_task:
   alias: FreeBSD tests
@@ -122,6 +127,11 @@ FreeBSD_task:
   script:
     - python${PYTHON} --version
     - bork run test
+  always:
+    upload_results_artifacts:
+      path: ./bork-junit.xml
+      format: junit
+      type: text/xml
 
 Windows_task:
   windows_container:
@@ -143,6 +153,11 @@ Windows_task:
     - C:\Python\python.exe --version
   test_script:
     - C:\Python\python.exe -m pytest --verbose
+  always:
+    upload_results_artifacts:
+      path: ./bork-junit.xml
+      format: junit
+      type: text/xml
 
 success_task:
   name: CI success

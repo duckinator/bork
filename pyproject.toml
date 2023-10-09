@@ -80,7 +80,7 @@ lint = [
 #    "mypy bork",
 ]
 # Runs all tests.
-test = "pytest --verbose"
+test = "pytest --junitxml=bork-junit.xml --verbose"
 # Runs fast tests.
 test-fast = "pytest --verbose -m 'not slow'"
 # Runs slow tests.
