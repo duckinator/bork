@@ -121,9 +121,7 @@ def run(args):
     api.run(args.ALIAS)
 
 
-def _parse_args(args=None):
-    # NOTE: args should be equivalent to to `sys.argv[1:]`.
-
+def _arg_parser():
     parser = argparse.ArgumentParser(
             prog="bork",
             description="A build and release tool for Python projects, with ZipApp support.")
@@ -177,22 +175,22 @@ def _parse_args(args=None):
     runp.add_argument("ALIAS")
     runp.set_defaults(func=run)
 
-    args = args or sys.argv[1:]
-    if len(args) == 0:
-        args = ["--help"]
-    return parser.parse_args(args)
+    return parser
 
 
-def main(args=None):
+def main(cmd_args=None):
     """
     Command-line entrypoint for bork.
 
-    `args` should be either `None` or equivalent to `sys.argv[1:]`.
+    `cmd_args` should be either `None` or equivalent to `sys.argv[1:]`.
     """
     if sys.version_info < (3, 8):
         print('ERROR: Bork requires Python 3.8 or newer', file=sys.stderr)
 
-    args = _parse_args(args)
+    cmd_args = cmd_args or sys.argv[1:]
+    if len(cmd_args) == 0:
+        cmd_args = ["--help"]
+    args = _arg_parser().parse_args(cmd_args)
 
     if args.version:
         print(f"bork v{__version__}")
