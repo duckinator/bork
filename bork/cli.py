@@ -122,13 +122,11 @@ def run(args):
 
 
 def _parse_args(args=None):
-    """
-    NOTE: args should be equivalent to to `sys.argv[1:]`.
-    """
+    # NOTE: args should be equivalent to to `sys.argv[1:]`.
+
     parser = argparse.ArgumentParser(
             prog="bork",
-            description="A build and release tool for Python projects, with ZipApp support.",
-            epilog="epi")
+            description="A build and release tool for Python projects, with ZipApp support.")
     parser.add_argument("--version", action="store_true",
                         help="Print version information and exit.")
     parser.add_argument("--verbose", action="store_true",
