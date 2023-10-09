@@ -8,4 +8,5 @@
 /venv
 /bork-junit.xml
 /bork-junit.xml.html
+/docs/build/
 __pycache__
