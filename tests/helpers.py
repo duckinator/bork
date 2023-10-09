@@ -3,8 +3,6 @@ import sys
 import tarfile
 import zipfile
 
-import bork.cli
-
 
 def check_tgz(path):
     assert tarfile.is_tarfile(path)
