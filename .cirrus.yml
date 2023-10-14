@@ -109,7 +109,7 @@ macOS_task:
 FreeBSD_task:
   alias: FreeBSD tests
   freebsd_instance:
-    image_family: freebsd-12-2
+    image_family: freebsd-13-2
   env:
     matrix:
       - PYTHON: 3.8
