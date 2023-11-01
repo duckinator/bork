@@ -9,8 +9,8 @@ python:
   install:
     - requirements: docs-requirements.txt
 
-mkdocs:
-  configuration: mkdocs.yml
+sphinx:
+  configuration: docs/source/conf.py
 
 # Build PDF & ePub versions of docs.
 formats:
