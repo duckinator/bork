@@ -31,6 +31,9 @@ dependencies = [
     "toml~=0.10.2",
     "twine==4.0.1", # 4.0.2 starts pulling in Rust.
     "coloredlogs~=15.0.1",
+    # pip is used by bork.builder._prepare_zipapp(),
+    # meaning it is in fact a proper dependency.
+    "pip",
 ]
 
 requires-python = ">= 3.8"
