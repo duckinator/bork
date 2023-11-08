@@ -109,8 +109,7 @@ FreeBSD_task:
       - PYTHON: 3.11
   install_script:
     - PY=`echo $PYTHON | tr -d '.'`
-    # Rust is installed because: twine -> readme-renderer -> nh3 (which is Rust)
-    - pkg install -y python${PY} git rust
+    - pkg install -y python${PY} git
     - python${PYTHON} -m ensurepip
   pip_install_script:
     - python${PYTHON} -m pip install -U --upgrade-strategy eager pip 'setuptools>61'
