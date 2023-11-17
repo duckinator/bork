@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from helpers import check_run
+from helpers import chdir, check_run
 
 
 def _src_name(src):
@@ -33,4 +33,6 @@ def project_src(request, tmp_path_factory):
 
 @pytest.fixture(scope="function")
 def project(project_src, tmp_path):
-    return shutil.copytree(project_src, tmp_path, dirs_exist_ok=True)
+    shutil.copytree(project_src, tmp_path, dirs_exist_ok=True)
+    with chdir(tmp_path):
+        yield tmp_path
