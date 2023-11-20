@@ -51,7 +51,7 @@ def _bdist_file():
 def _prepare_zipapp(dest, bdist_file):
     # Prepare zipapp directory.
     try_delete(dest)
-    Path(dest).mkdir()
+    Path(dest).mkdir(parents=True)
     return subprocess.check_call([
         sys.executable, '-m', 'pip', 'install', '--target', dest, bdist_file
     ])
