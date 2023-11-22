@@ -27,7 +27,7 @@ classifiers = [
 dependencies = [
     "build~=1.0.3",
     "packaging~=21.3",
-    "toml~=0.10.2",
+    "toml~=0.10.2; python_version < '3.11'",
     "twine==4.0.1",
     "coloredlogs~=15.0.1",
     # pip is used by bork.builder._prepare_zipapp(),
