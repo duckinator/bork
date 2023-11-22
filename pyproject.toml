@@ -25,7 +25,6 @@ classifiers = [
 # The packaging library is used by bork.github_api, and also pulled in via
 # twine -> readme_renderer -> bleach -> packaging.
 dependencies = [
-    "wheel~=0.41.2",
     "build~=1.0.3",
     "packaging~=21.3",
     "toml~=0.10.2",
@@ -54,6 +53,9 @@ lint = [
 
 test = [
     "pytest==7.4.2",
+
+    # build-system.requires for packages built during tests, including bork itself
+    "setuptools >= 61", "wheel"
 ]
 
 docs = [
