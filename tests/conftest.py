@@ -23,6 +23,9 @@ def _src_name(src):
     return removesuffix(src, '.git').rsplit('/', 1)[1]
 
 
+# pylint: disable=redefined-outer-name
+# would trigger on any fixture which uses another fixture defined in the same file
+
 @pytest.fixture(scope="session", ids=_src_name, params=(
     Path(__file__).parent / 'fixtures' / 'minimal-package',
     ) + tuple(pytest.param(url, marks=pytest.mark.network) for url in (
