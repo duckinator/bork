@@ -1,8 +1,10 @@
+import os
 import subprocess
 import sys
 import tarfile
 import zipfile
-
+from contextlib import contextmanager
+from pathlib import Path
 
 def check_tgz(path):
     assert tarfile.is_tarfile(path)
@@ -37,3 +39,12 @@ def python_check(*args):
 
 def bork_check(*args):
     return python_check("-m", "bork", *args)
+
+
+@contextmanager
+def chdir(path):
+    cwd = Path.cwd()
+
+    os.chdir(path)
+    yield
+    os.chdir(cwd)
