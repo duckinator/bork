@@ -28,9 +28,9 @@ def _src_name(src):
 
 @pytest.fixture(scope="session", ids=_src_name, params=(
     Path(__file__).parent / 'fixtures' / 'minimal-package',
+    Path(__file__).parent.parent,  # bork's source tree
     ) + tuple(pytest.param(url, marks=pytest.mark.network) for url in (
     "https://github.com/astronouth7303/ppb-mutant.git",
-    "https://github.com/duckinator/bork.git",
     "https://github.com/duckinator/emanate.git",
     "https://github.com/ppb/ppb-vector.git",
 )))
