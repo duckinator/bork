@@ -1,4 +1,5 @@
 import shutil
+import sys
 from pathlib import Path
 
 import pytest
@@ -6,11 +7,20 @@ import pytest
 from helpers import chdir, check_run
 
 
+if sys.version_info >= (3, 9):
+    removesuffix = str.removesuffix
+else:
+    def removesuffix(s: str, suffix: str) -> str:
+        if not s.endswith(suffix):
+            return s
+        return s[:-len(suffix)]
+
+
 def _src_name(src):
     if isinstance(src, Path):
         return src.name
 
-    return src.rsplit('/', 1)[1].removesuffix('.git')
+    return removesuffix(src, '.git').rsplit('/', 1)[1]
 
 
 @pytest.fixture(scope="session", ids=_src_name, params=(
