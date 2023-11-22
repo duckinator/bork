@@ -1,6 +1,6 @@
 Lint_task:
   container:
-    image: python:3.11-slim
+    image: python:3.12-slim
   install_script:
     - pip install -U --upgrade-strategy eager pip 'setuptools>61'
     - pip install .
