@@ -1,7 +1,10 @@
 from pathlib import Path
 import shutil
 
-import toml  # type: ignore
+try:
+    import tomllib
+except ImportError:
+    import toml as tomllib  # type: ignore
 
 
 def load_pyproject():
@@ -11,7 +14,9 @@ def load_pyproject():
     Will synthesize data if a legacy setuptools project is detected.
     """
     try:
-        return toml.load('pyproject.toml')
+        pyproject = Path.cwd() / 'pyproject.toml'
+        return tomllib.loads(pyproject.read_text())  # Mildly inefficient, but portable
+
     except FileNotFoundError:
         if Path('setup.py').exists() or Path('setup.cfg').exists():
             # Legacy project, use setuptools' legacy backend
