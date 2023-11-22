@@ -35,6 +35,11 @@ def _src_name(src):
     "https://github.com/ppb/ppb-vector.git",
 )))
 def project_src(request, tmp_path_factory):
+    """Provide a source tree, which is cached over the whole pytest run.
+
+    This fixture is parameterized over all the source trees that are built during tests,
+    making any test (or fixture) that uses it parameterized itself.
+    """
     if isinstance(request.param, Path):
         return request.param
 
@@ -46,6 +51,7 @@ def project_src(request, tmp_path_factory):
 
 @pytest.fixture(scope="function")
 def project(project_src, tmp_path):
+    """Provide a fresh copy of a source tree, which is discarded after the current test."""
     shutil.copytree(project_src, tmp_path, dirs_exist_ok=True)
     with chdir(tmp_path):
         yield tmp_path
