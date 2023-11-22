@@ -73,10 +73,10 @@ macOS_task:
     PATH: ${HOME}/.pyenv/shims:${PATH}
     matrix:
       # https://formulae.brew.sh/formula/python@3.10
-      - PYTHON: 3.8.16
-      - PYTHON: 3.9.16
-      - PYTHON: 3.10.9
-      - PYTHON: 3.11.1
+      - PYTHON: 3.8.18
+      - PYTHON: 3.9.18
+      - PYTHON: 3.10.13
+      - PYTHON: 3.11.6
       - PYTHON: 3.12.0
   brew_update_script:
     - brew update
