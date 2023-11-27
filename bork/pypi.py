@@ -38,7 +38,7 @@ class Downloader:  # pylint: disable=too-few-public-methods
             config.read(str(path))
 
         if repository_name in config:
-            repo_config = config.get(repository_name, None)
+            repo_config = config[repository_name]
             if self.PYPIRC_KEY in repo_config:
                 return repo_config[self.PYPIRC_KEY]
 
