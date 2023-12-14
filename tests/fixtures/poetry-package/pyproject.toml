@@ -1,0 +1,13 @@
+[build-system]
+# Specify the required build system.
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "test-poetry-project-please-ignore"
+version = "0"
+description = "Example description"
+authors = ["Example Author"]
+packages = [
+    { include = "src" },
+]
