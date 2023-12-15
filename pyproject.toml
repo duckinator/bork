@@ -26,7 +26,7 @@ classifiers = [
 # twine -> readme_renderer -> bleach -> packaging.
 dependencies = [
     "build~=1.0.3",
-    "packaging~=21.3",
+    "packaging~=23.2",
     "toml~=0.10.2; python_version < '3.11'",
     "twine==4.0.1",
     "coloredlogs~=15.0.1",
