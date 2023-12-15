@@ -2,6 +2,8 @@
    :maxdepth: 1
 
    index
+   config
+   github-release-template
    api
    asset_manager
    builder
