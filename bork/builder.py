@@ -16,22 +16,29 @@ from .filesystem import load_pyproject, try_delete
 DEFAULT_PYTHON_INTERPRETER = '/usr/bin/env python3'
 
 
-def dist():
-    """Build the sdist and wheel distributions."""
+def dist(backend_settings=None):
+    """Build the sdist and wheel distributions.
+
+    :param backend_settings: Passed as ``config_settings`` to
+        ``build.ProjectBuilder.get_requires_for_build(distribution, config_settings)`` and
+        ``build.ProjectBuilder.build(distribution, outdir, config_settings)
+    """
 
     srcdir = "."
     outdir = "./dist"
-    backend_config_settings = None # TODO: Expose this somehow?
 
     with build.env.DefaultIsolatedEnv() as env:
         builder = build.ProjectBuilder.from_isolated_env(env, srcdir)
         # Install deps from `project.build_system_requires`
         env.install(builder.build_system_requires)
-        # TODO: builder.build() returns the location of the build dist. Maybe store/use it?
+
+        results = {}
         for distribution in ["sdist", "wheel"]:
             # Install deps that are required to build the distribution.
-            env.install(builder.get_requires_for_build(distribution, backend_config_settings or {}))
-            builder.build(distribution, outdir, backend_config_settings or {})
+            env.install(builder.get_requires_for_build(distribution, backend_settings or {}))
+
+            results[distribution] = builder.build(distribution, outdir, backend_settings or {})
+        return results
 
 
 def _setup_cfg_package_name():
