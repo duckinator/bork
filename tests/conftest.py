@@ -31,6 +31,7 @@ test_dir = Path(__file__).parent
 @pytest.fixture(scope="session", ids=_src_name, params=(
     Path(__file__).parent / 'fixtures' / 'minimal-package',
     test_dir / 'fixtures' / 'poetry-package',
+    test_dir / 'fixtures' / 'hatch-package',
     Path(__file__).parent.parent,  # bork's source tree
     ) + tuple(pytest.param(url, marks=pytest.mark.network) for url in (
     "https://github.com/astronouth7303/ppb-mutant.git",

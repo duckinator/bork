@@ -1,0 +1,11 @@
+[build-system]
+# Specify the required build system.
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "test-hatch-project-please-ignore"
+version = "0"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
