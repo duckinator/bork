@@ -1,8 +1,6 @@
 import configparser
 from pathlib import Path
 
-from twine.cli import dispatch as twine_dispatch  # type: ignore
-
 from .asset_manager import download_assets
 from .filesystem import find_files
 from .log import logger
@@ -50,15 +48,41 @@ def download(repository_name, package, release, file_pattern, directory):
                                                 directory)
 
 
+class Uploader:
+    PYPI_ENDPOINT = "https://upload.pypi.org/legacy/"
+    TESTPYPI_ENDPOINT = "https://test.pypi.org/legacy/"
+
+    def __init__(self, files, repository=None):
+        if repository == "pypi" or repository is None:
+            repository = self.PYPI_ENDPOINT
+        elif repository == "testpypi":
+            repository = self.TESTPYPI_ENDPOINT
+        elif repository.startswith("http://") or repository.startswith("https://"):
+            pass # Everything is fine.
+        else:
+            logger().error("Only the 'pypi' and 'testpypi' repository shorthands are supported.")
+            logger().error("Please provide a full URL for custom endpoints, such as <https://pypi.example.org/legacy/>.")
+            logger().error("Please open an issue at https://github.com/duckinator/bork if you need help.")
+            exit(1)
+
+        if not files:
+            logger().error("No files to upload?")
+            exit(1)
+
+        self.files = files
+        self.repository = repository
+
+    def upload(self, dry_run=True):
+        msg_prefix = "Uploading"
+        if dry_run:
+            logger().warn("Skipping PyPi release since this is a dry run.")
+            msg_prefix = "Pretending to upload"
+
+        logger().info("%s %i files to PyPi repository '%s':", msg_prefix, len(self.files), self.repository)
+        for file in self.files:
+            logger().info("- %s %s", file, "(skipping for dry run)" if dry_run else "")
+
+
 def upload(repository_name, *globs, dry_run=False):
     files = find_files(globs)
-    logger().info(
-        "Uploading files to PyPI instance '%s': %s",
-        repository_name,
-        ', '.join((f"'{file}'" for file in files)),
-    )
-
-    if dry_run:
-        logger().warning('Skipping PyPI upload step since this is a dry run.')
-    else:
-        twine_dispatch(['upload', '--repository', repository_name, *files])
+    Uploader(files, repository_name).upload(dry_run)

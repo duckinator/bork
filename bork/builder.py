@@ -10,6 +10,9 @@ import build
 from .filesystem import load_pyproject, try_delete
 # from .log import logger
 
+class NeedsBuildError(Exception):
+    pass
+
 
 # The "proper" way to handle the default would be to check python_requires
 # in setup.cfg. But, since Bork needs Python 3, there's no point.
@@ -62,7 +65,10 @@ def _python_interpreter(config):
 
 
 def _bdist_file():
-    return max(Path.cwd().glob('dist/*.whl'))
+    files = list(Path.cwd().glob('dist/*.whl'))
+    if not files:
+        raise NeedsBuildError
+    return max(files)
 
 
 def _prepare_zipapp(dest, bdist_file):

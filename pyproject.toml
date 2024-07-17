@@ -22,21 +22,15 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
-# The packaging library is used by bork.github_api, and also pulled in via
-# twine -> readme_renderer -> bleach -> packaging.
 dependencies = [
-    "build~=1.0.3",
+    "build~=1.2.1",
+    # The packaging library is used by bork.github_api.
     "packaging~=23.2",
     "toml~=0.10.2; python_version < '3.11'",
-    "twine==4.0.1",
     "coloredlogs~=15.0.1",
     # pip is used by bork.builder._prepare_zipapp(),
     # meaning it is in fact a proper dependency.
     "pip",
-    # readme-renderer is a dependency of twine.
-    # With v42.0, it switched from the `bleach` library to the `nh3` library.
-    # However, nh3 uses a Rust library, so it requires having Rust installed.
-    "readme-renderer>=35.0,<42.0",
 ]
 
 requires-python = ">= 3.8"
