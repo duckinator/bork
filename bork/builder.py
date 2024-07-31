@@ -1,7 +1,10 @@
 import configparser
+import contextlib
+import importlib
 from pathlib import Path
 import subprocess
 import sys
+import tempfile
 # Slight kludge so we can have a function named zipapp().
 import zipapp as Zipapp  # noqa: N812
 
@@ -18,6 +21,18 @@ class NeedsBuildError(Exception):
 # in setup.cfg. But, since Bork needs Python 3, there's no point.
 DEFAULT_PYTHON_INTERPRETER = '/usr/bin/env python3'
 
+@contextlib.contextmanager
+def prepared_environment(srcdir, outdir):
+    """Usage:
+        with prepared_environment(".", "./dist") as (env, builder):
+            # ...
+    """
+    with build.env.DefaultIsolatedEnv() as env:
+        builder = build.ProjectBuilder.from_isolated_env(env, srcdir)
+        # Install deps from `project.build_system_requires`
+        env.install(builder.build_system_requires)
+        # Yield env and builder.
+        yield (env, builder)
 
 def dist(backend_settings=None):
     """Build the sdist and wheel distributions.
@@ -44,17 +59,14 @@ def dist(backend_settings=None):
         return results
 
 
-def _setup_cfg_package_name():
-    setup_cfg = configparser.ConfigParser()
-    setup_cfg.read('setup.cfg')
+def metadata():
+    srcdir = "."
+    outdir = "./dist"
 
-    if 'metadata' not in setup_cfg or 'name' not in setup_cfg['metadata']:
-        raise RuntimeError(
-            "You need to set project.name in pyproject.toml OR metadata.name in setup.cfg"
-        )
-
-    return setup_cfg['metadata']['name']
-
+    with prepared_environment(srcdir, outdir) as (env, builder):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(builder.metadata_path(tmpdir))
+            return importlib.metadata.Distribution.at(path).metadata
 
 def _python_interpreter(config):
     # To override the default interpreter, add this to your project's setup.cfg:
@@ -99,11 +111,7 @@ def zipapp():
     if not want_zipapp:
         return
 
-    # If the project name is specified in pyproject.toml, use it.
-    # Otherwise, try getting it from setup.cfg.
-    name = pyproject.get('project', {}).get('name', None)
-    if name is None:
-        name = _setup_cfg_package_name()
+    name = metadata()['name']
     dest = str(Path('build', 'zipapp'))
     version = version_from_bdist_file()
     main = zipapp_cfg['main']
