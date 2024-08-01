@@ -26,11 +26,13 @@ def aliases():
     return pyproject.get('tool', {}).get('bork', {}).get('aliases', {})
 
 
-def build(build_zipapp=False):
+def build():
     """Build the project."""
     builder.dist()
-    if build_zipapp:
-        builder.zipapp()
+
+def build_zipapp(zipapp_main=None):
+    """Build the project as a ZipApp."""
+    builder.zipapp(zipapp_main)
 
 
 def clean():

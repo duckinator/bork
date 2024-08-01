@@ -98,7 +98,7 @@ def version_from_bdist_file():
     return _bdist_file().name.replace('.tar.gz', '').split('-')[1]
 
 
-def zipapp():
+def zipapp(zipapp_main):
     """
     Build a zipapp for the project.
 
@@ -116,7 +116,7 @@ def zipapp():
     name = metadata()['name']
     dest = str(Path('build', 'zipapp'))
     version = version_from_bdist_file()
-    main = zipapp_cfg['main']
+    main = zipapp_main or zipapp_cfg['main']
 
     # Output file is dist/<package name>-<package version>.pyz.
     target = f"dist/{name}-{version}.pyz"
