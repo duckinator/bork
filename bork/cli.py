@@ -127,10 +127,8 @@ def _arg_parser():
             description="A build and release tool for Python projects, with ZipApp support.")
     parser.add_argument("--version", action="store_true",
                         help="Print version information and exit.")
-    parser.add_argument("--verbose", action="store_true",
+    parser.add_argument("--verbose", "--debug", action="store_true",
                         help="Enable verbose logging.")
-    parser.add_argument("--debug", action="store_true",
-                        help="Enable VERY verbose logging. (Sometimes too noisy to be helpful.)")
 
     subparsers = parser.add_subparsers(title="Commands")
     aliasesp = subparsers.add_parser("aliases",
@@ -218,7 +216,7 @@ def main(cmd_args=None):
         log_level = logging.INFO
 
         # If we got '--verbose' or '--debug', print DEBUG and higher severity messages.
-        if args.verbose or args.debug:
+        if args.verbose:
             log_level = logging.DEBUG
 
         coloredlogs.install(
