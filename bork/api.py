@@ -156,7 +156,7 @@ def release(repository_name, dry_run, github_release_override=None, pypi_release
         release_to_pypi = pypi_release_override
 
     if not release_to_github and not release_to_pypi:
-        print('Configured to release to neither PyPi nor GitHub?')
+        raise RuntimeError('Configured to release to neither PyPi nor GitHub?')
 
     if release_to_github:
         github_repository = release_config.get('github_repository', None)
