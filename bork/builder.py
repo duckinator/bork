@@ -1,3 +1,5 @@
+from .filesystem import load_pyproject, try_delete
+import build
 import contextlib
 from pathlib import Path
 import subprocess
@@ -11,11 +13,6 @@ if sys.version_info[:2] >= (3, 10):
     from importlib import metadata as importlib_metadata
 else:
     import importlib_metadata
-
-import build
-
-from .filesystem import load_pyproject, try_delete
-# from .log import logger
 
 class NeedsBuildError(Exception):
     pass
