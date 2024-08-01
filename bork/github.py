@@ -1,12 +1,6 @@
-import fnmatch
-import json
 from pathlib import Path
-from urllib.request import urlopen
 from typing import Optional
 
-import packaging.version
-
-from .asset_manager import download_assets
 from .filesystem import find_files
 from .github_api import GithubApi
 from .log import logger
@@ -102,53 +96,3 @@ class GithubRelease:  # pylint: disable=too-many-instance-attributes
         if release_template_path.exists():
             return release_template_path.read_text(encoding='utf-8')
         return None
-
-
-def _relevant_asset(asset, file_pattern):
-    file_patterns = file_pattern.split(',')
-    for pattern in file_patterns:
-        if fnmatch.fnmatch(asset['name'], pattern):
-            return True
-    return False
-
-
-def _get_release_info(repo, name, draft=False, prerelease=False):
-    if '/' not in repo:
-        raise ValueError(
-            f"repo must be of format <user>/<repo>, got '{repo}'",
-        )
-
-    log = logger()
-    url = f"https://api.github.com/repos/{repo}/releases"
-    with urlopen(url) as f:
-        req = f.read().decode()
-    releases = json.loads(req)
-
-    try:
-        if name == 'latest':
-            # Filter out prereleases and drafts (unless specified in the arguments)
-            releases = (
-                r for r in releases
-                if (draft or not r['draft'])
-                and (prerelease or not r['prerelease'])  # noqa: W503
-            )
-            # Find the latest
-            release = max(
-                releases,
-                key=lambda x: packaging.version.parse(x['tag_name']).public,
-            )
-            log.info("Selected release '%s' as latest", release['name'])
-        else:
-            release = list(filter(lambda x: x['tag_name'] == name, releases))[0]
-
-    except (IndexError, ValueError) as e:
-        raise RuntimeError(f"No such Github release: '{name}'") from e
-
-    return release
-
-
-def download(repo, release, file_pattern, directory):
-    release_info = _get_release_info(repo, release, file_pattern)
-    assets = filter(lambda x: _relevant_asset(x, file_pattern),
-                    release_info['assets'])
-    download_assets(assets, directory, url_key='browser_download_url')

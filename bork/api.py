@@ -1,3 +1,4 @@
+from functools import partial
 import os
 from pathlib import Path
 from signal import Signals
@@ -5,8 +6,6 @@ import subprocess
 import sys
 
 from . import builder
-from . import github
-from . import pypi
 from .filesystem import try_delete, load_pyproject
 from .log import logger
 
@@ -67,6 +66,8 @@ def download(package, release_tag, file_pattern, directory):
             The directory where files are saved.
             This directory is created, if needed.
     """
+    from homf.api import github, pypi  # type: ignore
+
     if file_pattern is None or len(file_pattern) == 0:
         raise ValueError('file_pattern must be non-empty.')
 
@@ -77,15 +78,15 @@ def download(package, release_tag, file_pattern, directory):
 
     match source:
         case 'github' | 'gh':
-            downloader = github
+            download = github.download
         case 'pypi':
-            downloader = pypi.Downloader('pypi')
+            download = pypi.download
         case 'testpypi' | 'pypi-test':
-            downloader = pypi.Downloader('testpypi')
+            download = partial(pypi.download, repository_url = "https://test.pypi.org/simple/")
         case _:
             raise ValueError('Invalid package/repository -- unknown source given.')
 
-    downloader.download(package, release_tag, file_pattern, directory) # type:ignore
+    download(package, release_tag, file_pattern, directory) # type:ignore
 
 
 def release(repository_name, dry_run, github_release_override=None, pypi_release_override=None):
@@ -107,6 +108,7 @@ def release(repository_name, dry_run, github_release_override=None, pypi_release
             If True, enable PyPi releases; if False, disable PyPi releases;
             if None, respect the configuration in pyproject.toml.
     """
+    from . import github, pypi
     pyproject = load_pyproject()
     bork_config = pyproject.get('tool', {}).get('bork', {})
     release_config = bork_config.get('release', {})

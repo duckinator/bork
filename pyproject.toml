@@ -23,6 +23,7 @@ classifiers = [
 dependencies = [
     "build~=1.2.1",
     "coloredlogs~=15.0.1",
+    "homf~=1.1", # `bork download` stubs out to it
     "packaging~=23.2", # The packaging library is used by bork.github_api.
     "pip", # used by bork.builder._prepare_zipapp
     "urllib3~=2.2.2",
