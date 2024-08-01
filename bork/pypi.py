@@ -1,10 +1,14 @@
 import configparser
+import hashlib
+import os
 from pathlib import Path
 
+from . import builder
 from .asset_manager import download_assets
-from .filesystem import find_files
+from .filesystem import find_files, wheel_file_info
 from .log import logger
 from .pypi_api import get_download_info
+from .http import post
 
 
 class Downloader:  # pylint: disable=too-few-public-methods
@@ -57,7 +61,10 @@ class Uploader:
             repository = self.PYPI_ENDPOINT
         elif repository == "testpypi":
             repository = self.TESTPYPI_ENDPOINT
-        elif repository.startswith("http://") or repository.startswith("https://"):
+        elif repository.startswith("http://"):
+            logger().error("Configured to use insecure repository: %s", repository)
+            exit(1)
+        elif repository.startswith("https://"):
             pass # Everything is fine.
         else:
             logger().error("Only the 'pypi' and 'testpypi' repository shorthands are supported.")
@@ -72,15 +79,76 @@ class Uploader:
         self.files = files
         self.repository = repository
 
+        self.username = os.environ.get("BORK_PYPI_USERNAME", None)
+        self.password = os.environ.get("BORK_PYPI_PASSWORD", None)
+
+    def _upload_file(self, url, file, metadata):
+        file_contents = Path(file).read_bytes()
+        file_digest = hashlib.sha256(file_contents).hexdigest()
+
+        if file.endswith(".whl"):
+            file_type = "bdist_wheel"
+            pyversion = wheel_file_info(file)["pyversion"]
+        else:
+            file_type = "sdist"
+            pyversion = "source"
+
+        md = metadata
+
+        wanted_fields = [
+            "summary",
+            "description", "description_content_type",
+            "keywords", "home_page", "download_url",
+            "author", "author_email", "maintainer", "maintainer_email",
+            "license", "classifier",
+            "requires_dist", "requires_python", "requires_external",
+            "project_url",
+        ]
+
+        other_fields = []
+        for key in md.keys():
+            if key not in wanted_fields:
+                continue
+
+            values = md[key]
+            if not isinstance(values, list):
+                values = [values]
+
+            for value in values:
+                other_fields.append((key, value))
+
+        form = [
+            (":action", "file_upload"),
+            ("protocol_version", "1"),
+            ("content", (Path(file).name, file_contents)),
+            ("sha256_digest", file_digest),
+            ("filetype", file_type),
+            ("pyversion", pyversion),
+
+            # Required "core metadata" fields.
+            # These are set here to trigger a hard error if they're missing.
+            ("metadata_version", md["metadata_version"]),
+            ("name", md["name"]),
+            ("version", md["version"]),
+
+            # Remaining "core metadata" fields.
+            *other_fields
+            ]
+        result = post(url, form, auth=(self.username, self.password))
+
     def upload(self, dry_run=True):
         msg_prefix = "Uploading"
         if dry_run:
             logger().warn("Skipping PyPi release since this is a dry run.")
             msg_prefix = "Pretending to upload"
 
+        metadata = builder.metadata().json
+
         logger().info("%s %i files to PyPi repository '%s':", msg_prefix, len(self.files), self.repository)
         for file in self.files:
             logger().info("- %s %s", file, "(skipping for dry run)" if dry_run else "")
+            if not dry_run:
+                self._upload_file(self.repository, file, metadata)
 
 
 def upload(repository_name, *globs, dry_run=False):

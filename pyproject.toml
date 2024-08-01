@@ -28,6 +28,7 @@ dependencies = [
     "packaging~=23.2",
     "toml~=0.10.2; python_version < '3.11'",
     "coloredlogs~=15.0.1",
+    "urllib3~=2.2.2",
     # pip is used by bork.builder._prepare_zipapp(),
     # meaning it is in fact a proper dependency.
     "pip",
