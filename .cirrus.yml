@@ -6,7 +6,7 @@ Lint_task:
     - pip install .
     - pip install .[lint] .[test]
   script:
-    - pylint --version
+    - ruff --version
     - mypy --version
     - bork run lint
 
