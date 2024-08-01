@@ -134,21 +134,31 @@ class Uploader:
             # Remaining "core metadata" fields.
             *other_fields
             ]
-        result = post(url, form, auth=(self.username, self.password))
+        response = post(url, form, auth=(self.username, self.password))
+        return response
 
     def upload(self, dry_run=True):
+        log = logger()
+
         msg_prefix = "Uploading"
         if dry_run:
-            logger().warn("Skipping PyPi release since this is a dry run.")
             msg_prefix = "Pretending to upload"
 
         metadata = builder.metadata().json
 
-        logger().info("%s %i files to PyPi repository '%s':", msg_prefix, len(self.files), self.repository)
+        log.info("%s %i files to PyPi repository '%s'.", msg_prefix, len(self.files), self.repository)
         for file in self.files:
-            logger().info("- %s %s", file, "(skipping for dry run)" if dry_run else "")
-            if not dry_run:
-                self._upload_file(self.repository, file, metadata)
+            filename = Path(file).name
+            if dry_run:
+                log.info("SUCCESS - Pretended to upload %s!", file)
+                continue
+
+            response = self._upload_file(self.repository, file, metadata)
+            if response.status == 200:
+                log.info("SUCCESS - %s uploaded to %s", filename, self.repository)
+            else:
+                log.info("FAILED  - %s couldn't be uploaded to %s", filename, self.repository)
+                log.info(response.data.decode().strip())
 
 
 def upload(repository_name, *globs, dry_run=False):

@@ -22,11 +22,6 @@ def _request(url, fields, headers, method, auth):
 
     log.debug("%s %s returned %i", method, response.geturl(), response.status)
 
-    if response.status == 200:
-        log.info("Upload successful!")
-    else:
-        log.info(response.data.decode().strip())
-
     return response
 
 def get(url, headers={}, auth=None):
