@@ -221,8 +221,7 @@ def main(cmd_args=None):
 
         coloredlogs.install(
             level=log_level,
-            # %(name)15s means the name field is padded to at least 15 characters.
-            fmt='%(name)15s %(levelname)s %(message)s',
+            fmt='%(name)s %(levelname)s %(message)s',
         )
 
     except ModuleNotFoundError:
