@@ -6,7 +6,7 @@ from .log import logger
 
 MAX_RETRIES = False
 
-def _request(url, fields, headers, method, auth):
+def request(method, url, fields, auth):
     log = logger()
 
     user_agent = f"bork/{version.__version__} (+https://github.com/duckinator/bork)"
@@ -24,12 +24,8 @@ def _request(url, fields, headers, method, auth):
 
     return response
 
-def get(url, headers={}, auth=None):
-    return _request(url, None, headers, "GET", auth)
+def get(url, auth=None):
+    return request("GET", url, None, auth)
 
-def post(url, fields=None, headers=None, auth=None):
-    if headers is None:
-        headers = {}
-
-    headers["Content-Type"] = "application/x-www-form-urlencoded"
-    return _request(url, fields, headers, "POST", auth)
+def post(url, fields=None, auth=None):
+    return request("POST", url, fields, auth)
