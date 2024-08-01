@@ -18,7 +18,7 @@ class NeedsBuildError(Exception):
 
 
 # The "proper" way to handle the default would be to check python_requires
-# in setup.cfg. But, since Bork needs Python 3, there's no point.
+# in pyproject.toml. But, since Bork needs Python 3, there's no point.
 DEFAULT_PYTHON_INTERPRETER = '/usr/bin/env python3'
 
 @contextlib.contextmanager
@@ -69,7 +69,7 @@ def metadata():
             return importlib.metadata.Distribution.at(path).metadata
 
 def _python_interpreter(config):
-    # To override the default interpreter, add this to your project's setup.cfg:
+    # To override the default interpreter, add this to your project's pyproject.toml:
     #
     # [bork]
     # python_interpreter = /path/to/python
