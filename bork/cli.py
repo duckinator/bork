@@ -239,14 +239,3 @@ def main(cmd_args=None):
         (log.exception if args.verbose else log.error)(str(err))
 
         sys.exit(1)
-
-
-def zipapp_main():
-    # If Bork is put in a zipapp, this allows scripts executed as subprocesses
-    # to access pep517.compat.
-    #
-    # The problem area is the `import compat` line in pep517's _in_process.py.
-    # https://github.com/pypa/pep517/blob/master/pep517/_in_process.py
-    os.environ['PYTHONPATH'] = ':'.join([*sys.path, sys.argv[0] + '/pep517'])
-
-    main()

@@ -71,7 +71,7 @@ version = {attr = "bork.__version__"}
 
 [tool.bork.zipapp]
 enabled = true
-main = "bork.cli:zipapp_main"
+main = "bork.cli:main"
 
 [tool.bork.release]
 pypi = true
