@@ -4,6 +4,7 @@ from pathlib import Path
 from signal import Signals
 import subprocess
 import sys
+from warnings import warn
 
 from . import builder
 from .filesystem import try_delete, load_pyproject
@@ -67,6 +68,12 @@ def download(package, release_tag, file_pattern, directory):
             This directory is created, if needed.
     """
     from homf.api import github, pypi  # type: ignore
+
+    warn(
+        "`bork.api.download` has been split out into Homf",
+        DeprecationWarning,
+        stacklevel = 2,
+    )
 
     if file_pattern is None or len(file_pattern) == 0:
         raise ValueError('file_pattern must be non-empty.')
