@@ -1,4 +1,5 @@
 from .filesystem import load_pyproject, try_delete
+from .log import logger
 import build
 import contextlib
 from pathlib import Path
@@ -104,13 +105,13 @@ def zipapp():
     dist() should be called before zipapp().
     """
 
+    log = logger()
+
+    log.info("Building ZipApp.")
+
     pyproject = load_pyproject()
     config = pyproject.get('tool', {}).get('bork', {})
     zipapp_cfg = config.get('zipapp', {})
-    want_zipapp = zipapp_cfg.get('enabled', False)
-
-    if not want_zipapp:
-        return
 
     name = metadata()['name']
     dest = str(Path('build', 'zipapp'))
@@ -126,3 +127,4 @@ def zipapp():
         compressed=True)
     if not Path(target).exists():
         raise RuntimeError(f"Failed to build zipapp: {target}")
+    log.info("Finished building ZipApp.")
