@@ -17,7 +17,6 @@ Options that exist for all commands include:
 import argparse
 import inspect
 import logging
-import os
 import sys
 
 from . import __version__
