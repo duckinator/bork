@@ -43,7 +43,7 @@ documentation = "https://bork.readthedocs.io/en/latest/"
 
 [project.optional-dependencies]
 lint = [
-    "pylint==3.0.1",
+    "ruff",
     "mypy==1.5.1",
 ]
 
@@ -81,9 +81,8 @@ strip_zipapp_version = true
 
 [tool.bork.aliases]
 lint = [
-    "pylint bork tests",
-# TODO: Re-enable mypy after we move away from Click.
-#    "mypy bork",
+    "ruff check",
+    "mypy bork",
 ]
 # Runs all tests.
 test = "pytest --junitxml=bork-junit.xml --verbose"
