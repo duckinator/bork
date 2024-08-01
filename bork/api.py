@@ -11,15 +11,6 @@ from .filesystem import try_delete, load_pyproject
 from .log import logger
 
 
-DOWNLOAD_SOURCES = {
-    'gh': github,
-    'github': github,
-    'pypi': pypi.Downloader('pypi'),
-    'testpypi': pypi.Downloader('testpypi'),
-    'pypi-test': pypi.Downloader('testpypi'),  # for backwards compatibility
-}
-
-
 def aliases():
     """Returns a list of the aliases defined in pyproject.toml."""
     pyproject = load_pyproject()
@@ -84,10 +75,16 @@ def download(package, release_tag, file_pattern, directory):
 
     source, package = package.split(':')
 
-    if source not in DOWNLOAD_SOURCES:
-        raise ValueError('Invalid package/repository -- unknown source given.')
+    match source:
+        case 'github' | 'gh':
+            downloader = github
+        case 'pypi':
+            downloader = pypi.Downloader('pypi')
+        case 'testpypi' | 'pypi-test':
+            downloader = pypi.Downloader('testpypi')
+        case _:
+            raise ValueError('Invalid package/repository -- unknown source given.')
 
-    downloader = DOWNLOAD_SOURCES[source]
     downloader.download(package, release_tag, file_pattern, directory) # type:ignore
 
 
