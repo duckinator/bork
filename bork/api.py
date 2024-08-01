@@ -28,33 +28,8 @@ def aliases():
 
 def build():
     """Build the project."""
-    try:
-        builder.dist()
-        builder.zipapp()
-
-    except FileNotFoundError as e:
-        if e.filename != 'pyproject.toml':
-            raise e
-
-        def setup(ext):
-            return Path.cwd() / f"setup.{ext}"
-
-        if setup("cfg").exists() or setup("py").exists():
-            msg = """If you use setuptools, the following should be sufficient:
-
-	[build-system]
-	requires = ["setuptools > 42", "wheel"]
-	build-backend = "setuptools.build_meta" """
-
-        else:
-            msg = "Please refer to your build system's documentation."
-
-        logger().error(
-            "You need a 'pyproject.toml' file describing which buildsystem to "
-            "use, per PEP 517. %s", msg
-        )
-
-        raise e
+    builder.dist()
+    builder.zipapp()
 
 
 def clean():
