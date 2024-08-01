@@ -17,6 +17,7 @@ Zipapp_bootstrap_task:
       image: python:3.10-slim
       image: python:3.11-slim
       image: python:3.12-slim
+      image: python:3.13-rc-slim
   setup_script:
     - pip install -U --upgrade-strategy eager pip 'setuptools>61'
     - cp -r . /tmp/bork-pristine
@@ -50,6 +51,7 @@ Linux_task:
       - image: python:3.10-slim
       - image: python:3.11-slim
       - image: python:3.12-slim
+      - image: python:3.13-rc-slim
   install_script:
     - apt-get update
     - apt-get install -y git
