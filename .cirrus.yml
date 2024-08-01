@@ -170,8 +170,8 @@ Release_task:
   only_if: "changesInclude('bork/version.py') && $BRANCH == 'main' && $CIRRUS_CRON == ''"
   depends_on: [CI success]
   env:
-    TWINE_USERNAME: "__token__"
-    TWINE_PASSWORD: ENCRYPTED[00007524e18bea7b59efea288653efa57b1dbd235ed8af00cc325febfc9076631a2bf58ed330d8fa7ca057adb81579b0]
+    BORK_PYPI_USERNAME: "__token__"
+    BORK_PYPI_PASSWORD: ENCRYPTED[00007524e18bea7b59efea288653efa57b1dbd235ed8af00cc325febfc9076631a2bf58ed330d8fa7ca057adb81579b0]
     BORK_GITHUB_TOKEN: ENCRYPTED[29eac4d276e1e86020bbc415c04ce91136508e5bdeacd756310c32ebdd3fb7f910c6ed3159f08765915d9e656964e8f5]
   container:
     image: python:3.11-slim
