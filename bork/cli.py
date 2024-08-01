@@ -216,6 +216,8 @@ def main(cmd_args=None):
     if sys.version_info < (3, 10):
         print('ERROR: Bork requires Python 3.10 or newer', file=sys.stderr)
 
+    logging.captureWarnings(True)
+
     cmd_args = cmd_args or sys.argv[1:]
     if len(cmd_args) == 0:
         cmd_args = ["--help"]
