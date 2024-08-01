@@ -82,6 +82,10 @@ class Uploader:
         self.username = os.environ.get("BORK_PYPI_USERNAME", None)
         self.password = os.environ.get("BORK_PYPI_PASSWORD", None)
 
+        if self.username is None and self.password is None:
+            raise RuntimeError("BORK_PYPI_USERNAME and BORK_PYPI_PASSWORD environment variables aren't defined.\n\n"
+                    "If you used Bork prior to v9.0.0, these variables used to be TWINE_USERNAME and TWINE_PASSWORD. You can use the same values.")
+
     def _upload_file(self, url, file, metadata):
         file_contents = Path(file).read_bytes()
         file_digest = hashlib.sha256(file_contents).hexdigest()
