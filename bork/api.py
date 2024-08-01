@@ -113,7 +113,7 @@ def download(package, release_tag, file_pattern, directory):
     downloader.download(package, release_tag, file_pattern, directory) # type:ignore
 
 
-def release(repository_name, dry_run):
+def release(repository_name, dry_run, github_release_override=None, pypi_release_override=None):
     """Uploads build artifacts to a PyPi instance or GitHub, as configured
     in pyproject.toml.
 
@@ -123,6 +123,14 @@ def release(repository_name, dry_run):
 
         dry_run:
             If True, don't actually release, just show what a release would do.
+
+        github_release_override:
+            If True, enable GitHub releases; if False, disable GitHub releases;
+            if None, respect the configuration in pyproject.toml.
+
+        py_release_override:
+            If True, enable PyPi releases; if False, disable PyPi releases;
+            if None, respect the configuration in pyproject.toml.
     """
     pyproject = load_pyproject()
     bork_config = pyproject.get('tool', {}).get('bork', {})
@@ -140,6 +148,12 @@ def release(repository_name, dry_run):
 
     release_to_github = release_config.get('github', False)
     release_to_pypi = release_config.get('pypi', True)
+
+    if github_release_override is not None:
+        release_to_github = github_release_override
+
+    if pypi_release_override is not None:
+        release_to_pypi = pypi_release_override
 
     if not release_to_github and not release_to_pypi:
         print('Configured to release to neither PyPi nor GitHub?')

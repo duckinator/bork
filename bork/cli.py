@@ -109,7 +109,7 @@ def release(args):
     pypi_repository = args.pypi_repository
     if args.test_pypi:
         pypi_repository = 'testpypi'
-    api.release(pypi_repository, args.dry_run)
+    api.release(pypi_repository, args.dry_run, args.github, args.pypi)
 
 
 def run(args):
@@ -169,6 +169,19 @@ def _arg_parser():
                               "Equivalent to '--pypi-repository testpypi'.")
     releasep.add_argument("--dry-run", action="store_true",
                          help="Don't actually release, just show what a release would do.")
+
+    releasep.add_argument("--github", action="store_true",
+                        help="Release to GitHub, ignoring pyproject.toml.")
+    releasep.add_argument("--no-github", dest="github", action="store_false",
+                        help="Don't release to GitHub, ignoring pyproject.toml.")
+    releasep.set_defaults(github=None)
+
+    releasep.add_argument("--pypi", action="store_true",
+                        help="Release to PyPi, ignoring pyproject.toml.")
+    releasep.add_argument("--no-pypi", dest="pypi", action="store_false",
+                        help="Don't release to GitHub, ignoring pyproject.toml.")
+    releasep.set_defaults(pypi=None)
+
     releasep.set_defaults(func=release)
 
     runp = subparsers.add_parser("run", help="Run the specified alias.")
