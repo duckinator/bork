@@ -57,6 +57,8 @@ class Uploader:
     TESTPYPI_ENDPOINT = "https://test.pypi.org/legacy/"
 
     def __init__(self, files, repository=None):
+        log = logger()
+
         if repository == "pypi" or repository is None:
             repository = self.PYPI_ENDPOINT
         elif repository == "testpypi":
@@ -67,13 +69,13 @@ class Uploader:
         elif repository.startswith("https://"):
             pass # Everything is fine.
         else:
-            logger().error("Only the 'pypi' and 'testpypi' repository shorthands are supported.")
-            logger().error("Please provide a full URL for custom endpoints, such as <https://pypi.example.org/legacy/>.")
-            logger().error("Please open an issue at https://github.com/duckinator/bork if you need help.")
+            log.error("Only the 'pypi' and 'testpypi' repository shorthands are supported.")
+            log.error("For custom endpoints, provide a full URL.")
+            log.error("Open an issue at https://github.com/duckinator/bork if you need help.")
             exit(1)
 
         if not files:
-            logger().error("No files to upload?")
+            log.error("No files to upload?")
             exit(1)
 
         self.files = files
@@ -136,8 +138,10 @@ class Uploader:
             ]
 
         if self.username is None and self.password is None:
-            raise RuntimeError("BORK_PYPI_USERNAME and BORK_PYPI_PASSWORD environment variables aren't defined.\n\n"
-                    "If you used Bork prior to v9.0.0, these variables used to be TWINE_USERNAME and TWINE_PASSWORD. You can use the same values.")
+            raise RuntimeError(
+                "BORK_PYPI_USERNAME and BORK_PYPI_PASSWORD environment variables are undefined.\n\n"
+                "If you used Bork prior to v9.0.0, these variables used to be TWINE_USERNAME and "
+                "TWINE_PASSWORD. You can use the same values.")
 
         response = post(url, form, auth=(self.username, self.password))
         return response
@@ -151,7 +155,8 @@ class Uploader:
 
         metadata = builder.metadata().json
 
-        log.info("%s %i files to PyPi repository '%s'.", msg_prefix, len(self.files), self.repository)
+        log.info("%s %i files to PyPi repository '%s'.", msg_prefix, len(self.files),
+                self.repository)
         for file in self.files:
             filename = Path(file).name
             if dry_run:
