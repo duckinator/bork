@@ -28,33 +28,11 @@ def aliases():
 
 def build():
     """Build the project."""
-    try:
-        builder.dist()
-        builder.zipapp()
+    builder.dist()
 
-    except FileNotFoundError as e:
-        if e.filename != 'pyproject.toml':
-            raise e
-
-        def setup(ext):
-            return Path.cwd() / f"setup.{ext}"
-
-        if setup("cfg").exists() or setup("py").exists():
-            msg = """If you use setuptools, the following should be sufficient:
-
-	[build-system]
-	requires = ["setuptools > 42", "wheel"]
-	build-backend = "setuptools.build_meta" """
-
-        else:
-            msg = "Please refer to your build system's documentation."
-
-        logger().error(
-            "You need a 'pyproject.toml' file describing which buildsystem to "
-            "use, per PEP 517. %s", msg
-        )
-
-        raise e
+def build_zipapp(zipapp_main=None):
+    """Build the project as a ZipApp."""
+    builder.zipapp(zipapp_main)
 
 
 def clean():
@@ -113,7 +91,7 @@ def download(package, release_tag, file_pattern, directory):
     downloader.download(package, release_tag, file_pattern, directory) # type:ignore
 
 
-def release(repository_name, dry_run):
+def release(repository_name, dry_run, github_release_override=None, pypi_release_override=None):
     """Uploads build artifacts to a PyPi instance or GitHub, as configured
     in pyproject.toml.
 
@@ -123,12 +101,23 @@ def release(repository_name, dry_run):
 
         dry_run:
             If True, don't actually release, just show what a release would do.
+
+        github_release_override:
+            If True, enable GitHub releases; if False, disable GitHub releases;
+            if None, respect the configuration in pyproject.toml.
+
+        py_release_override:
+            If True, enable PyPi releases; if False, disable PyPi releases;
+            if None, respect the configuration in pyproject.toml.
     """
     pyproject = load_pyproject()
     bork_config = pyproject.get('tool', {}).get('bork', {})
     release_config = bork_config.get('release', {})
     github_token = os.environ.get('BORK_GITHUB_TOKEN', None)
-    version = builder.version_from_bdist_file()
+    try:
+        version = builder.version_from_bdist_file()
+    except builder.NeedsBuildError:
+        raise RuntimeError("No wheel files found. Please run 'bork build' first.")
 
     project_name = pyproject.get('project', {}).get('name', None)
 
@@ -138,8 +127,14 @@ def release(repository_name, dry_run):
     release_to_github = release_config.get('github', False)
     release_to_pypi = release_config.get('pypi', True)
 
+    if github_release_override is not None:
+        release_to_github = github_release_override
+
+    if pypi_release_override is not None:
+        release_to_pypi = pypi_release_override
+
     if not release_to_github and not release_to_pypi:
-        print('Configured to release to neither PyPi nor GitHub?')
+        raise RuntimeError('Configured to release to neither PyPi nor GitHub?')
 
     if release_to_github:
         github_repository = release_config.get('github_repository', None)
