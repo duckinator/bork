@@ -129,18 +129,11 @@ FreeBSD_task:
 
 Windows_task:
   windows_container:
-    image: cirrusci/windowsservercore:2019
-  env:
     matrix:
-      - PYTHON: 3.8.10
-      - PYTHON: 3.9.13
-      - PYTHON: 3.10.11
-      - PYTHON: 3.11.6
-      - PYTHON: 3.12.0
-  python_install_script:
-    # https://docs.python.org/3.6/using/windows.html#installing-without-ui
-    - ps: Invoke-WebRequest -Uri https://www.python.org/ftp/python/${env:PYTHON}/python-${env:PYTHON}-amd64.exe -OutFile C:\python-installer.exe
-    - C:\python-installer.exe /quiet TargetDir=C:\Python SimpleInstall=1
+      - image: python:3.10-windowsservercore-ltsc2022⁠
+      - image: python:3.11-windowsservercore-ltsc2022⁠
+      - image: python:3.12-windowsservercore-ltsc2022⁠
+      - image: python:3.13-rc-windowsservercore-ltsc2022⁠
   install_script:
     - C:\Python\python.exe -m pip install -U --upgrade-strategy eager pip "setuptools>61"
     - C:\Python\python.exe -m pip install .[test]
