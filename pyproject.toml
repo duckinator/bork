@@ -21,16 +21,16 @@ classifiers = [
 ]
 
 dependencies = [
-    "build~=1.2",
-    "coloredlogs~=15.0",
-    "homf~=1.1", # `bork download` stubs out to it
-    "packaging~=23.2", # The packaging library is used by bork.github_api.
+    "build ~= 1.2",
+    "coloredlogs ~= 15.0",
+    "homf ~= 1.1", # `bork download` stubs out to it
+    "packaging ~= 23.2", # The packaging library is used by bork.github_api.
     "pip", # used by bork.builder._prepare_zipapp
-    "urllib3~=2.2",
+    "urllib3 ~= 2.2",
 
     # Compatibility shims for older Python versions
     "importlib_metadata; python_version < '3.10'",
-    "toml~=0.10.2; python_version < '3.11'",
+    "toml ~= 0.10.2; python_version < '3.11'",
 ]
 
 requires-python = ">= 3.10"
@@ -42,11 +42,11 @@ documentation = "https://bork.readthedocs.io/en/latest/"
 [project.optional-dependencies]
 lint = [
     "ruff",
-    "mypy==1.11.1",
+    "mypy == 1.11.1",
 ]
 
 test = [
-    "pytest==8.3.2",
+    "pytest == 8.3.2",
 
     # build-system.requires for packages built during tests, including bork itself
     "setuptools >= 61", "wheel",
