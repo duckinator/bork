@@ -232,15 +232,8 @@ def main(cmd_args=None):
         import coloredlogs  # type: ignore
         # pylint: enable=import-outside-toplevel
 
-        # Default to only printing INFO and higher severity messages.
-        log_level = logging.INFO
-
-        # If we got '--verbose' or '--debug', print DEBUG and higher severity messages.
-        if args.verbose:
-            log_level = logging.DEBUG
-
         coloredlogs.install(
-            level=log_level,
+            level=logging.DEBUG if args.verbose else logging.INFO,
             fmt='%(name)s %(levelname)s %(message)s',
         )
 
