@@ -25,9 +25,6 @@ from .filesystem import load_pyproject
 from .log import logger
 
 
-DOWNLOAD_SOURCES_STR = ' '.join(api.DOWNLOAD_SOURCES)
-
-
 def aliases(_args):
     """
     ### `bork aliases`

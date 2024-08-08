@@ -14,8 +14,6 @@ readme = "README.md"
 license = {text = "MIT"}
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "License :: OSI Approved :: MIT License",
@@ -24,18 +22,18 @@ classifiers = [
 
 dependencies = [
     "build~=1.2.1",
-    # The packaging library is used by bork.github_api.
-    "packaging~=23.2",
-    "toml~=0.10.2; python_version < '3.11'",
     "coloredlogs~=15.0.1",
+    "homf~=1.1", # `bork download` stubs out to it
+    "packaging~=23.2", # The packaging library is used by bork.github_api.
+    "pip", # used by bork.builder._prepare_zipapp
     "urllib3~=2.2.2",
+
+    # Compatibility shims for older Python versions
     "importlib_metadata; python_version < '3.10'",
-    # pip is used by bork.builder._prepare_zipapp(),
-    # meaning it is in fact a proper dependency.
-    "pip",
+    "toml~=0.10.2; python_version < '3.11'",
 ]
 
-requires-python = ">= 3.8"
+requires-python = ">= 3.10"
 
 [project.urls]
 repository = "https://github.com/duckinator/bork"

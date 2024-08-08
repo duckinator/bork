@@ -1,3 +1,4 @@
+from functools import partial
 import os
 from pathlib import Path
 from signal import Signals
@@ -5,19 +6,8 @@ import subprocess
 import sys
 
 from . import builder
-from . import github
-from . import pypi
 from .filesystem import try_delete, load_pyproject
 from .log import logger
-
-
-DOWNLOAD_SOURCES = {
-    'gh': github,
-    'github': github,
-    'pypi': pypi.Downloader('pypi'),
-    'testpypi': pypi.Downloader('testpypi'),
-    'pypi-test': pypi.Downloader('testpypi'),  # for backwards compatibility
-}
 
 
 def aliases():
@@ -76,6 +66,8 @@ def download(package, release_tag, file_pattern, directory):
             The directory where files are saved.
             This directory is created, if needed.
     """
+    from homf.api import github, pypi  # type: ignore
+
     if file_pattern is None or len(file_pattern) == 0:
         raise ValueError('file_pattern must be non-empty.')
 
@@ -84,11 +76,17 @@ def download(package, release_tag, file_pattern, directory):
 
     source, package = package.split(':')
 
-    if source not in DOWNLOAD_SOURCES:
-        raise ValueError('Invalid package/repository -- unknown source given.')
+    match source:
+        case 'github' | 'gh':
+            download = github.download
+        case 'pypi':
+            download = pypi.download
+        case 'testpypi' | 'pypi-test':
+            download = partial(pypi.download, repository_url = "https://test.pypi.org/simple/")
+        case _:
+            raise ValueError('Invalid package/repository -- unknown source given.')
 
-    downloader = DOWNLOAD_SOURCES[source]
-    downloader.download(package, release_tag, file_pattern, directory) # type:ignore
+    download(package, release_tag, file_pattern, directory) # type:ignore
 
 
 def release(repository_name, dry_run, github_release_override=None, pypi_release_override=None):
@@ -110,6 +108,7 @@ def release(repository_name, dry_run, github_release_override=None, pypi_release
             If True, enable PyPi releases; if False, disable PyPi releases;
             if None, respect the configuration in pyproject.toml.
     """
+    from . import github, pypi
     pyproject = load_pyproject()
     bork_config = pyproject.get('tool', {}).get('bork', {})
     release_config = bork_config.get('release', {})
