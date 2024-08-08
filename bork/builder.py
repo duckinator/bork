@@ -2,6 +2,7 @@ from .filesystem import load_pyproject, try_delete
 from .log import logger
 import build
 import contextlib
+import importlib
 from pathlib import Path
 import subprocess
 import sys
@@ -9,11 +10,6 @@ import tempfile
 # Slight kludge so we can have a function named zipapp().
 import zipapp as Zipapp  # noqa: N812
 
-# When Python 3.8 and 3.9 support is dropped, drop the importlib_metadata backport.
-if sys.version_info[:2] >= (3, 10):
-    from importlib import metadata as importlib_metadata
-else:
-    import importlib_metadata
 
 class NeedsBuildError(Exception):
     pass
@@ -68,7 +64,7 @@ def metadata():
     with prepared_environment(srcdir, outdir) as (env, builder):
         with tempfile.TemporaryDirectory() as tmpdir:
             path = Path(builder.metadata_path(tmpdir))
-            return importlib_metadata.Distribution.at(path).metadata
+            return importlib.metadata.Distribution.at(path).metadata
 
 def _python_interpreter(config):
     # To override the default interpreter, add this to your project's pyproject.toml:
