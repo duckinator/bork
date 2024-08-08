@@ -52,96 +52,67 @@ Zipapp_bootstrap_task:
     - python3 /tmp/bork-pass2.pyz build
     - '[ -e ./dist/bork-*.pyz ]'
 
+pytest_task:
+  matrix:
+    - persistent_worker: *linuxes
+      env:
+        PY: python3
+      install_script:
+        - apt-get update
+        - apt-get install -y git
 
-Linux_task:
-  alias: Linux tests
-  persistent_worker: *linuxes
-  install_script:
-    - apt-get update
-    - apt-get install -y git
-    - pip install -U --upgrade-strategy eager pip 'setuptools>61'
-    - pip install . .[test]
+    - macos_instance:
+        cpu: 1
+        image: ghcr.io/cirruslabs/macos-runner:sonoma
+      skip: true
+      env:
+        PATH: ${HOME}/.pyenv/shims:${PATH}
+        PY: python3
+      brew_update_script:
+        - brew update
+      brew_install_script:
+        # Per the pyenv homebrew recommendations.
+        #  https://github.com/pyenv/pyenv/wiki#suggested-build-environment
+        - brew install pyenv git
+      pyenv_install_script:
+        - pyenv install 3:latest
+        - pyenv global 3
+        - pyenv rehash
+
+    - freebsd_instance:
+        image_family: freebsd-14-0
+      skip: true
+      env:
+        matrix:
+          - PYTHON: 3.10
+          - PYTHON: 3.11
+          # TODO: PYTHON: 3.12
+      install_script:
+        - PY=`echo python$PYTHON | tr -d '.'`
+        - pkg install -y $PY git
+        - $PY -m ensurepip
+
+    - windows_container:
+        image: cirrusci/windowsservercore:2019
+      skip: true
+      env:
+        PY: C:\Python\python.exe
+        matrix:
+          - PYTHON: 3.10.11
+          - PYTHON: 3.11.9
+          - PYTHON: 3.12.4
+      python_install_script:
+        # https://docs.python.org/3.6/using/windows.html#installing-without-ui
+        - ps: Invoke-WebRequest -Uri https://www.python.org/ftp/python/${env:PYTHON}/python-${env:PYTHON}-amd64.exe -OutFile C:\python-installer.exe
+        - C:\python-installer.exe /quiet TargetDir=C:\Python SimpleInstall=1
+
+  build_script:
+    - $PY -m pip install -U --upgrade-strategy eager pip 'setuptools>61'
+    - $PY -m pip install .[test]
+
   script:
-    - python3 --version
+    - $PY --version
     - bork run test
-
-macOS_task:
-  alias: macOS tests
-  skip: true
-  macos_instance:
-    cpu: 1
-    image: ghcr.io/cirruslabs/macos-runner:sonoma
-  env:
-    PATH: ${HOME}/.pyenv/shims:${PATH}
-    PYTHON: 3:latest
-  brew_update_script:
-    - brew update
-  brew_install_script:
-    # Per the pyenv homebrew recommendations.
-    #  https://github.com/pyenv/pyenv/wiki#suggested-build-environment
-    - brew install pyenv git
-  pyenv_install_script:
-    - pyenv install ${PYTHON}
-    - pyenv global 3
-    - pyenv rehash
-  pip_install_script:
-    - pip install -U --upgrade-strategy eager pip 'setuptools>61'
-    - pip install .[test]
-  script:
-    - python3 --version
-    - bork run test
-  always:
-    upload_results_artifacts:
-      path: ./bork-junit.xml
-      format: junit
-      type: text/xml
-
-FreeBSD_task:
-  alias: FreeBSD tests
-  skip: true
-  freebsd_instance:
-    image_family: freebsd-14-0
-  env:
-    matrix:
-      - PYTHON: 3.10
-      - PYTHON: 3.11
-      # TODO: PYTHON: 3.12
-  install_script:
-    - PY=`echo $PYTHON | tr -d '.'`
-    - pkg install -y python${PY} git
-    - python${PYTHON} -m ensurepip
-  pip_install_script:
-    - python${PYTHON} -m pip install -U --upgrade-strategy eager pip 'setuptools>61'
-    - python${PYTHON} -m pip install .[test]
-  script:
-    - python${PYTHON} --version
-    - bork run test
-  always:
-    upload_results_artifacts:
-      path: ./bork-junit.xml
-      format: junit
-      type: text/xml
-
-Windows_task:
-  skip: true
-  windows_container:
-    image: cirrusci/windowsservercore:2019
-  env:
-    matrix:
-      - PYTHON: 3.10.11
-      - PYTHON: 3.11.9
-      - PYTHON: 3.12.4
-  python_install_script:
-    # https://docs.python.org/3.6/using/windows.html#installing-without-ui
-    - ps: Invoke-WebRequest -Uri https://www.python.org/ftp/python/${env:PYTHON}/python-${env:PYTHON}-amd64.exe -OutFile C:\python-installer.exe
-    - C:\python-installer.exe /quiet TargetDir=C:\Python SimpleInstall=1
-  install_script:
-    - C:\Python\python.exe -m pip install -U --upgrade-strategy eager pip "setuptools>61"
-    - C:\Python\python.exe -m pip install .[test]
-  version_info_script:
-    - C:\Python\python.exe --version
-  test_script:
-    - C:\Python\python.exe -m pytest --verbose
   always:
     upload_results_artifacts:
       path: ./bork-junit.xml
@@ -154,12 +125,9 @@ success_task:
     isolation:
       container: {image: "busybox"}
   depends_on:
-    - FreeBSD tests
-    - Linux tests
-    - macOS tests
-    - Zipapp bootstraps
     - Lint
-    - Windows
+    - pytest
+    - Zipapp bootstraps
 
 # If bork/version.py is modified on the main branch, make a release.
 Release_task:
