@@ -49,7 +49,7 @@ test = [
     "pytest==8.3.2",
 
     # build-system.requires for packages built during tests, including bork itself
-    "setuptools >= 61", "wheel"
+    "setuptools >= 61", "wheel",
 ]
 
 docs = [
