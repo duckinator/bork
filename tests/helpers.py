@@ -23,10 +23,8 @@ def check_zipfile(path):
 
 
 def _check_call(cmd, **kwargs):
-    # `universal_newlines` is the old name for the `text` kwarg.
-    # Since we want 3.6 support, we use that instead.
     return subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                          universal_newlines=True, check=True, **kwargs)
+                          text=True, check=True, **kwargs)
 
 
 def check_run(*args):

@@ -5,7 +5,7 @@ A frontend for building and releasing [PEP 517](https://www.python.org/dev/peps/
 Includes a basic task runner, in the form of `bork run <task name>`. Tasks
 are defined in your `pyproject.toml` file.
 
-Bork requires Python 3.8 or newer.
+Bork requires Python 3.10 or newer.
 
 [build-status-img]: https://api.cirrus-ci.com/github/duckinator/bork.svg
 [build-status-link]: https://cirrus-ci.com/github/duckinator/bork
@@ -71,8 +71,6 @@ main = "<entrypoint>"
 
 Where `<entrypoint>` is of the form "module.submodule:function", and
 may be equivalent to a `console_script` entrypoint in setup.cfg.
-
-**NOTE**: ZipApps will only be compressed when using Python 3.7 and later. This means ZipApps created with older versions may be significantly larger.
 
 ### Uploading To GitHub Releases
 
