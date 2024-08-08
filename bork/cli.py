@@ -209,8 +209,8 @@ def main(cmd_args=None):
 
     `cmd_args` should be either `None` or equivalent to `sys.argv[1:]`.
     """
-    if sys.version_info < (3, 8):
-        print('ERROR: Bork requires Python 3.8 or newer', file=sys.stderr)
+    if sys.version_info < (3, 10):
+        print('ERROR: Bork requires Python 3.10 or newer', file=sys.stderr)
 
     cmd_args = cmd_args or sys.argv[1:]
     if len(cmd_args) == 0:
