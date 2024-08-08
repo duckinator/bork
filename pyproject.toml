@@ -42,11 +42,11 @@ documentation = "https://bork.readthedocs.io/en/latest/"
 [project.optional-dependencies]
 lint = [
     "ruff",
-    "mypy==1.5.1",
+    "mypy==1.11.1",
 ]
 
 test = [
-    "pytest==7.4.2",
+    "pytest==8.3.2",
 
     # build-system.requires for packages built during tests, including bork itself
     "setuptools >= 61", "wheel"
