@@ -12,7 +12,7 @@ Lint_task:
 
 Zipapp_bootstrap_task:
   alias: Zipapp bootstraps
-  container:
+  container: &linuxes
     matrix:
       image: python:3.10-slim
       image: python:3.11-slim
@@ -46,12 +46,7 @@ Zipapp_bootstrap_task:
 
 Linux_task:
   alias: Linux tests
-  container:
-    matrix:
-      - image: python:3.10-slim
-      - image: python:3.11-slim
-      - image: python:3.12-slim
-      - image: python:3.13-rc-slim
+  container: *linuxes
   install_script:
     - apt-get update
     - apt-get install -y git
