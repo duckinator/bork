@@ -17,6 +17,7 @@ Zipapp_bootstrap_task:
       image: python:3.10-slim
       image: python:3.11-slim
       image: python:3.12-slim
+      image: python:3.13-rc-slim
   setup_script:
     - pip install -U --upgrade-strategy eager pip 'setuptools>61'
     - cp -r . /tmp/bork-pristine
@@ -50,6 +51,7 @@ Linux_task:
       - image: python:3.10-slim
       - image: python:3.11-slim
       - image: python:3.12-slim
+      - image: python:3.13-rc-slim
   install_script:
     - apt-get update
     - apt-get install -y git
@@ -69,9 +71,9 @@ macOS_task:
     PATH: ${HOME}/.pyenv/shims:${PATH}
     matrix:
       # https://formulae.brew.sh/formula/python@3.10
-      - PYTHON: 3.10.13
-      - PYTHON: 3.11.6
-      - PYTHON: 3.12.0
+      - PYTHON: 3.10.14
+      - PYTHON: 3.11.9
+      - PYTHON: 3.12.4
   brew_update_script:
     - brew update
   brew_install_script:
@@ -125,8 +127,8 @@ Windows_task:
   env:
     matrix:
       - PYTHON: 3.10.11
-      - PYTHON: 3.11.6
-      - PYTHON: 3.12.0
+      - PYTHON: 3.11.9
+      - PYTHON: 3.12.4
   python_install_script:
     # https://docs.python.org/3.6/using/windows.html#installing-without-ui
     - ps: Invoke-WebRequest -Uri https://www.python.org/ftp/python/${env:PYTHON}/python-${env:PYTHON}-amd64.exe -OutFile C:\python-installer.exe
@@ -164,7 +166,7 @@ Release_task:
     BORK_PYPI_PASSWORD: ENCRYPTED[00007524e18bea7b59efea288653efa57b1dbd235ed8af00cc325febfc9076631a2bf58ed330d8fa7ca057adb81579b0]
     BORK_GITHUB_TOKEN: ENCRYPTED[29eac4d276e1e86020bbc415c04ce91136508e5bdeacd756310c32ebdd3fb7f910c6ed3159f08765915d9e656964e8f5]
   container:
-    image: python:3.11-slim
+    image: python:3.12-slim
   install_script:
     - apt-get update
     - apt-get install -y git
