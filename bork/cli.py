@@ -93,6 +93,10 @@ def download(args):
     package = args.PACKAGE
     release_tag = args.RELEASE
 
+    if not sys.flags.dev_mode:
+        # Avoid a double-warning if the API's deprecation was shown
+        logging.warning("`bork download` is deprecated; its functionality has been split out into Homf")
+
     api.download(package, release_tag, files, directory)
 
 
