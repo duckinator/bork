@@ -74,7 +74,7 @@ def download(package, release_tag, file_pattern, directory):
     if ':' not in package:
         raise ValueError('Invalid package/repository -- no source given.')
 
-    source, package = package.split(':')
+    source, package = package.split(':', 1)
 
     match source:
         case 'github' | 'gh':
