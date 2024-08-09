@@ -93,3 +93,8 @@ test-slow = "pytest --verbose -m slow"
 docs = "sphinx-build -b html -d build/doctrees docs/source/ docs/build/"
 docs-clean = "rm -rf docs/build/"
 #sphinx-apidoc = "sphinx-apidoc -o ./docs/source ./bork"
+
+[tool.ruff.lint]
+ignore = [
+    "E401",  # multiple imports per line
+]
