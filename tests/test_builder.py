@@ -1,5 +1,6 @@
 from functools import partial
 from pathlib import Path
+from random import shuffle
 from typing import Literal
 import logging
 
@@ -28,6 +29,14 @@ def _artefact(dst, artefact, suffix = ""):
             raise ValueError(f"'{rel}' is not directly in directory")
 
 
+def metadata(b):
+    meta = b.metadata()
+
+    # Can't actually check the object implements the protocol
+    for k in ("name", "version", "Metadata-Version"):
+        assert k in meta, f"built metadata does not contain '{k}'"
+
+
 @pytest.mark.slow
 def test_builder_cwd(project_src, tmp_path):
     "Ensure that `builder` does not depend on the current working directory"
@@ -40,11 +49,7 @@ def test_builder_cwd(project_src, tmp_path):
       with builder.prepare(project_src, dst.relative_to(Path.cwd())) as b:
           with cd(tmp_path / "metadata", mkdir = True):
               log.info(f"Building metadata from {Path.cwd()}")
-              meta = b.metadata()
-
-              # Can't actually check the object implements the protocol
-              for k in ("name", "version", "Metadata-Version"):
-                  assert k in meta, f"built metadata does not contain '{k}'"
+              metadata(b)
 
           with cd(tmp_path / "sdist", mkdir = True):
               log.info(f"Building source distribution from {Path.cwd()}")
@@ -53,3 +58,21 @@ def test_builder_cwd(project_src, tmp_path):
           with cd(tmp_path / "wheel", mkdir = True):
               log.info(f"Building wheel from {Path.cwd()}")
               artefact(b.build("wheel"), ".whl")
+
+
+@pytest.mark.slow
+def test_builder_order(project_src, tmp_path):
+    "Ensure that `builder` does not depend on the current working directory"
+    dst = (tmp_path / 'dist').resolve()
+    artefact = partial(_artefact, dst)
+
+    phases = [
+        metadata,
+        lambda b: artefact(b.build("sdist"), ".tar.gz"),
+        lambda b: artefact(b.build("wheel"), ".whl"),
+    ]
+    shuffle(phases)
+
+    with builder.prepare(project_src, dst) as b:
+        for phase in phases:
+            phase(b)
