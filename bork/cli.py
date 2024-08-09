@@ -227,21 +227,18 @@ def main(cmd_args=None):
         print(f"bork v{__version__}")
         sys.exit()
 
+    # If `--verbose` or `--debug` is passed, print DEBUG and higher severity messages.
+    # Otherwise, print INFO and higher severity messages.
+    log_level = logging.DEBUG if args.verbose else logging.INFO
+
+    log_format='%(name)s %(levelname)s %(message)s'
+
     try:
-        # pylint: disable=import-outside-toplevel
         import coloredlogs  # type: ignore
-        # pylint: enable=import-outside-toplevel
 
-        coloredlogs.install(
-            level=logging.DEBUG if args.verbose else logging.INFO,
-            fmt='%(name)s %(levelname)s %(message)s',
-        )
-
+        coloredlogs.install(level=log_level, fmt=log_format)
     except ModuleNotFoundError:
-        logging.basicConfig(
-            level=logging.INFO if args.verbose else logging.WARNING,
-            format='%(name)s %(levelname)s %(message)s',
-        )
+        logging.basicConfig(level=log_level, format=log_format)
 
     try:
         args.func(args)
