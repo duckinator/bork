@@ -93,6 +93,10 @@ def download(args):
     package = args.PACKAGE
     release_tag = args.RELEASE
 
+    if not sys.flags.dev_mode:
+        # Avoid a double-warning if the API's deprecation was shown
+        logging.warning("`bork download` is deprecated; its functionality has been split out into Homf")
+
     api.download(package, release_tag, files, directory)
 
 
@@ -212,6 +216,8 @@ def main(cmd_args=None):
     if sys.version_info < (3, 10):
         print('ERROR: Bork requires Python 3.10 or newer', file=sys.stderr)
 
+    logging.captureWarnings(True)
+
     cmd_args = cmd_args or sys.argv[1:]
     if len(cmd_args) == 0:
         cmd_args = ["--help"]
@@ -226,15 +232,8 @@ def main(cmd_args=None):
         import coloredlogs  # type: ignore
         # pylint: enable=import-outside-toplevel
 
-        # Default to only printing INFO and higher severity messages.
-        log_level = logging.INFO
-
-        # If we got '--verbose' or '--debug', print DEBUG and higher severity messages.
-        if args.verbose:
-            log_level = logging.DEBUG
-
         coloredlogs.install(
-            level=log_level,
+            level=logging.DEBUG if args.verbose else logging.INFO,
             fmt='%(name)s %(levelname)s %(message)s',
         )
 
