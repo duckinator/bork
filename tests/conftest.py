@@ -23,8 +23,8 @@ test_dir = Path(__file__).parent
     test_dir / 'fixtures' / 'minimal-package',
     test_dir / 'fixtures' / 'poetry-package',
     test_dir / 'fixtures' / 'hatch-package',
-    Path(__file__).parent.parent,  # bork's source tree
-    ) + tuple(pytest.param(url, marks=pytest.mark.network) for url in (
+    pytest.param(Path(__file__).parent.parent, marks=pytest.mark.slow),  # bork's source tree
+    ) + tuple(pytest.param(url, marks=(pytest.mark.network, pytest.mark.slow)) for url in (
     "https://github.com/astronouth7303/ppb-mutant.git",
     "https://github.com/duckinator/emanate.git",
     "https://github.com/ppb/ppb-vector.git",

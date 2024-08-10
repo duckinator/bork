@@ -4,8 +4,6 @@ from random import shuffle
 from typing import Literal
 import logging
 
-import pytest
-
 from bork import builder
 from helpers import chdir
 
@@ -36,7 +34,6 @@ def metadata(b):
         assert k in meta, f"built metadata does not contain '{k}'"
 
 
-@pytest.mark.slow
 def test_builder_cwd(project_src, tmp_path):
     "Ensure that `builder` does not depend on the current working directory"
     log = logging.getLogger(__name__ + ".test_builder_cwd")
@@ -59,7 +56,6 @@ def test_builder_cwd(project_src, tmp_path):
               artefact(b.build("wheel"), ".whl")
 
 
-@pytest.mark.slow
 def test_builder_order(project_src, tmp_path):
     "Ensure that `builder` does not depend on the current working directory"
     dst = (tmp_path / 'dist').resolve()
