@@ -68,6 +68,11 @@ Linux_task:
     - alias: Linux slow
       depends_on: [Linux quick]
       script: bork run test-slow
+  always:
+    upload_results_artifacts:
+      path: ./bork-junit.xml
+      format: junit
+      type: text/xml
 
 macOS_task:
   alias: macOS tests
