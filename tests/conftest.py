@@ -14,9 +14,6 @@ def _src_name(src):
     return name.removesuffix(".git")
 
 
-# pylint: disable=redefined-outer-name
-# would trigger on any fixture which uses another fixture defined in the same file
-
 test_dir = Path(__file__).parent
 
 @pytest.fixture(scope="session", ids=_src_name, params=(
