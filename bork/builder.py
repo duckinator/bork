@@ -1,3 +1,39 @@
+"""Bork's package-building abstraction
+
+This module provides an abstraction for building various kind of artefacts from a Python package, in isolation:
+* `Built Metadata`_ ;
+* `Python source distributions`_, a.k.a. *sdist* ;
+* `Built distributions`_ in the standard `wheel`_ format ;
+* :py:mod:`zipapp`s.
+
+It is used by invoking the :py:func:`prepare` `context manager`_,
+which sets up an isolated build environment and yields a :py:class:`Builder`
+whose methods are then called to build the desired artefacts.
+
+This module is meant to be independent of global state, including:
+* current working directory ;
+* pre-existing contents of the artefacts directory.
+
+
+Example
+"""""""
+.. code:: python
+with bork.builder.prepare(src_dir, artefacts_dir) as b:
+    b.build("wheel")
+    b.zipapp()
+
+    meta = b.metadata()
+    with (artefacts_dir / f"{meta['name']}-{meta['version']}.json").open("w") as meta_file:
+        json.dump(meta.json, meta_file)
+::
+
+.. _Built distributions: https://packaging.python.org/en/latest/glossary/#term-Built-Distribution
+.. _Built Metadata: https://packaging.python.org/en/latest/glossary/#term-Built-Metadata
+.. _Python source distributions: https://packaging.python.org/en/latest/glossary/#term-Source-Distribution-or-sdist
+.. _context manager: https://docs.python.org/3/library/stdtypes.html#typecontextmanager
+.. _wheel: https://packaging.python.org/en/latest/glossary/#term-Wheel
+"""
+
 from .filesystem import load_pyproject
 from .log import logger
 
@@ -14,9 +50,6 @@ import importlib, importlib.metadata
 import subprocess, sys, zipapp
 
 
-class NeedsBuildError(Exception):
-    pass
-
 # The "proper" way to handle the default would be to check python_requires
 # in pyproject.toml. But, since Bork needs Python 3, there's no point.
 DEFAULT_PYTHON_INTERPRETER = '/usr/bin/env python3'
@@ -27,17 +60,39 @@ BuildSettings = Mapping[str, str | Sequence[str]]
 
 class Builder(ABC):
     @abstractmethod
-    def metadata(self) -> importlib.metadata.PackageMetadata: ...
+    def metadata(self) -> importlib.metadata.PackageMetadata:
+        "Build the package's wheel metadata"
 
     @abstractmethod
-    def build(self, dist: Distribution, *, settings: BuildSettings = {}) -> Path: ...
+    def build(self, dist: Distribution, *, settings: BuildSettings = {}) -> Path:
+        """Build a given distribution of the package
+
+        :param dist: The distribution to be built, must be one of ``"sdist"`` or ``"wheel"``.
+        :param settings: Configuration settings for the build backend.
+        :returns: The :py:class:`pathlib.Path` to the built artefact.
+        """
 
     @abstractmethod
-    def zipapp(self, main: str | None) -> Path: ...
+    def zipapp(self, main: str | None) -> Path:
+        """Build a :py:mod:`zipapp` containing the package and its runtime dependencies
+
+        :param main: The name of a callable used as the zipapp's entry point.
+                     It must be in the form ``"pkg.mod:func"``, or ``None``
+                     in which case the source tree must contain a ``__main__.py``;
+                     see :py:func:`zipapp.create_archive`.
+        :returns: The :py:class:`pathlib.Path` to the executable archive.
+        """
 
 
 @contextmanager
 def prepare(src: Path, dst: Path) -> Iterator[Builder]:
+    """Context manager for performing builds in an isolated environments.
+
+    :param src: The :py:class:`pathlib.Path` of the source tree to be built.
+    :param dst: The :py:class:`pathlib.Path` to the directory where to store built artefacts.
+                It will be created if it does not yet exist.
+    :returns: A concrete :py:class:`Builder`
+    """
     @dataclass(frozen = True)
     class Bob(Builder):
         src: Path
@@ -120,3 +175,6 @@ def version_from_bdist_file():
         raise NeedsBuildError
 
     return max(files).name.replace('.tar.gz', '').split('-')[1]
+
+class NeedsBuildError(Exception):
+    pass
