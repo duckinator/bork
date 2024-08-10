@@ -120,8 +120,10 @@ def prepare(src: Path, dst: Path) -> Iterator[Builder]:
             self.env.install(
                 self.bld.get_requires_for_build(dist)
             )
-            # TODO: reuse metadata_path if it was already built
-            return Path( self.bld.build(dist, self.dst) )
+            return Path(self.bld.build(
+                dist, self.dst,
+                metadata_directory = self._metadata_path if isinstance(self._metadata_path, Path) else None
+            ))
 
         def zipapp(self, main):
             log = logger()
