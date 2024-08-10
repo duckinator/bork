@@ -54,16 +54,20 @@ Zipapp_bootstrap_task:
 
 
 Linux_task:
-  alias: Linux tests
   persistent_worker: *linuxes
   install_script:
     - apt-get update
     - apt-get install -y git
     - pip install -U --upgrade-strategy eager pip 'setuptools>61'
     - pip install . .[test]
-  script:
+  version_script:
     - python3 --version
-    - bork run test
+  matrix:
+    - alias: Linux quick
+      script: bork run test-fast
+    - alias: Linux slow
+      depends_on: [Linux quick]
+      script: bork run test-slow
 
 macOS_task:
   alias: macOS tests
@@ -155,7 +159,8 @@ success_task:
       container: {image: "busybox"}
   depends_on:
     - FreeBSD tests
-    - Linux tests
+    - Linux quick
+    - Linux slow
     - macOS tests
     - Zipapp bootstraps
     - Lint
