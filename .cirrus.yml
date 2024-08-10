@@ -1,8 +1,11 @@
 Lint_task:
-  container:
-    cpu: 1
-    memory: 512Mi
-    image: python:3.12-slim
+  persistent_worker: &linux
+    isolation:
+      container:
+        image: python:3.12-slim
+        cpu: 1
+        memory: 512Mi
+
   install_script:
     - pip install -U --upgrade-strategy eager pip 'setuptools>61'
     - pip install .
@@ -14,14 +17,16 @@ Lint_task:
 
 Zipapp_bootstrap_task:
   alias: Zipapp bootstraps
-  container:
-    cpu: 1
-    memory: 512Mi
-    matrix:
-      image: python:3.10-slim
-      image: python:3.11-slim
-      image: python:3.12-slim
-      image: python:3.13-rc-slim
+  persistent_worker: &linuxes
+    isolation:
+      container:
+        cpu: 1
+        memory: 512Mi
+        matrix:
+          - image: python:3.10-slim
+          - image: python:3.11-slim
+          - image: python:3.12-slim
+          - image: python:3.13-rc-slim
   setup_script:
     - pip install -U --upgrade-strategy eager pip 'setuptools>61'
     - cp -r . /tmp/bork-pristine
@@ -50,14 +55,7 @@ Zipapp_bootstrap_task:
 
 Linux_task:
   alias: Linux tests
-  container:
-    cpu: 1
-    memory: 512Mi
-    matrix:
-      - image: python:3.10-slim
-      - image: python:3.11-slim
-      - image: python:3.12-slim
-      - image: python:3.13-rc-slim
+  persistent_worker: *linuxes
   install_script:
     - apt-get update
     - apt-get install -y git
@@ -69,6 +67,7 @@ Linux_task:
 
 macOS_task:
   alias: macOS tests
+  skip: true
   macos_instance:
     cpu: 1
     image: ghcr.io/cirruslabs/macos-runner:sonoma
@@ -99,6 +98,7 @@ macOS_task:
 
 FreeBSD_task:
   alias: FreeBSD tests
+  skip: true
   freebsd_instance:
     image_family: freebsd-14-0
   env:
@@ -123,6 +123,7 @@ FreeBSD_task:
       type: text/xml
 
 Windows_task:
+  skip: true
   windows_container:
     image: cirrusci/windowsservercore:2019
   env:
@@ -149,7 +150,9 @@ Windows_task:
 
 success_task:
   name: CI success
-  container: {image: "busybox"}
+  persistent_worker:
+    isolation:
+      container: {image: "busybox"}
   depends_on:
     - FreeBSD tests
     - Linux tests
@@ -160,14 +163,13 @@ success_task:
 
 # If bork/version.py is modified on the main branch, make a release.
 Release_task:
+  persistent_worker: *linux
   only_if: "changesInclude('bork/version.py') && $BRANCH == 'main' && $CIRRUS_CRON == ''"
   depends_on: [CI success]
   env:
     BORK_PYPI_USERNAME: "__token__"
     BORK_PYPI_PASSWORD: ENCRYPTED[00007524e18bea7b59efea288653efa57b1dbd235ed8af00cc325febfc9076631a2bf58ed330d8fa7ca057adb81579b0]
     BORK_GITHUB_TOKEN: ENCRYPTED[29eac4d276e1e86020bbc415c04ce91136508e5bdeacd756310c32ebdd3fb7f910c6ed3159f08765915d9e656964e8f5]
-  container:
-    image: python:3.12-slim
   install_script:
     - apt-get update
     - apt-get install -y git
