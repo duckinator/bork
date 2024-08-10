@@ -50,9 +50,6 @@ import importlib, importlib.metadata
 import subprocess, sys, zipapp
 
 
-class NeedsBuildError(Exception):
-    pass
-
 # The "proper" way to handle the default would be to check python_requires
 # in pyproject.toml. But, since Bork needs Python 3, there's no point.
 DEFAULT_PYTHON_INTERPRETER = '/usr/bin/env python3'
@@ -178,3 +175,6 @@ def version_from_bdist_file():
         raise NeedsBuildError
 
     return max(files).name.replace('.tar.gz', '').split('-')[1]
+
+class NeedsBuildError(Exception):
+    pass
