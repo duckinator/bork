@@ -163,6 +163,7 @@ success_task:
 
 # If bork/version.py is modified on the main branch, make a release.
 Release_task:
+  stateful: true  # we don't want the task interrupted mid-release
   persistent_worker: *linux
   only_if: "changesInclude('bork/version.py') && $BRANCH == 'main' && $CIRRUS_CRON == ''"
   depends_on: [CI success]
