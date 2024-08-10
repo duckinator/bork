@@ -3,8 +3,8 @@ from helpers import chdir, bork_check, python_check, check_zipfile, check_tgz
 
 
 @pytest.mark.network
-def test_download_pyz(tmpdir):
-    with chdir(tmpdir):
+def test_download_pyz(tmppath):
+    with chdir(tmppath):
         # Download a pyz file from GitHub, saved to ./downloads, and check
         # that it can be run with Python.
         bork_check("download", "gh:duckinator/emanate", "v7.0.0")
@@ -15,8 +15,8 @@ def test_download_pyz(tmpdir):
         python_check("bin/emanate-7.0.0.pyz", "--help")
 
 @pytest.mark.network
-def test_download_tgz(tmpdir):
-    with chdir(tmpdir):
+def test_download_tgz(tmppath):
+    with chdir(tmppath):
         # Download a .tar.gz file from GitHub, saved to ./downloads
         bork_check("download",
                    "gh:ppb/pursuedpybear", "v0.6.0",
@@ -29,8 +29,8 @@ def test_download_tgz(tmpdir):
     ("pypi", "emanate", "6.0.0"),
     ("pypi-test", "whaledo", "1.0.1")
 ))
-def test_download_whl(tmpdir, repo, pkg, version):
-    with chdir(tmpdir):
+def test_download_whl(tmppath, repo, pkg, version):
+    with chdir(tmppath):
         # Download a .whl file from PyPi, and verify it's uncorrupted.
         bork_check("download", f"{repo}:{pkg}", version, "--files", "*.whl")
         assert check_zipfile(f"downloads/{pkg}-{version}-py3-none-any.whl")

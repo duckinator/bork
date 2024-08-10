@@ -47,3 +47,9 @@ def project(project_src, tmp_path):
     shutil.copytree(project_src, tmp_path, dirs_exist_ok=True)
     with chdir(tmp_path):
         yield tmp_path
+
+
+@pytest.fixture
+def tmppath(tmpdir):
+    "Work around the incompatibility of `pytest.LocalPath` and `pathlib.Path`"
+    return Path(tmpdir)
