@@ -36,6 +36,7 @@ with bork.builder.prepare(src_dir, artefacts_dir) as b:
 
 from .filesystem import load_pyproject
 from .log import logger
+from .utils import scoped_cache
 
 import build
 
@@ -93,6 +94,7 @@ def prepare(src: Path, dst: Path) -> Iterator[Builder]:
                 It will be created if it does not yet exist.
     :returns: A concrete :py:class:`Builder`
     """
+    @scoped_cache
     @dataclass(frozen = True)
     class Bob(Builder):
         src: Path
@@ -107,22 +109,23 @@ def prepare(src: Path, dst: Path) -> Iterator[Builder]:
             out_dir.mkdir(exist_ok = True)
             return Path(self.bld.metadata_path(out_dir))
 
+        @scoped_cache.skip  # This is just a wrapper for metadata_path
         def metadata(self) -> importlib.metadata.PackageMetadata:
             return importlib.metadata.PathDistribution(
                 self.metadata_path()
             ).metadata
 
-        def build(self, dist, *, settings = {}):
+        def build(self, dist):
             logger().info(f"Building {dist}")
             self.env.install(
-                self.bld.get_requires_for_build(dist, settings)
+                self.bld.get_requires_for_build(dist)
             )
             # TODO: reuse metadata_path if it was already built
-            return Path( self.bld.build(dist, self.dst, settings) )
+            return Path( self.bld.build(dist, self.dst) )
 
         def zipapp(self, main):
             log = logger()
-            log.info("Building zipapp")
+            log.info(f"Building zipapp with entrypoint '{main}'")
 
             log.debug("Loading configuration")
             config = load_pyproject().get("tool", {}).get("bork", {})
