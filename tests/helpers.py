@@ -36,7 +36,8 @@ def python_check(*args):
 
 
 def bork_check(*args):
-    return python_check("-m", "bork", *args)
+    from bork.cli import main
+    return main(args)
 
 
 @contextmanager
