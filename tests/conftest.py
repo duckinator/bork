@@ -1,26 +1,17 @@
-import shutil
-import sys
 from pathlib import Path
+import shutil
 
 import pytest
 
 from helpers import chdir, check_run
 
 
-if sys.version_info >= (3, 9):
-    removesuffix = str.removesuffix
-else:
-    def removesuffix(s: str, suffix: str) -> str:
-        if not s.endswith(suffix):
-            return s
-        return s[:-len(suffix)]
-
-
 def _src_name(src):
     if isinstance(src, Path):
         return src.name
 
-    return removesuffix(src, '.git').rsplit('/', 1)[1]
+    _, name = src.rsplit("/", 1)
+    return name.removesuffix(".git")
 
 
 # pylint: disable=redefined-outer-name
@@ -29,7 +20,7 @@ def _src_name(src):
 test_dir = Path(__file__).parent
 
 @pytest.fixture(scope="session", ids=_src_name, params=(
-    Path(__file__).parent / 'fixtures' / 'minimal-package',
+    test_dir / 'fixtures' / 'minimal-package',
     test_dir / 'fixtures' / 'poetry-package',
     test_dir / 'fixtures' / 'hatch-package',
     Path(__file__).parent.parent,  # bork's source tree

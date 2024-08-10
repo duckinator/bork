@@ -19,11 +19,16 @@ def aliases():
 
 def build():
     """Build the project."""
-    builder.dist()
+    with builder.prepare(src = Path.cwd(), dst = Path.cwd() / 'dist') as b:
+        b.build("sdist")
+        b.build("wheel")
+
 
 def build_zipapp(zipapp_main=None):
     """Build the project as a ZipApp."""
-    builder.zipapp(zipapp_main)
+    # TODO: change the API so the same `Builder` can be reused
+    with builder.prepare(src = Path.cwd(), dst = Path.cwd() / 'dist') as b:
+        b.zipapp(zipapp_main)
 
 
 def clean():

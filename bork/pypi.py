@@ -102,14 +102,17 @@ class Uploader:
         response = post(url, form, auth=(self.username, self.password))
         return response
 
-    def upload(self, dry_run=True):
+    def upload(self, *, dry_run = True, metadata = None):
         log = logger()
 
         msg_prefix = "Uploading"
         if dry_run:
             msg_prefix = "Pretending to upload"
 
-        metadata = builder.metadata().json
+        if metadata is None:
+            # Pure sadness, more hardcoded paths and another rebuild  >_>'
+            with builder.prepare(Path.cwd(), Path("dist")) as b:
+                metadata = b.metadata()
 
         log.info("%s %i files to PyPi repository '%s'.", msg_prefix, len(self.files),
                 self.repository)
@@ -127,6 +130,6 @@ class Uploader:
                 log.info(response.data.decode().strip())
 
 
-def upload(repository_name, *globs, dry_run=False):
+def upload(repository_name, *globs, **kwargs):
     files = find_files(globs)
-    Uploader(files, repository_name).upload(dry_run)
+    Uploader(files, repository_name).upload(**kwargs)
