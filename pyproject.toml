@@ -27,6 +27,7 @@ dependencies = [
     "homf ~= 1.1", # `bork download` stubs out to it
     "packaging ~= 23.2", # The packaging library is used by bork.github_api.
     "pip", # used by bork.builder._prepare_zipapp
+    "pydantic ~= 2.8",  # model & validate the configuration
     "urllib3 ~= 2.2",
 
     # Compatibility shims for older Python versions

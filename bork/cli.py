@@ -14,14 +14,12 @@ Options that exist for all commands include:
 
 """
 
-import argparse
-import inspect
-import logging
-import sys
+from pathlib import Path
+import argparse, inspect, logging, sys
 
 from . import __version__
 from . import api
-from .filesystem import load_pyproject
+from .config import Config
 from .log import logger
 
 
@@ -46,15 +44,10 @@ def build(args):
 
     Build the project.
     """
-
-    pyproject = load_pyproject()
-    config = pyproject.get('tool', {}).get('bork', {})
-    zipapp_cfg = config.get('zipapp', {})
-    zipapp_enabled = zipapp_cfg.get('enabled', False)
-
     api.build()
 
-    if args.zipapp or zipapp_enabled:
+    config = Config.from_project(Path.cwd())
+    if args.zipapp or config.bork.zipapp.enabled:
         api.build_zipapp(args.zipapp_main)
 
 

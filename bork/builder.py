@@ -34,7 +34,7 @@ with bork.builder.prepare(src_dir, artefacts_dir) as b:
 .. _wheel: https://packaging.python.org/en/latest/glossary/#term-Wheel
 """
 
-from .filesystem import load_pyproject
+from .config import Config
 from .log import logger
 
 import build
@@ -125,8 +125,7 @@ def prepare(src: Path, dst: Path) -> Iterator[Builder]:
             log.info("Building zipapp")
 
             log.debug("Loading configuration")
-            config = load_pyproject().get("tool", {}).get("bork", {})
-            zipapp_cfg = config.get("zipapp")
+            config = Config.from_project(self.src)
 
             log.debug("Loading metadata")
             meta = self.metadata()
@@ -147,8 +146,8 @@ def prepare(src: Path, dst: Path) -> Iterator[Builder]:
                 zipapp.create_archive(
                     source = tmp,
                     target = dst,
-                    interpreter = config.get('python_interpreter', DEFAULT_PYTHON_INTERPRETER),
-                    main = main or zipapp_cfg['main'],  # TODO: give a more user-friendly error if neither is set
+                    interpreter = config.bork.python_interpreter,
+                    main = main or config.bork.zipapp.main,  # TODO error if main is None and there's no __main__.py
                     compressed = True,
                 )
 
