@@ -1,3 +1,39 @@
+"""Bork's package-building abstraction
+
+This module provides an abstraction for building various kind of artefacts from a Python package, in isolation:
+* `Built Metadata`_ ;
+* `Python source distributions`_, a.k.a. *sdist* ;
+* `Built distributions`_ in the standard `wheel`_ format ;
+* :py:mod:`zipapp`s.
+
+It is used by invoking the :py:func:`prepare` `context manager`_,
+which sets up an isolated build environment and yields a :py:class:`Builder`
+whose methods are then called to build the desired artefacts.
+
+This module is meant to be independent of global state, including:
+* current working directory ;
+* pre-existing contents of the artefacts directory.
+
+
+Example
+"""""""
+.. code:: python
+with bork.builder.prepare(src_dir, artefacts_dir) as b:
+    b.build("wheel")
+    b.zipapp()
+
+    meta = b.metadata()
+    with (artefacts_dir / f"{meta['name']}-{meta['version']}.json").open("w") as meta_file:
+        json.dump(meta.json, meta_file)
+::
+
+.. _Built distributions: https://packaging.python.org/en/latest/glossary/#term-Built-Distribution
+.. _Built Metadata: https://packaging.python.org/en/latest/glossary/#term-Built-Metadata
+.. _Python source distributions: https://packaging.python.org/en/latest/glossary/#term-Source-Distribution-or-sdist
+.. _context manager: https://docs.python.org/3/library/stdtypes.html#typecontextmanager
+.. _wheel: https://packaging.python.org/en/latest/glossary/#term-Wheel
+"""
+
 from .filesystem import load_pyproject
 from .log import logger
 
