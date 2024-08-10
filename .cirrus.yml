@@ -1,5 +1,7 @@
 Lint_task:
   container:
+    cpu: 1
+    memory: 512Mi
     image: python:3.12-slim
   install_script:
     - pip install -U --upgrade-strategy eager pip 'setuptools>61'
@@ -13,6 +15,8 @@ Lint_task:
 Zipapp_bootstrap_task:
   alias: Zipapp bootstraps
   container:
+    cpu: 1
+    memory: 512Mi
     matrix:
       image: python:3.10-slim
       image: python:3.11-slim
@@ -47,6 +51,8 @@ Zipapp_bootstrap_task:
 Linux_task:
   alias: Linux tests
   container:
+    cpu: 1
+    memory: 512Mi
     matrix:
       - image: python:3.10-slim
       - image: python:3.11-slim
@@ -64,25 +70,20 @@ Linux_task:
 macOS_task:
   alias: macOS tests
   macos_instance:
-    image: ghcr.io/cirruslabs/macos-ventura-base:latest
+    cpu: 1
+    image: ghcr.io/cirruslabs/macos-runner:sonoma
   env:
-    LC_ALL: en_US.UTF-8
-    LANG: en_US.UTF-8
     PATH: ${HOME}/.pyenv/shims:${PATH}
-    matrix:
-      # https://formulae.brew.sh/formula/python@3.10
-      - PYTHON: 3.10.14
-      - PYTHON: 3.11.9
-      - PYTHON: 3.12.4
+    PYTHON: 3:latest
   brew_update_script:
     - brew update
   brew_install_script:
     # Per the pyenv homebrew recommendations.
     #  https://github.com/pyenv/pyenv/wiki#suggested-build-environment
-    - brew install openssl readline sqlite3 xz zlib pyenv git
+    - brew install pyenv git
   pyenv_install_script:
     - pyenv install ${PYTHON}
-    - pyenv global ${PYTHON}
+    - pyenv global 3
     - pyenv rehash
   pip_install_script:
     - pip install -U --upgrade-strategy eager pip 'setuptools>61'
