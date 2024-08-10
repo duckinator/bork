@@ -47,8 +47,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Literal, Mapping
+from zipfile import ZipFile
 import importlib, importlib.metadata
-import subprocess, sys, zipapp
+import re, subprocess, sys, zipapp
 
 
 # The "proper" way to handle the default would be to check python_requires
@@ -85,6 +86,13 @@ class Builder(ABC):
         """
 
 
+_WHEEL_FILENAME_REGEX = re.compile(
+    r"(?P<distribution>.+)-(?P<version>.+)"
+    r"(-(?P<build_tag>.+))?-(?P<python_tag>.+)"
+    r"-(?P<abi_tag>.+)-(?P<platform_tag>.+)\.whl"
+)
+
+
 @contextmanager
 def prepare(src: Path, dst: Path) -> Iterator[Builder]:
     """Context manager for performing builds in an isolated environments.
@@ -102,19 +110,6 @@ def prepare(src: Path, dst: Path) -> Iterator[Builder]:
         env: build.env.IsolatedEnv
         bld: build.ProjectBuilder
 
-        def metadata_path(self) -> Path:
-            logger().info("Building wheel metadata")
-
-            out_dir = Path(env.path) / 'metadata'
-            out_dir.mkdir(exist_ok = True)
-            return Path(self.bld.metadata_path(out_dir))
-
-        @scoped_cache.skip  # This is just a wrapper for metadata_path
-        def metadata(self) -> importlib.metadata.PackageMetadata:
-            return importlib.metadata.PathDistribution(
-                self.metadata_path()
-            ).metadata
-
         def build(self, dist):
             logger().info(f"Building {dist}")
             self.env.install(
@@ -124,6 +119,43 @@ def prepare(src: Path, dst: Path) -> Iterator[Builder]:
                 dist, self.dst,
                 metadata_directory = self._metadata_path if isinstance(self._metadata_path, Path) else None
             ))
+
+        @scoped_cache.skip  # This is just a wrapper for metadata_path
+        def metadata(self) -> importlib.metadata.PackageMetadata:
+            return importlib.metadata.PathDistribution(
+                self.metadata_path()
+            ).metadata
+
+        def metadata_path(self) -> Path:
+            log = logger()
+            out_dir = Path(self.env.path) / 'metadata'
+
+            def from_wheel() -> Path:
+                whl_path = self.build("wheel")
+                whl_parse = _WHEEL_FILENAME_REGEX.fullmatch(whl_path.name)
+                assert whl_parse, f"Invalid wheel filename '{whl_path.name}'"
+
+                log.info("Extracting metadata from wheel")
+                distinfo = f"{whl_parse['distribution']}-{whl_parse['version']}.dist-info/"
+                with ZipFile(whl_path) as whl:
+                    whl.extractall(
+                        out_dir,
+                        members = (fn for fn in whl.namelist() if fn.startswith(distinfo)),
+                    )
+
+                return out_dir / distinfo
+
+
+            if "wheel" in self._build:
+                # A wheel was already built, let's extract its metadata
+                return from_wheel()
+
+            metadata = self.bld.prepare("wheel", out_dir)
+            if metadata is not None:
+                return Path(metadata)
+
+            log.debug("Package metadata cannot be built alone, building wheel")
+            return from_wheel()
 
         def zipapp(self, main):
             log = logger()
