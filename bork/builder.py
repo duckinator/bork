@@ -27,17 +27,39 @@ BuildSettings = Mapping[str, str | Sequence[str]]
 
 class Builder(ABC):
     @abstractmethod
-    def metadata(self) -> importlib.metadata.PackageMetadata: ...
+    def metadata(self) -> importlib.metadata.PackageMetadata:
+        "Build the package's wheel metadata"
 
     @abstractmethod
-    def build(self, dist: Distribution, *, settings: BuildSettings = {}) -> Path: ...
+    def build(self, dist: Distribution, *, settings: BuildSettings = {}) -> Path:
+        """Build a given distribution of the package
+
+        :param dist: The distribution to be built, must be one of ``"sdist"`` or ``"wheel"``.
+        :param settings: Configuration settings for the build backend.
+        :returns: The :py:class:`pathlib.Path` to the built artefact.
+        """
 
     @abstractmethod
-    def zipapp(self, main: str | None) -> Path: ...
+    def zipapp(self, main: str | None) -> Path:
+        """Build a :py:mod:`zipapp` containing the package and its runtime dependencies
+
+        :param main: The name of a callable used as the zipapp's entry point.
+                     It must be in the form ``"pkg.mod:func"``, or ``None``
+                     in which case the source tree must contain a ``__main__.py``;
+                     see :py:func:`zipapp.create_archive`.
+        :returns: The :py:class:`pathlib.Path` to the executable archive.
+        """
 
 
 @contextmanager
 def prepare(src: Path, dst: Path) -> Iterator[Builder]:
+    """Context manager for performing builds in an isolated environments.
+
+    :param src: The :py:class:`pathlib.Path` of the source tree to be built.
+    :param dst: The :py:class:`pathlib.Path` to the directory where to store built artefacts.
+                It will be created if it does not yet exist.
+    :returns: A concrete :py:class:`Builder`
+    """
     @dataclass(frozen = True)
     class Bob(Builder):
         src: Path
