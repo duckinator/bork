@@ -67,15 +67,10 @@ packages = ["bork"]
 [tool.setuptools.dynamic]
 version = {attr = "bork.__version__"}
 
-[tool.bork.zipapp]
-enabled = true
-main = "bork.cli:main"
-
 [tool.bork.release]
 pypi = true
 github = true
 github_repository = "duckinator/bork"
-strip_zipapp_version = true
 
 [tool.bork.aliases]
 lint = [
