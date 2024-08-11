@@ -14,17 +14,14 @@ def _src_name(src):
     return name.removesuffix(".git")
 
 
-# pylint: disable=redefined-outer-name
-# would trigger on any fixture which uses another fixture defined in the same file
-
 test_dir = Path(__file__).parent
 
 @pytest.fixture(scope="session", ids=_src_name, params=(
     test_dir / 'fixtures' / 'minimal-package',
     test_dir / 'fixtures' / 'poetry-package',
     test_dir / 'fixtures' / 'hatch-package',
-    Path(__file__).parent.parent,  # bork's source tree
-    ) + tuple(pytest.param(url, marks=pytest.mark.network) for url in (
+    pytest.param(Path(__file__).parent.parent, marks=pytest.mark.slow),  # bork's source tree
+    ) + tuple(pytest.param(url, marks=(pytest.mark.network, pytest.mark.slow)) for url in (
     "https://github.com/astronouth7303/ppb-mutant.git",
     "https://github.com/duckinator/emanate.git",
     "https://github.com/ppb/ppb-vector.git",
@@ -50,3 +47,9 @@ def project(project_src, tmp_path):
     shutil.copytree(project_src, tmp_path, dirs_exist_ok=True)
     with chdir(tmp_path):
         yield tmp_path
+
+
+@pytest.fixture
+def tmppath(tmpdir):
+    "Work around the incompatibility of `pytest.LocalPath` and `pathlib.Path`"
+    return Path(tmpdir)

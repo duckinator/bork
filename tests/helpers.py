@@ -36,13 +36,24 @@ def python_check(*args):
 
 
 def bork_check(*args):
-    return python_check("-m", "bork", *args)
+    from bork.cli import main
+    return main(args)
 
 
 @contextmanager
-def chdir(path):
-    cwd = Path.cwd()
+def chdir(d: Path, *, mkdir: bool = False):
+    if not d.exists():
+        if not mkdir:
+            raise ValueError(f"Directory '{d}' does not exist and we won't create it")
+    elif not d.is_dir():
+        raise ValueError(f"'{d}' exists and is not a directory")
 
-    os.chdir(path)
-    yield
-    os.chdir(cwd)
+    prev_wd = Path.cwd()
+    if mkdir:
+        d.mkdir(exist_ok = True)
+
+    try:
+        os.chdir(d)
+        yield
+    finally:
+        os.chdir(prev_wd)
