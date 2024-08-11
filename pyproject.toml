@@ -90,6 +90,15 @@ docs = "sphinx-build -b html -d build/doctrees docs/source/ docs/build/"
 docs-clean = "rm -rf docs/build/"
 #sphinx-apidoc = "sphinx-apidoc -o ./docs/source ./bork"
 
+[tool.mypy]
+plugins = [
+    "pydantic.mypy"
+]
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+
 [tool.ruff.lint]
 ignore = [
     "E401",  # multiple imports per line
