@@ -13,7 +13,7 @@ from .log import logger
 
 
 def aliases():
-    """Returns a list of the aliases defined in pyproject.toml."""
+    """Returns the aliases defined in pyproject.toml."""
     return Config.from_project(Path.cwd()).bork.aliases
 
 
@@ -168,15 +168,9 @@ def release(repository_name, dry_run, github_release_override=None, pypi_release
 
 def run(alias):
     """Run the alias specified by `alias`, as defined in pyproject.toml."""
-    match aliases().get(alias):
-        case None:
-            raise RuntimeError(f"No such alias: '{alias}'")
-        case [*cmds]:
-            commands = cmds
-        case cmd if isinstance(cmd, str):
-            commands = (cmd, )
-        case x:
-            raise TypeError(f"commands must be (a sequence of) str, was {type(x)}")
+    commands = aliases().get(alias)
+    if commands is None:
+        raise RuntimeError(f"No such alias: '{alias}'")
 
     logger().info("Running '%s'", commands)
     try:

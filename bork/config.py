@@ -1,9 +1,9 @@
 from collections.abc import Mapping, Set, Sequence
 from functools import partial, reduce
 from pathlib import Path
-from typing import Optional # after Py3.10, replace string annotations with Self
+from typing import Annotated, Optional # after Py3.10, replace string annotations with Self
 
-from pydantic import dataclasses, TypeAdapter
+from pydantic import dataclasses, BeforeValidator, TypeAdapter
 
 try:
     import tomllib
@@ -33,10 +33,15 @@ class ZipappConfig:
     main: Optional[str] = None   # args.zipapp_main
     # TODO(nicoo): specify entrypoint format w/ regex annotation
 
+
+Commands = Annotated[
+    Sequence[str],
+    BeforeValidator(lambda x, _: (x, ) if isinstance(x, str) else x),
+]
+
 @dataclass
 class ToolConfig:
-    # TODO: normalize values to Sequence[str]
-    aliases: Mapping[str, Sequence[str] | str] = dataclasses.Field(default_factory = dict)
+    aliases: Mapping[str, Commands] = dataclasses.Field(default_factory = dict)
     release: ReleaseConfig = ReleaseConfig()
 
     python_interpreter: str = "/usr/bin/env python3"  # TODO: move to ZipappConfig
