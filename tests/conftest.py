@@ -24,6 +24,7 @@ test_dir = Path(__file__).parent
     ) + tuple(pytest.param(url, marks=(pytest.mark.network, pytest.mark.slow)) for url in (
     "https://github.com/astronouth7303/ppb-mutant.git",
     "https://github.com/duckinator/emanate.git",
+    "https://github.com/duckinator/homf.git",
     "https://github.com/ppb/ppb-vector.git",
 )))
 def project_src(request, tmp_path_factory):
