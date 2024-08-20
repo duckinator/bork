@@ -1,5 +1,4 @@
 from functools import partial
-import os
 from pathlib import Path
 from signal import Signals
 import subprocess
@@ -7,14 +6,15 @@ import sys
 from warnings import warn
 
 from . import builder
-from .filesystem import try_delete, load_pyproject
+from .config import Config
+from .creds import Credentials
+from .filesystem import try_delete
 from .log import logger
 
 
 def aliases():
-    """Returns a list of the aliases defined in pyproject.toml."""
-    pyproject = load_pyproject()
-    return pyproject.get('tool', {}).get('bork', {}).get('aliases', {})
+    """Returns the aliases defined in pyproject.toml."""
+    return Config.from_project(Path.cwd()).bork.aliases
 
 
 def build():
@@ -121,36 +121,21 @@ def release(repository_name, dry_run, github_release_override=None, pypi_release
             if None, respect the configuration in pyproject.toml.
     """
     from . import github, pypi
-    pyproject = load_pyproject()
-    bork_config = pyproject.get('tool', {}).get('bork', {})
-    release_config = bork_config.get('release', {})
-    github_token = os.environ.get('BORK_GITHUB_TOKEN', None)
+    config = Config.from_project(Path.cwd())
+    credentials = Credentials.from_env()
+
     try:
         version = builder.version_from_bdist_file()
     except builder.NeedsBuildError:
         raise RuntimeError("No wheel files found. Please run 'bork build' first.")
 
-    project_name = pyproject.get('project', {}).get('name', None)
-
-    strip_zipapp_version = release_config.get('strip_zipapp_version', False)
-    globs = release_config.get('github_release_globs', ['./dist/*.pyz'])
-
-    release_to_github = release_config.get('github', False)
-    release_to_pypi = release_config.get('pypi', True)
-
-    if github_release_override is not None:
-        release_to_github = github_release_override
-
-    if pypi_release_override is not None:
-        release_to_pypi = pypi_release_override
-
+    release_to_github = github_release_override if github_release_override is not None else config.bork.release.github
+    release_to_pypi = pypi_release_override if pypi_release_override is not None else config.bork.release.pypi
     if not release_to_github and not release_to_pypi:
         raise RuntimeError('Configured to release to neither PyPi nor GitHub?')
 
     if release_to_github:
-        github_repository = release_config.get('github_repository', None)
-
-        if github_token is None:
+        if credentials.github is None:
             logger().error('No GitHub token specified. Use the BORK_GITHUB_TOKEN '
                 'environment variable to set it.')
 
@@ -159,11 +144,18 @@ def release(repository_name, dry_run, github_release_override=None, pypi_release
             else:
                 sys.exit(1)
 
-        config = github.GithubConfig(github_token, github_repository, project_name)
+        github_config = github.GithubConfig(
+            credentials.github,
+            config.bork.release.github_repository,
+            config.project_name
+        )
         github_release = github.GithubRelease(
-            config, tag=f'v{version}', commitish=None, body=None,
-            globs=globs,
-            dry_run=dry_run, strip_zipapp_version=strip_zipapp_version)
+            github_config,
+            tag = f'v{version}', commitish = None, body = None,
+            globs = config.bork.release.github_release_globs,
+            dry_run = dry_run,
+            strip_zipapp_version = config.bork.release.strip_zipapp_version,
+        )
         github_release.prepare()
 
     if release_to_pypi:
@@ -176,22 +168,11 @@ def release(repository_name, dry_run, github_release_override=None, pypi_release
 
 def run(alias):
     """Run the alias specified by `alias`, as defined in pyproject.toml."""
-    pyproject = load_pyproject()
-
-    try:
-        commands = pyproject['tool']['bork']['aliases'][alias]
-    except KeyError as error:
-        raise RuntimeError(f"No such alias: '{alias}'") from error
+    commands = aliases().get(alias)
+    if commands is None:
+        raise RuntimeError(f"No such alias: '{alias}'")
 
     logger().info("Running '%s'", commands)
-
-    if isinstance(commands, str):
-        commands = [commands]
-    elif isinstance(commands, list):
-        pass
-    else:
-        raise TypeError(f"commands must be str or list, was {type(commands)}")
-
     try:
         for command in commands:
             print(command)

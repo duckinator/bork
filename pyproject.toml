@@ -27,6 +27,7 @@ dependencies = [
     "homf ~= 1.1", # `bork download` stubs out to it
     "packaging ~= 23.2", # The packaging library is used by bork.github_api.
     "pip", # used by bork.builder._prepare_zipapp
+    "pydantic ~= 2.8",  # model & validate the configuration
     "urllib3 ~= 2.2",
 
     # Compatibility shims for older Python versions
@@ -67,15 +68,10 @@ packages = ["bork"]
 [tool.setuptools.dynamic]
 version = {attr = "bork.__version__"}
 
-[tool.bork.zipapp]
-enabled = true
-main = "bork.cli:main"
-
 [tool.bork.release]
 pypi = true
 github = true
 github_repository = "duckinator/bork"
-strip_zipapp_version = true
 
 [tool.bork.aliases]
 lint = [
@@ -93,6 +89,15 @@ test-slow = "pytest --verbose -m slow"
 docs = "sphinx-build -b html -d build/doctrees docs/source/ docs/build/"
 docs-clean = "rm -rf docs/build/"
 #sphinx-apidoc = "sphinx-apidoc -o ./docs/source ./bork"
+
+[tool.mypy]
+plugins = [
+    "pydantic.mypy"
+]
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
 
 [tool.ruff.lint]
 ignore = [
