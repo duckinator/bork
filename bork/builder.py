@@ -55,7 +55,7 @@ import subprocess, sys, zipapp
 DEFAULT_PYTHON_INTERPRETER = '/usr/bin/env python3'
 
 
-Distribution = Literal["sdist", "wheel"]
+DistributionKind = Literal["sdist", "wheel"]
 BuildSettings = Mapping[str, str | Sequence[str]]
 
 class Builder(ABC):
@@ -64,7 +64,7 @@ class Builder(ABC):
         "Build the package's wheel metadata"
 
     @abstractmethod
-    def build(self, dist: Distribution, *, settings: BuildSettings = {}) -> Path:
+    def build(self, dist: DistributionKind, *, settings: BuildSettings = {}) -> Path:
         """Build a given distribution of the package
 
         :param dist: The distribution to be built, must be one of ``"sdist"`` or ``"wheel"``.
