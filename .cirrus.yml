@@ -74,20 +74,14 @@ FreeBSD_task:
   alias: FreeBSD tests
   freebsd_instance:
     image_family: freebsd-14-0
-  env:
-    matrix:
-      - PYTHON: 3.10
-      - PYTHON: 3.11
-      # TODO: PYTHON: 3.12
   install_script:
-    - PY=`echo $PYTHON | tr -d '.'`
-    - pkg install -y python${PY} git
-    - python${PYTHON} -m ensurepip
+    - pkg install -y python git
+    - python -m ensurepip
   pip_install_script:
-    - python${PYTHON} -m pip install -U --upgrade-strategy eager pip 'setuptools>61'
-    - python${PYTHON} -m pip install .[test]
+    - python -m pip install -U --upgrade-strategy eager pip 'setuptools>61'
+    - python -m pip install .[test]
   script:
-    - python${PYTHON} --version
+    - python --version
     - bork run test
   always:
     upload_results_artifacts:
