@@ -1,11 +1,8 @@
 Lint_task:
-  persistent_worker: &linux
-    isolation:
-      container:
-        image: python:3.12-slim
-        cpu: 1
-        memory: 512Mi
-
+  container: &linux
+    image: python:3.12-slim
+    cpu: 1
+    memory: 512Mi
   install_script:
     - pip install -U --upgrade-strategy eager pip 'setuptools>61'
     - pip install .
@@ -16,16 +13,14 @@ Lint_task:
     - bork run lint
 
 Linux_task:
-  persistent_worker: &linuxes
-    isolation:
-      container:
-        cpu: 1
-        memory: 512Mi
-        matrix:
-          - image: python:3.10-slim
-          - image: python:3.11-slim
-          - image: python:3.12-slim
-          - image: python:3.13-rc-slim
+  container:
+    cpu: 1
+    memory: 512Mi
+    matrix:
+      - image: python:3.10-slim
+      - image: python:3.11-slim
+      - image: python:3.12-slim
+      - image: python:3.13-rc-slim
   install_script:
     - apt-get update
     - apt-get install -y git
@@ -47,7 +42,6 @@ Linux_task:
 
 macOS_task:
   alias: macOS tests
-  skip: true
   macos_instance:
     cpu: 1
     image: ghcr.io/cirruslabs/macos-runner:sonoma
@@ -78,7 +72,6 @@ macOS_task:
 
 FreeBSD_task:
   alias: FreeBSD tests
-  skip: true
   freebsd_instance:
     image_family: freebsd-14-0
   env:
@@ -103,7 +96,6 @@ FreeBSD_task:
       type: text/xml
 
 Windows_task:
-  skip: true
   windows_container:
     image: cirrusci/windowsservercore:2019
   env:
@@ -144,7 +136,7 @@ success_task:
 # If bork/version.py is modified on the main branch, make a release.
 Release_task:
   stateful: true  # we don't want the task interrupted mid-release
-  persistent_worker: *linux
+  container: *linux
   only_if: "changesInclude('bork/version.py') && $BRANCH == 'main' && $CIRRUS_CRON == ''"
   depends_on: [CI success]
   env:
