@@ -73,7 +73,7 @@ macOS_task:
 FreeBSD_task:
   alias: FreeBSD tests
   freebsd_instance:
-    image_family: freebsd-14-0
+    image_family: freebsd-14-2
   install_script:
     - pkg install -y python310 git
     - python3.10 -m ensurepip
