@@ -75,13 +75,13 @@ FreeBSD_task:
   freebsd_instance:
     image_family: freebsd-14-0
   install_script:
-    - pkg install -y python git
-    - python -m ensurepip
+    - pkg install -y python310 git
+    - python3.10 -m ensurepip
   pip_install_script:
-    - python -m pip install -U --upgrade-strategy eager pip 'setuptools>61'
-    - python -m pip install .[test]
+    - python3.10 -m pip install -U --upgrade-strategy eager pip 'setuptools>61'
+    - python3.10 -m pip install .[test]
   script:
-    - python --version
+    - python3.10 --version
     - bork run test
   always:
     upload_results_artifacts:
