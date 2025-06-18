@@ -116,9 +116,7 @@ Windows_task:
 
 success_task:
   name: CI success
-  persistent_worker:
-    isolation:
-      container: {image: "busybox"}
+  container: *linux
   depends_on:
     - FreeBSD tests
     - Linux quick
