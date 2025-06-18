@@ -75,7 +75,7 @@ FreeBSD_task:
   freebsd_instance:
     image_family: freebsd-14-2
   install_script:
-    - pkg install -y python310 git
+    - pkg install -y python310 git rust
     - python3.10 -m ensurepip
   pip_install_script:
     - python3.10 -m pip install -U --upgrade-strategy eager pip 'setuptools>61'
