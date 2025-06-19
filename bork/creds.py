@@ -23,7 +23,7 @@ class Credentials:
 
         @classmethod
         def from_env(cls) -> Optional['Credentials.PyPI']:
-            match getenv("BORK_PYPI_USERNAME"), getenv("BORK_PYPI_PASSWORD"), getenv("BORK_GITHUB_TOKEN"):
+            match getenv("BORK_PYPI_USERNAME"), getenv("BORK_PYPI_PASSWORD"), getenv("BORK_PYPI_TOKEN"):
                 case username, password, None if username and password:
                     return cls(username, password)
                 case None, None, token if token:
