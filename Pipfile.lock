@@ -50,11 +50,12 @@
         },
         "pip": {
             "hashes": [
-                "sha256:7cd207eed4c60b0f411b444cd1464198fe186671c323b6cd6d433ed80fc9d247",
-                "sha256:e5458a0b89f2755e0ee8c0c77613fe5273e05f337907874d64f13171a898a7ff"
+                "sha256:578283f006390f85bb6282dffb876454593d637f5d1be494b5202ce4877e71f2",
+                "sha256:6d67a2b4e7f14d8b31b8b52648866fa717f45a1eb70e83002f4331d07e953717"
             ],
-            "markers": "python_version >= '3.8'",
-            "version": "==24.1.2"
+            "index": "pypi",
+            "markers": "python_version >= '3.9'",
+            "version": "==25.2"
         },
         "pyproject-hooks": {
             "editable": true,
