@@ -40,6 +40,11 @@ class Uploader:
         self.username = os.environ.get("BORK_PYPI_USERNAME", None)
         self.password = os.environ.get("BORK_PYPI_PASSWORD", None)
 
+        token = os.environ.get("BORK_PYPI_TOKEN", None)
+        if self.username is None and self.token is not None:
+            self.username = "__token__"
+            self.password = token
+
     def _upload_file(self, url, file, metadata):
         file_contents = Path(file).read_bytes()
         file_digest = hashlib.sha256(file_contents).hexdigest()
