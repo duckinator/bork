@@ -47,7 +47,7 @@ macOS_task:
     image: ghcr.io/cirruslabs/macos-runner:sonoma
   env:
     PATH: ${HOME}/.pyenv/shims:${PATH}
-    PYTHON: 3:latest
+    PYTHON: "3.14"
   brew_update_script:
     - brew update
   brew_install_script:
@@ -56,7 +56,7 @@ macOS_task:
     - brew install pyenv git
   pyenv_install_script:
     - pyenv install ${PYTHON}
-    - pyenv global 3
+    - pyenv global ${PYTHON}
     - pyenv rehash
   pip_install_script:
     - pip install -U --upgrade-strategy eager pip 'setuptools>61'
