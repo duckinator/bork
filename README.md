@@ -5,7 +5,7 @@ A frontend for building and releasing [PEP 517](https://www.python.org/dev/peps/
 Includes a basic task runner, in the form of `bork run <task name>`. Tasks
 are defined in your `pyproject.toml` file.
 
-Bork requires Python 3.10 or newer.
+Bork requires Python 3.11 or newer.
 
 [build-status-img]: https://api.cirrus-ci.com/github/duckinator/bork.svg
 [build-status-link]: https://cirrus-ci.com/github/duckinator/bork
@@ -26,44 +26,21 @@ releases](https://github.com/duckinator/bork/releases/latest/download/bork.pyz)
 
 Example usage information is provided below. Additional documentation can be found at [bork.readthedocs.io](https://bork.readthedocs.io/).
 
-### Downloading Existing Builds
-
-To download a release from GitHub:
-
-```
-$ bork download gh:duckinator/emanate # download latest .pyz for Emanate
-$ bork download gh:duckinator/emanate --directory bin/ # put files in ./bin
-$ bork download gh:ppb/pursuedpybear --files '*.tar.gz' # download latest .tar.gz file
-```
-
-To download a wheel from a PyPi release:
-
-```
-$ bork download pypi:emanate 6.0.0 --files '*.whl'
-```
-
-
-To download a wheel from a release on PyPi's test instance:
-
-```
-$ bork download testpypi:whaledo 1.0.1 --files '*.whl'
-```
-
 ### Building and Releasing
 
 Assuming a project is PEP 517 compliant, you can just do:
 
-```
+```console
 $ bork clean # Remove anything in build/, dist/, *.egg-info/
 $ bork build # Build the project
-$ bork release # Release to PyPI
+$ bork release # Release to PyPI and, optionally, GitHub
 ```
 
 ### ZipApp Support
 
 If you want to build a ZipApp, add this to your pyproject.toml:
 
-```
+```toml
 [tool.bork.zipapp]
 enabled = true
 main = "<entrypoint>"
@@ -77,7 +54,7 @@ may be equivalent to a `console_script` entrypoint in setup.cfg.
 If you want to upload assets to GitHub Releases, you can
 add the following configuration to your pyproject.toml:
 
-```
+```toml
 [project]
 name = "<project name>"
 
@@ -118,7 +95,7 @@ docs = "mkdocs build"
 
 Then you can run `bork aliases` to get the list of aliases:
 
-```
+```console
 ~/bork$ bork aliases
 lint
 test
@@ -129,7 +106,7 @@ test-slow
 
 And run `bork run <alias>` to run that alias:
 
-```
+```console
 ~/bork$ bork run docs
 mkdocs build
 INFO     -  Cleaning site directory

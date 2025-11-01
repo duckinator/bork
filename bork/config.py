@@ -1,15 +1,10 @@
 from collections.abc import Mapping, Set, Sequence
 from functools import partial, reduce
 from pathlib import Path
+import tomllib
 from typing import Annotated, Optional # after Py3.10, replace string annotations with Self
 
 from pydantic import dataclasses, BeforeValidator, TypeAdapter
-
-try:
-    import tomllib
-except ImportError:
-    # Py3.10 compatibility shim
-    import toml as tomllib  # type: ignore
 
 
 # TODO(nicoo): tie model definitions into CLI parsing

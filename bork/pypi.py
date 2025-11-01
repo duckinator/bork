@@ -40,6 +40,11 @@ class Uploader:
         self.username = os.environ.get("BORK_PYPI_USERNAME", None)
         self.password = os.environ.get("BORK_PYPI_PASSWORD", None)
 
+        token = os.environ.get("BORK_PYPI_TOKEN", None)
+        if self.username is None and token is not None:
+            self.username = "__token__"
+            self.password = token
+
     def _upload_file(self, url, file, metadata):
         file_contents = Path(file).read_bytes()
         file_digest = hashlib.sha256(file_contents).hexdigest()
@@ -51,16 +56,35 @@ class Uploader:
             file_type = "sdist"
             pyversion = "source"
 
-        md = metadata
+        # From <https://docs.pypi.org/api/upload/>:
+        # "All fields need to be renamed to lowercase and hyphens need to replaced by underscores."
+        md = {k.lower().replace('-', '_'): v for (k, v) in metadata.items()}
 
+        # https://packaging.python.org/en/latest/specifications/core-metadata/
         wanted_fields = [
+            # The following 3 are commented out because they're added later:
+            # "metadata_version",
+            # "name",
+            # "version",
+
+            "platform",
+            "supported_platform",
             "summary",
             "description", "description_content_type",
-            "keywords", "home_page", "download_url",
-            "author", "author_email", "maintainer", "maintainer_email",
-            "license", "classifier",
+            "keywords",
+            "author", "author_email",
+            "maintainer", "maintainer_email",
+            "license", "license_expression", "license_file",
+            "classifier",
             "requires_dist", "requires_python", "requires_external",
             "project_url",
+            "provides_extra",
+            "import_name",
+            "import_namespace",
+
+            # Rarely used
+            "provides_dist",
+            "obsoletes_dist",
         ]
 
         other_fields = []
@@ -78,7 +102,7 @@ class Uploader:
         form = [
             (":action", "file_upload"),
             ("protocol_version", "1"),
-            ("content", (Path(file).name, file_contents)),
+            ("content", (Path(file).name, file_contents, "application/octet-stream")),
             ("sha256_digest", file_digest),
             ("filetype", file_type),
             ("pyversion", pyversion),

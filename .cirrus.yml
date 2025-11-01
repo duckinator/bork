@@ -1,6 +1,6 @@
 Lint_task:
   container: &linux
-    image: python:3.12-slim
+    image: python:3.14-slim
     cpu: 1
     memory: 512Mi
   install_script:
@@ -17,10 +17,10 @@ Linux_task:
     cpu: 1
     memory: 512Mi
     matrix:
-      - image: python:3.10-slim
       - image: python:3.11-slim
       - image: python:3.12-slim
-      - image: python:3.13-rc-slim
+      - image: python:3.13-slim
+      - image: python:3.14-slim
   install_script:
     - apt-get update
     - apt-get install -y git
@@ -47,7 +47,7 @@ macOS_task:
     image: ghcr.io/cirruslabs/macos-runner:sonoma
   env:
     PATH: ${HOME}/.pyenv/shims:${PATH}
-    PYTHON: 3:latest
+    PYTHON: "3.14"
   brew_update_script:
     - brew update
   brew_install_script:
@@ -56,7 +56,7 @@ macOS_task:
     - brew install pyenv git
   pyenv_install_script:
     - pyenv install ${PYTHON}
-    - pyenv global 3
+    - pyenv global ${PYTHON}
     - pyenv rehash
   pip_install_script:
     - pip install -U --upgrade-strategy eager pip 'setuptools>61'
@@ -75,13 +75,13 @@ FreeBSD_task:
   freebsd_instance:
     image_family: freebsd-14-2
   install_script:
-    - pkg install -y python310 git rust
-    - python3.10 -m ensurepip
+    - pkg install -y python312 git rust
+    - python3.12 -m ensurepip
   pip_install_script:
-    - python3.10 -m pip install -U --upgrade-strategy eager pip 'setuptools>61'
-    - python3.10 -m pip install .[test]
+    - python3.12 -m pip install -U --upgrade-strategy eager pip 'setuptools>61'
+    - python3.12 -m pip install .[test]
   script:
-    - python3.10 --version
+    - python3.12 --version
     - bork run test
   always:
     upload_results_artifacts:
@@ -94,9 +94,10 @@ Windows_task:
     image: cirrusci/windowsservercore:2019
   env:
     matrix:
-      - PYTHON: 3.10.11
       - PYTHON: 3.11.9
-      - PYTHON: 3.12.4
+      - PYTHON: 3.12.10
+      - PYTHON: 3.13.9
+      - PYTHON: 3.14.0
   python_install_script:
     # https://docs.python.org/3.6/using/windows.html#installing-without-ui
     - ps: Invoke-WebRequest -Uri https://www.python.org/ftp/python/${env:PYTHON}/python-${env:PYTHON}-amd64.exe -OutFile C:\python-installer.exe
@@ -132,8 +133,7 @@ Release_task:
   only_if: "changesInclude('bork/version.py') && $BRANCH == 'main' && $CIRRUS_CRON == ''"
   depends_on: [CI success]
   env:
-    BORK_PYPI_USERNAME: "__token__"
-    BORK_PYPI_PASSWORD: ENCRYPTED[00007524e18bea7b59efea288653efa57b1dbd235ed8af00cc325febfc9076631a2bf58ed330d8fa7ca057adb81579b0]
+    BORK_PYPI_TOKEN: ENCRYPTED[00007524e18bea7b59efea288653efa57b1dbd235ed8af00cc325febfc9076631a2bf58ed330d8fa7ca057adb81579b0]
     BORK_GITHUB_TOKEN: ENCRYPTED[44b81ec4df2b298fe5d2c13fe16476aee6df05553e227ea1f598971602b6e8d84d389706440dcafef99bec0794d7284f]
   install_script:
     - apt-get update

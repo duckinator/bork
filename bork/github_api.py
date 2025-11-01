@@ -30,7 +30,7 @@ class GithubApi:
 
     # pylint: disable=too-many-arguments,too-many-locals
     def create_release(self, tag_name, name=None, commitish=None, body=None, draft=True,
-                       prerelease=None, assets=None):
+                       prerelease=None, assets=None, note=None):
         """
         `tag_name` is the name of the tag.
         `commitish` is a commit hash, branch, tag, etc.
@@ -38,12 +38,21 @@ class GithubApi:
         `draft` indicates whether it should be a draft release or not.
         `prerelease` indicates whether it should be a prerelease or not.
         `assets` is a dict mapping local file paths to the uploaded asset name.
+        `note` is a note which is by default inserted right before the changelog.
         """
         if commitish is None:
             commitish = self.run('git', 'rev-parse', 'HEAD')
 
         if body is None:
-            body = '{repo} {tag}'
+            body = '\n'.join([
+                '{repo} {tag} is now available!',
+                '{note}',
+                '---',
+                '',
+                'Changes:',
+                '',
+                '{changelog}'
+            ])
 
         if name is None:
             name = '{project_name} {tag}'
@@ -52,6 +61,10 @@ class GithubApi:
             draft_indicator = ' as a draft'
         else:
             draft_indicator = ''
+
+        if note is not None:
+            note = f"\n{note}\n"
+
         logger().info('Creating GitHub release %s%s. (commit=%s)', tag_name,
                       draft_indicator, commitish)
 
@@ -65,6 +78,7 @@ class GithubApi:
             'tag': tag_name,
             'tag_name': tag_name,
             'version': packaging.version.parse(tag_name).public,
+            'note': note,
         }
 
         # Don't fetch more data unless needed.
@@ -137,15 +151,13 @@ class GithubApi:
 
     # pylint: disable=too-many-arguments
 
-    def _api_post(self, endpoint, data, headers=None, server=None, method=None):
-        if method is None:
-            method = 'POST'
+    def _api_req(self, endpoint, data, headers, server, method):
         if headers is None:
             headers = {}
         if server is None:
             server = 'https://api.github.com'
 
-        headers['Authorization'] = 'token ' + self.token
+        headers['Authorization'] = f'token {self.token}'
         headers['Accept'] = 'application/vnd.github.v3+json'
 
         if isinstance(data, (dict, list)):
@@ -161,8 +173,11 @@ class GithubApi:
 
     # pylint: enable=too-many-arguments
 
+    def _api_post(self, endpoint, data, headers=None, server=None):
+        return self._api_req(endpoint, data, headers, server, 'POST')
+
     def _api_get(self, endpoint, headers=None, server=None):
-        return self._api_post(endpoint, None, headers, server, 'GET')
+        return self._api_req(endpoint, None, headers, server, 'GET')
 
     def _api_patch(self, endpoint, data, headers=None, server=None):
-        return self._api_post(endpoint, data, headers, server, 'PATCH')
+        return self._api_req(endpoint, data, headers, server, 'PATCH')
