@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath('..'))
 import bork
 
 project = 'Bork'
-copyright = '2023, Ellen Marie Dash'
+copyright = 'Ellen Marie Dash & contributors, released under the MIT license'
 author = 'Ellen Marie Dash'
 release = bork.__version__
 
