@@ -51,7 +51,9 @@ class Uploader:
             file_type = "sdist"
             pyversion = "source"
 
-        md = metadata
+        # From <https://docs.pypi.org/api/upload/>:
+        # "All fields need to be renamed to lowercase and hyphens need to replaced by underscores."
+        md = {k.lower().replace('-', '_'): v for (k, v) in metadata.items()}
 
         wanted_fields = [
             "summary",
