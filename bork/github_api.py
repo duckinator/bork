@@ -166,7 +166,6 @@ class GithubApi:
         req = urllib.request.Request(server + endpoint, data=data,
                                      headers=headers, method=method)
         logger().debug('%s %s', req.method, req.full_url)
-        print(req)
 
         with urllib.request.urlopen(req) as f:
             response = f.read().decode()
