@@ -41,7 +41,7 @@ class Uploader:
         self.password = os.environ.get("BORK_PYPI_PASSWORD", None)
 
         token = os.environ.get("BORK_PYPI_TOKEN", None)
-        if self.username is None and self.token is not None:
+        if self.username is None and token is not None:
             self.username = "__token__"
             self.password = token
 
