@@ -102,7 +102,7 @@ class Uploader:
         form = [
             (":action", "file_upload"),
             ("protocol_version", "1"),
-            ("content", (Path(file).name, file_contents)),
+            ("content", (Path(file).name, file_contents, "application/octet-stream")),
             ("sha256_digest", file_digest),
             ("filetype", file_type),
             ("pyversion", pyversion),
