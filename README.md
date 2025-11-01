@@ -30,7 +30,7 @@ Example usage information is provided below. Additional documentation can be fou
 
 Assuming a project is PEP 517 compliant, you can just do:
 
-```
+```console
 $ bork clean # Remove anything in build/, dist/, *.egg-info/
 $ bork build # Build the project
 $ bork release # Release to PyPI and, optionally, GitHub
@@ -40,7 +40,7 @@ $ bork release # Release to PyPI and, optionally, GitHub
 
 If you want to build a ZipApp, add this to your pyproject.toml:
 
-```
+```toml
 [tool.bork.zipapp]
 enabled = true
 main = "<entrypoint>"
@@ -54,7 +54,7 @@ may be equivalent to a `console_script` entrypoint in setup.cfg.
 If you want to upload assets to GitHub Releases, you can
 add the following configuration to your pyproject.toml:
 
-```
+```toml
 [project]
 name = "<project name>"
 
@@ -95,7 +95,7 @@ docs = "mkdocs build"
 
 Then you can run `bork aliases` to get the list of aliases:
 
-```
+```console
 ~/bork$ bork aliases
 lint
 test
@@ -106,7 +106,7 @@ test-slow
 
 And run `bork run <alias>` to run that alias:
 
-```
+```console
 ~/bork$ bork run docs
 mkdocs build
 INFO     -  Cleaning site directory
