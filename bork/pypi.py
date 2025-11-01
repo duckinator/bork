@@ -55,14 +55,31 @@ class Uploader:
         # "All fields need to be renamed to lowercase and hyphens need to replaced by underscores."
         md = {k.lower().replace('-', '_'): v for (k, v) in metadata.items()}
 
+        # https://packaging.python.org/en/latest/specifications/core-metadata/
         wanted_fields = [
+            # The following 3 are commented out because they're added later:
+            # "metadata_version",
+            # "name",
+            # "version",
+
+            "platform",
+            "supported_platform",
             "summary",
             "description", "description_content_type",
-            "keywords", "home_page", "download_url",
-            "author", "author_email", "maintainer", "maintainer_email",
-            "license", "classifier",
+            "keywords",
+            "author", "author_email",
+            "maintainer", "maintainer_email",
+            "license", "license_expression", "license_file",
+            "classifier",
             "requires_dist", "requires_python", "requires_external",
             "project_url",
+            "provides_extra",
+            "import_name",
+            "import_namespace",
+
+            # Rarely used
+            "provides_dist",
+            "obsoletes_dist",
         ]
 
         other_fields = []
