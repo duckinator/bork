@@ -55,7 +55,7 @@ class Config:
         try:
             # Inefficient but necessary for compatibility with toml shim
             # To be improved once Py3.10 support is removed
-            pyproject = tomllib.loads((root / "pyproject.toml").read_text())
+            pyproject = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))
         except FileNotFoundError:
             if any((root / fn).exists() for fn in ("setup.py", "setup.cfg")):
                 # Legacy setuptools project without Bork-specific config
