@@ -71,6 +71,7 @@ class Uploader:
             "supported_platform",
             "summary",
             "description", "description_content_type",
+            "documentation",
             "keywords",
             "author", "author_email",
             "maintainer", "maintainer_email",
@@ -81,6 +82,7 @@ class Uploader:
             "provides_extra",
             "import_name",
             "import_namespace",
+            "repository",
 
             # Rarely used
             "provides_dist",
