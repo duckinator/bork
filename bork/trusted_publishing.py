@@ -27,7 +27,7 @@ def request(method, url, data, headers):
         log.debug('-> %s returned %i %s', res.url, res.status, res.reason)
         response = res.read().decode()
 
-    return json.loads(response)
+    return response
 
 def get(url, headers={}):
     return request('GET', url, None, headers)
