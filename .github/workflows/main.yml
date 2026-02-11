@@ -1,0 +1,87 @@
+name: Release
+
+on:
+  push:
+
+jobs:
+  lint:
+    runs-on: ubuntu-slim
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '> 3.10'
+      - run: "pip install . .[lint] .[test]"
+      - run: ruff --version
+      - run: mypy --version
+      - run: bork run lint
+
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: "pip install . .[test]"
+      - run: bork build
+      - run: bork run test
+
+  #test_freebsd:
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - uses: actions/checkout@v6
+  #    - uses: vmactions/freebsd-vm@v1
+  #      with:
+  #        prepare: |
+  #          pkg install -y python311 py311-pip rust
+  #          pw user add -n action -m
+  #          chown -R action "$GITHUB_WORKSPACE"
+  #          su action -c 'python3.11 -m pip install --user . .[test]'
+  #        run: |
+  #          su action -c 'python3.11 -m bork build'
+  #          su action -c 'python3.11 -m pytest --verbose'
+
+  ci_success:
+    name: "CI Success"
+    runs-on: ubuntu-slim
+    needs: [lint, test]
+    steps:
+      - run: true
+
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      version_changed: ${{ steps.project.VERSION_CHANGED == '1' }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check if version in bork/version.py changed
+        id: project
+        run: |
+          git diff-tree --exit-code HEAD bork/version.py || : "${VERSION_CHANGED:=1}" && : "${VERSION_CHANGED:=0}"
+          echo "VERSION_CHANGED=${VERSION_CHANGED}" >> "$GITHUB_OUTPUT"
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [ci_success, changes]
+    if: ${{ github.ref == 'refs/heads/main' && needs.changes.outputs.version_changed }}
+    environment: pypi
+    permissions:
+      contents: write # Required for GitHub Releases
+      id-token: write # Required for PyPi Trusted Publishing
+    env:
+      BORK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '> 3.10'
+      - run: pip install .
+      - run: bork build
+      - run: bork release

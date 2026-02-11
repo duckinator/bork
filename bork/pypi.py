@@ -2,7 +2,7 @@ import hashlib
 import os
 from pathlib import Path
 
-from . import builder
+from . import builder, trusted_publishing
 from .filesystem import find_files, wheel_file_info
 from .log import logger
 from .http import post
@@ -118,6 +118,13 @@ class Uploader:
             # Remaining "core metadata" fields.
             *other_fields
             ]
+
+        # If we've still have no credentials, try Trusted Publishing.
+        if self.username is None and self.password is None:
+            token = trusted_publishing.get_token(self.repository)
+            if token is not None:
+                self.username = "__token__"
+                self.password = token
 
         if self.username is None and self.password is None:
             raise RuntimeError(
