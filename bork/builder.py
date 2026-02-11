@@ -36,6 +36,7 @@ with bork.builder.prepare(src_dir, artefacts_dir) as b:
 
 from .config import Config
 from .log import logger
+from .utils import scoped_cache
 
 import build
 
@@ -46,8 +47,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Literal, Mapping
+from zipfile import ZipFile
 import importlib, importlib.metadata
-import subprocess, sys, zipapp
+import re, subprocess, sys, zipapp
 
 
 # The "proper" way to handle the default would be to check python_requires
@@ -84,6 +86,13 @@ class Builder(ABC):
         """
 
 
+_WHEEL_FILENAME_REGEX = re.compile(
+    r"(?P<distribution>.+)-(?P<version>.+)"
+    r"(-(?P<build_tag>.+))?-(?P<python_tag>.+)"
+    r"-(?P<abi_tag>.+)-(?P<platform_tag>.+)\.whl"
+)
+
+
 @contextmanager
 def prepare(src: Path, dst: Path) -> Iterator[Builder]:
     """Context manager for performing builds in an isolated environments.
@@ -93,6 +102,7 @@ def prepare(src: Path, dst: Path) -> Iterator[Builder]:
                 It will be created if it does not yet exist.
     :returns: A concrete :py:class:`Builder`
     """
+    @scoped_cache
     @dataclass(frozen = True)
     class Bob(Builder):
         src: Path
@@ -100,29 +110,56 @@ def prepare(src: Path, dst: Path) -> Iterator[Builder]:
         env: build.env.IsolatedEnv
         bld: build.ProjectBuilder
 
-        def metadata_path(self) -> Path:
-            logger().info("Building wheel metadata")
+        def build(self, dist):
+            logger().info(f"Building {dist}")
+            self.env.install(
+                self.bld.get_requires_for_build(dist)
+            )
+            return Path(self.bld.build(
+                dist, self.dst,
+                metadata_directory = self._metadata_path if isinstance(self._metadata_path, Path) else None
+            ))
 
-            out_dir = Path(env.path) / 'metadata'
-            out_dir.mkdir(exist_ok = True)
-            return Path(self.bld.metadata_path(out_dir))
-
+        @scoped_cache.skip  # This is just a wrapper for metadata_path
         def metadata(self) -> importlib.metadata.PackageMetadata:
             return importlib.metadata.PathDistribution(
                 self.metadata_path()
             ).metadata
 
-        def build(self, dist, *, settings = {}):
-            logger().info(f"Building {dist}")
-            self.env.install(
-                self.bld.get_requires_for_build(dist, settings)
-            )
-            # TODO: reuse metadata_path if it was already built
-            return Path( self.bld.build(dist, self.dst, settings) )
+        def metadata_path(self) -> Path:
+            log = logger()
+            out_dir = Path(self.env.path) / 'metadata'
+
+            def from_wheel() -> Path:
+                whl_path = self.build("wheel")
+                whl_parse = _WHEEL_FILENAME_REGEX.fullmatch(whl_path.name)
+                assert whl_parse, f"Invalid wheel filename '{whl_path.name}'"
+
+                log.info("Extracting metadata from wheel")
+                distinfo = f"{whl_parse['distribution']}-{whl_parse['version']}.dist-info/"
+                with ZipFile(whl_path) as whl:
+                    whl.extractall(
+                        out_dir,
+                        members = (fn for fn in whl.namelist() if fn.startswith(distinfo)),
+                    )
+
+                return out_dir / distinfo
+
+
+            if "wheel" in self._build:
+                # A wheel was already built, let's extract its metadata
+                return from_wheel()
+
+            metadata = self.bld.prepare("wheel", out_dir)
+            if metadata is not None:
+                return Path(metadata)
+
+            log.debug("Package metadata cannot be built alone, building wheel")
+            return from_wheel()
 
         def zipapp(self, main):
             log = logger()
-            log.info("Building zipapp")
+            log.info(f"Building zipapp with entrypoint '{main}'")
 
             log.debug("Loading configuration")
             config = Config.from_project(self.src)
