@@ -3,6 +3,7 @@ from .log import logger
 import json
 import os
 import urllib
+from urllib.parse import urlsplit
 
 
 # FIXME: Dedupe request/get/post with bork/github_api.py.
@@ -102,7 +103,7 @@ def get_token(repository):
 
 def get_audience(repository):
     """Given the full URL for a repository, determine the OIDC audience."""
-    url = f"{repository}/_/oidc/audience"
+    url = urlsplit(repository)._replace(path="/_/oidc/audience").geturl()
     audience = json.loads(get(url))["audience"]
     logger().debug(f"repository {repository!r} has audience {audience!r}")
     return audience
