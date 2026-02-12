@@ -66,7 +66,7 @@ class GithubTrustedPublishing(TrustedPublishingProvider):
     @staticmethod
     def detected():
         """Are we running on GitHub CI?"""
-        return bool(os.environ["GITHUB_CI"])
+        return bool(os.environ.get("GITHUB_CI"))
 
     def get_ambient_credential(self):
         token = os.environ("ACTIONS_ID_TOKEN_REQUEST_TOKEN")
