@@ -2,15 +2,13 @@ from . import version
 from .log import logger
 import json
 import os
-import urllib
+import urllib.request
 from urllib.parse import urlsplit
 
 
 # FIXME: Dedupe request/get/post with bork/github_api.py.
 
 def request(method, url, data, headers):
-    log = logger()
-
     if headers is None:
         headers = {}
 
@@ -21,10 +19,8 @@ def request(method, url, data, headers):
 
     req = urllib.request.Request(url, data=data,
                                  headers=headers, method=method)
-    log.debug('%s %s', req.method, req.full_url)
 
     with urllib.request.urlopen(req) as res:
-        log.debug('-> %s returned %i %s', res.url, res.status, res.reason)
         response = res.read().decode()
 
     return response
@@ -54,7 +50,7 @@ class TrustedPublishingProvider:
 
     def get_token(self, repository):
         """Perform the whole song and dance to get a token."""
-        url = f"{repository}/_/oidc/mint-token"
+        url = urlsplit(repository)._replace(path="/_/oidc/mint-token").geturl()
         data = json.loads(post(url, {"token": self.get_ambient_credential()}))
         return data["token"]
 
@@ -66,11 +62,11 @@ class GithubTrustedPublishing(TrustedPublishingProvider):
     @staticmethod
     def detected():
         """Are we running on GitHub CI?"""
-        return bool(os.environ.get("GITHUB_CI"))
+        return bool(os.environ.get("CI") and os.environ.get("GITHUB_ACTION"))
 
     def get_ambient_credential(self):
-        token = os.environ("ACTIONS_ID_TOKEN_REQUEST_TOKEN")
-        url = os.environ("ACTIONS_ID_TOKEN_REQUEST_URL")
+        token = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_TOKEN")
+        url = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_URL")
 
         if not token:
             raise TrustedPublishingError("Expected ACTIONS_ID_TOKEN_REQUEST_TOKEN environment variable to be defined.")

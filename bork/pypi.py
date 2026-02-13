@@ -1,8 +1,8 @@
 import hashlib
-import os
 from pathlib import Path
 
-from . import builder, trusted_publishing
+from . import builder
+from .creds import Credentials
 from .filesystem import find_files, wheel_file_info
 from .log import logger
 from .http import post
@@ -36,14 +36,6 @@ class Uploader:
 
         self.files = files
         self.repository = repository
-
-        self.username = os.environ.get("BORK_PYPI_USERNAME", None)
-        self.password = os.environ.get("BORK_PYPI_PASSWORD", None)
-
-        token = os.environ.get("BORK_PYPI_TOKEN", None)
-        if self.username is None and token is not None:
-            self.username = "__token__"
-            self.password = token
 
     def _upload_file(self, url, file, metadata):
         file_contents = Path(file).read_bytes()
@@ -119,20 +111,15 @@ class Uploader:
             *other_fields
             ]
 
-        # If we've still have no credentials, try Trusted Publishing.
-        if self.username is None and self.password is None:
-            token = trusted_publishing.get_token(self.repository)
-            if token is not None:
-                self.username = "__token__"
-                self.password = token
+        username, password = self._get_credentials()
 
-        if self.username is None and self.password is None:
+        if username is None and password is None:
             raise RuntimeError(
                 "BORK_PYPI_USERNAME and BORK_PYPI_PASSWORD environment variables are undefined.\n\n"
                 "If you used Bork prior to v9.0.0, these variables used to be TWINE_USERNAME and "
                 "TWINE_PASSWORD. You can use the same values.")
 
-        response = post(url, form, auth=(self.username, self.password))
+        response = post(url, form, auth=(username, password))
         return response
 
     def upload(self, *, dry_run = True, metadata = None):
@@ -161,6 +148,17 @@ class Uploader:
             else:
                 log.info("FAILED  - %s couldn't be uploaded to %s", filename, self.repository)
                 log.info(response.data.decode().strip())
+
+    def _get_credentials(self):
+        username = None
+        password = None
+
+        credentials = Credentials.from_env(self.repository)
+        if credentials.pypi:
+            username = credentials.pypi.username
+            password = credentials.pypi.password
+
+        return (username, password)
 
 
 def upload(repository_name, *globs, **kwargs):
