@@ -1,4 +1,4 @@
-name: Release
+name: Main
 
 on:
   push:
@@ -6,6 +6,8 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-slim
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v5
@@ -22,6 +24,8 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ["3.11", "3.12", "3.13", "3.14"]
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v6
         with:
@@ -35,6 +39,8 @@ jobs:
 
   #test_freebsd:
   #  runs-on: ubuntu-latest
+  #  permissions:
+  #    contents: read
   #  steps:
   #    - uses: actions/checkout@v6
   #    - uses: vmactions/freebsd-vm@v1
@@ -51,12 +57,16 @@ jobs:
   ci_success:
     name: "CI Success"
     runs-on: ubuntu-slim
+    permissions:
+      contents: read
     needs: [lint, test]
     steps:
       - run: true
 
   changes:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       version_changed: ${{ steps.project.VERSION_CHANGED == '1' }}
     steps:
